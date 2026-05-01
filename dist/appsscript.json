@@ -1,0 +1,9 @@
+{
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "timeZone": "America/New_York",
+  "webapp": {
+    "access": "ANYONE",
+    "executeAs": "USER_ACCESSING"
+  }
+}

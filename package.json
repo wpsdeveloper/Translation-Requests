@@ -1,0 +1,26 @@
+{
+  "author": "",
+  "description": "",
+  "devDependencies": {
+    "@eslint/css": "^1.2.0",
+    "@eslint/js": "^10.0.1",
+    "@types/google-apps-script": "^2.0.8",
+    "clasp": "^1.0.0",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0",
+    "shx": "^0.4.0",
+    "vite": "^8.0.10",
+    "vite-plugin-singlefile": "^2.3.3"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "eslint.config.js",
+  "name": "translation-requests",
+  "scripts": {
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "copy src\\server\\*.gs dist\\ && copy appsscript.json dist\\",
+    "deploy": "npm run build && clasp push"
+  },
+  "version": "1.0.0"
+}

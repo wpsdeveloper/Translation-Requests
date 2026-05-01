@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translation Requests</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Translation Requests</h1>
+      <p class="subtitle">Browse submitted requests, filter them by school, and inspect the request details without leaving the page.</p>
+    </div>
+    <div class="filters">
+      <label for="schoolFilter">Filter by school</label>
+      <select id="schoolFilter" aria-label="Filter requests by school">
+        <option value="all">All schools</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="panel">
+    <section class="card">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;">
+        <h2>Requests</h2>
+        <span id="resultsCount" class="row-count">0 entries</span>
+      </div>
+      <div class="table-wrapper">
+        <table aria-label="Requests table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Request Date</th>
+              <th>Submitted Date</th>
+              <th>Username</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody id="requestsTableBody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty-state" hidden>No requests match the selected school.</div>
+    </section>
+
+    <section class="card">
+      <h2>Request Details</h2>
+      <div id="requestDetails">
+        <div class="empty-state">Select a request row to view details here.</div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
