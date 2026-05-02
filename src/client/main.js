@@ -5,13 +5,33 @@
 
 // 
 
-const tableBody = document.getElementById('requestsTableBody');
-const schoolFilter = document.getElementById('schoolFilter');
-const resultsCount = document.getElementById('resultsCount');
-const emptyState = document.getElementById('emptyState');
-const requestDetails = document.getElementById('requestDetails');
+const tableBody = document.getElementById('requests-table-body');
+const schoolFilter = document.getElementById('school-filter');
+const resultsCount = document.getElementById('results-count');
+const emptyState = document.getElementById('empty-state');
+const requestDetails = document.getElementById('request-details');
+const processingDetails = document.getElementById('request-processing');
 let activeRowId = null;/** @type {string|null} */ (null);
 let allRequests = []; /** @type {Array} */ ([]);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const url = window.location.href;
+  if (url.includes('localhost')) {
+    console.log("Running in development mode, using mock data.");
+    allRequests = parseData(JSON.parse(getMockData()));
+    renderRequests();
+    return;
+  }
+  
+  google.script.run
+    .withSuccessHandler(receiveDataFromServer)
+    .withFailureHandler((error) => {
+      // This will give you the ACTUAL server-side error message
+      console.error("Server Error:", error.message);
+      console.error("Stack Trace:", error.stack);
+    })
+    .getDataFromServer();
+});
 
 function getSchoolOptions() {
   if (!Array.isArray(allRequests) || !allRequests.length) {
@@ -55,11 +75,11 @@ function renderTable() {
     .map(
       (request) => `
       <tr data-id="${request.id}" class="${request.id === activeRowId ? 'active' : ''}">
-        <td>${request.status}</td>
+        <td><span class="badge ${getBadgeClass(request.status)}">${request.status}</span></td>
         <td>${request.requestDate.toLocaleDateString()}</td>
         <td>${request.submittedDate.toLocaleDateString()}</td>
-        <td>${request.name}</td>
         <td>${request.reqType}</td>
+        <td>${request.name}</td>
       </tr>`
     )
     .join('');
@@ -96,71 +116,149 @@ function renderDetails(requestId) {
     requestDetails.innerHTML = '<div class="empty-state">No request selected.</div>';
     return;
   }
-
   if (request.reqType === 'Interpretation') {
-    requestDetails.innerHTML = `
-      <div class="detail-item">
-        <label>Request ID ${request.id}</label>
-      </div>
-      <div class="detail-item">
-        <label>Status</label>
-        <div><span class="badge">${request.status}</span></div>
-      </div>
-      <div class="detail-item">
-        <label>Event Details</label>
-        <div class="detail-value">${request.requestDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}, 
-        ${request.startTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
-        -${request.endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
-        </div>
-        <div class="detail-value">${request.eventLocation}</div>
-      </div>
-      <div class="detail-item">
-        <label>Details</label>
-        <div class="detail-value">${request.description}</div>
-      </div>`;
+    requestDetails.innerHTML = getDetailsHTMLInterpretation(request);
+    processingDetails.innerHTML = getProcessingHTMLInterpretation(request);
   } else if (request.reqType === 'Translation') {
-    requestDetails.innerHTML = `
-      <div class="detail-item">
-        <label>Request ID ${request.id}</label>
-      </div>
-      <div class="detail-item">
-        <label>Status</label>
-        <div><span class="badge">${request.status}</span></div>
-      </div>
-      <div class="detail-item">
-        <label>Document Link</label>
-        <div>
-          <a href="${request.docLink}" target="_blank">Document original</a>
-        </div>
-      </div>
-      <div class="detail-item">
-        <label>Page Count</label>
-        <div class="detail-value">${request.docPageCount}</div>
-      </div>
-      <div class="detail-item">
-        <label>Details</label>
-        <div class="detail-value">${request.description}</div>
-      </div>`;
+    requestDetails.innerHTML = getDetailsHTMLTranslation(request);
+    processingDetails.innerHTML = getProcessingHTMLTranslation(request);
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  google.script.run
-    .withSuccessHandler(receiveDataFromServer)
-    .withFailureHandler((error) => {
-      // This will give you the ACTUAL server-side error message
-      console.error("Server Error:", error.message);
-      console.error("Stack Trace:", error.stack);
-    })
-    .getDataFromServer();
-});
+function getDetailsHTMLInterpretation(request) {
+  return `
+    <div class="detail-item">
+      <label>Request ID ${request.id}</label>
+    </div>
+    <div class="detail-item">
+      <label>Languages</label>
+      <div class="detail-value">${request.originalLanguage} to ${request.targetLanguage}</div>
+    </div>
+    <div class="detail-item">
+      <label>Event Details</label>
+    <div class="detail-value">${request.requestDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}, 
+      ${request.startTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
+      -${request.endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
+    </div>
+    <div class="detail-value">${request.eventLocation}</div>
+    </div>
+    <div class="detail-item">
+      <label>Details</label>
+      <div class="detail-value">${request.description}</div>
+    </div>`;
+  }
+  function getDetailsHTMLTranslation(request) {
+    return `
+    <div class="detail-item">
+      <label>Request ID ${request.id}</label>
+    </div>
+    <div class="detail-item">
+      <label>Languages</label>
+      <div class="detail-value">${request.originalLanguage} to ${request.targetLanguage}</div>
+    </div>
+    <div class="detail-item">
+      <label>Document Link</label>
+    <div>
+      <a href="${request.docLink}" target="_blank">Document original</a>
+    </div>
+    </div>
+    <div class="detail-item">
+      <label>Page Count</label>
+      <div class="detail-value">${request.docPageCount}</div>
+    </div>
+    <div class="detail-item">
+      <label>Details</label>
+      <div class="detail-value">${request.description}</div>
+    </div>`;
+  }
+  
+  function getProcessingHTMLInterpretation(request) {
+    return `
+    <div class="detail-item">
+      <label>Status</label>
+    <div><span class="badge ${getBadgeClass(request.status)}">${request.status}</span></div>
+    </div>
+    <div class="detail-item">
+      <label>Interpreter selected</label>
+      <select id="interpreter-select">
+        <option value="">Select an interpreter</option>
+        <option value="Lexikeet">Lexikeet</option>
+        <option value="MAPA">MAPA</option>
+        <option value="Google Translate">Google Translate</option>
+        
+        <option value="Staff member">Staff member</option>
+        <option value="Contractor">Contractor</option>
+      </select>
+      <div class="interpreter-name" style="display:none;margin-top:8px;">
+        <label>Name</label>
+         <div class="detail-value"></div>
+      </div>
+    </div>
+    <div class="detail-item">
+      <label>Interpreter contracted</label>
+      <div class="detail-value"></div>
+    </div>
+    <div class="detail-item">
+      <label>Guest attendance confirmed</label>
+      <div class="detail-value"></div>
+    </div>
+    <div class="detail-item">
+      <label>Technology confirmed</label>
+      <div class="detail-value"></div>
+    </div>
+    `;
+  }
+  
+  function getProcessingHTMLTranslation(request) {
+    return`
+    <div class="detail-item">
+      <label>Status</label>
+    <div><span class="badge ${getBadgeClass(request.status)}">${request.status}</span></div>
+    </div>
+    <div class="detail-item">
+      <label>Translation service</label>
+      <select id="translation-select">
+        <option value="">Select a translation service</option>
+        <option value="Lexikeet">Lexikeet</option>
+        <option value="MAPA">MAPA</option>
+        <option value="Google Translate">Google Translate</option>
+        <option value="Staff member">Staff member</option>
+        <option value="Contractor">Contractor</option>
+      </select>
+      <div class="interpreter-name" style="display:none;margin-top:8px;">
+        <label>Name</label>
+        <div class="detail-value"></div>
+      </div>
+    </div>
+    <div class="detail-item">
+      <label>Document sent (date)</label>
+      <div class="detail-value"></div>
+    </div>
+    <div class="detail-item">
+      <label>Document received (date)</label>
+      <div class="detail-value"></div>
+    </div>
+    `;
+  }
 
-function receiveDataFromServer(serializedData) {
-  console.log("Raw data from server:", serializedData);
-  const dataRaw = JSON.parse(serializedData);
-  allRequests = parseData(dataRaw);
-  renderRequests();
-}
+  function getBadgeClass(status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'badge-pending';
+      case 'in progress':
+        return 'badge-in-progress';
+      case 'completed':
+        return 'badge-completed';
+      default:
+        return 'badge';
+    }
+  }
+
+  function receiveDataFromServer(serializedData) {
+    const dataRaw = JSON.parse(serializedData);
+    allRequests = parseData(dataRaw);
+    renderRequests();
+  }
 
 function parseData(data) {
   data.forEach(item => {
@@ -180,3 +278,40 @@ function renderRequests() {
     renderTable();
   });
 }
+
+function getMockData() {
+  return JSON.stringify(mockData.requests);
+};
+
+const mockData = {
+  requests: [{
+    id: '12345',
+    status: 'Pending',
+    requestDate: new Date(),
+    submittedDate: new Date(),  
+    name: 'John Doe',
+    reqType: 'Translation',
+    eventLocation: '123 Main St, Anytown, USA',
+    description: 'Requesting translation of syllabus.',
+    docLink: 'https://example.com/document',
+    docPageCount: 10,
+    school: 'Washington High School',
+    originalLanguage: 'English',
+    targetLanguage: 'Spanish',
+  },
+  {
+    id: '67890',
+    status: 'Completed',
+    requestDate: new Date(),
+    submittedDate: new Date(),
+    name: 'Jane Smith',
+    reqType: 'Interpretation',
+    eventLocation: '456 Oak Ave, Somewhere, USA',
+    description: 'Requesting interpretation services for an upcoming event.',
+    startTime: new Date('5/25/2026 6:00 PM'),
+    endTime: new Date('5/25/2026 7:00 PM'),
+    school: 'Lincoln High School',
+    originalLanguage: 'English',
+    targetLanguage: 'Chinese',
+  }]
+};

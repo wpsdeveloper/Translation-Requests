@@ -13,8 +13,8 @@
       <p class="subtitle">Browse submitted requests, filter them by school, and inspect the request details without leaving the page.</p>
     </div>
     <div class="filters">
-      <label for="schoolFilter">Filter by school</label>
-      <select id="schoolFilter" aria-label="Filter requests by school">
+      <label for="school-filter">Filter by school</label>
+      <select id="school-filter" aria-label="Filter requests by school">
         <option value="all">All schools</option>
       </select>
     </div>
@@ -24,7 +24,7 @@
     <section class="card">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;">
         <h2>Requests</h2>
-        <span id="resultsCount" class="row-count">0 entries</span>
+        <span id="results-count" class="row-count">0 entries</span>
       </div>
       <div class="table-wrapper">
         <table aria-label="Requests table">
@@ -32,23 +32,32 @@
             <tr>
               <th>Status</th>
               <th>Request Date</th>
-              <th>Submitted Date</th>
-              <th>Username</th>
+              <th>Submitted</th>
               <th>Type</th>
+              <th>Requested By</th>
             </tr>
           </thead>
-          <tbody id="requestsTableBody"></tbody>
+          <tbody id="requests-table-body"></tbody>
         </table>
       </div>
-      <div id="emptyState" class="empty-state" hidden>No requests match the selected school.</div>
+      <div id="empty-state" class="empty-state" hidden>No requests match the selected school.</div>
     </section>
 
-    <section class="card">
-      <h2>Request Details</h2>
-      <div id="requestDetails">
-        <div class="empty-state">Select a request row to view details here.</div>
+    <section class="card details-card">
+      <div>
+        <div id="request-details">
+          <div class="empty-state">Select a request row to view details here.</div>
+        </div>
+      </div>
+      <div>
+        <div id="request-processing">
+          <div class="empty-state">Select a request row to view details here.</div>
+        </div>
       </div>
     </section>
+    <div>
+
+    </div>
   </div>
 
   <script type="module" src="main.js"></script>

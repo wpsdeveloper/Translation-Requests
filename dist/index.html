@@ -3,56 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Translation Requests</title>
-  <script type="module" crossorigin>(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return;for(let e of document.querySelectorAll(`link[rel="modulepreload"]`))n(e);new MutationObserver(e=>{for(let t of e)if(t.type===`childList`)for(let e of t.addedNodes)e.tagName===`LINK`&&e.rel===`modulepreload`&&n(e)}).observe(document,{childList:!0,subtree:!0});function t(e){let t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),e.crossOrigin===`use-credentials`?t.credentials=`include`:e.crossOrigin===`anonymous`?t.credentials=`omit`:t.credentials=`same-origin`,t}function n(e){if(e.ep)return;e.ep=!0;let n=t(e);fetch(e.href,n)}})();var e=document.getElementById(`requestsTableBody`),t=document.getElementById(`schoolFilter`),n=document.getElementById(`resultsCount`),r=document.getElementById(`emptyState`),i=document.getElementById(`requestDetails`),a=null,o=[];function s(){return!Array.isArray(o)||!o.length?[`all`]:[`all`,...Array.from(new Set(o.map(e=>e.school))).sort()]}function c(){t.innerHTML=s().map(e=>`<option value="${e}">${e===`all`?`All schools`:e}</option>`).join(``)}function l(){let e=t.value;return e===`all`?o:o.filter(t=>t.school===e)}function u(){let t=l();if(n.textContent=`${t.length} entr${t.length===1?`y`:`ies`}`,!t.length){e.innerHTML=``,r.hidden=!1,i.innerHTML=`<div class="empty-state">Select a request row to view details here.</div>`;return}r.hidden=!0,e.innerHTML=t.map(e=>`
-      <tr data-id="${e.id}" class="${e.id===a?`active`:``}">
-        <td>${e.status}</td>
+  <title>Translation Requests</title>
+  <script type="module" crossorigin>(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return;for(let e of document.querySelectorAll(`link[rel="modulepreload"]`))n(e);new MutationObserver(e=>{for(let t of e)if(t.type===`childList`)for(let e of t.addedNodes)e.tagName===`LINK`&&e.rel===`modulepreload`&&n(e)}).observe(document,{childList:!0,subtree:!0});function t(e){let t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),e.crossOrigin===`use-credentials`?t.credentials=`include`:e.crossOrigin===`anonymous`?t.credentials=`omit`:t.credentials=`same-origin`,t}function n(e){if(e.ep)return;e.ep=!0;let n=t(e);fetch(e.href,n)}})();var e=document.getElementById(`requests-table-body`),t=document.getElementById(`school-filter`),n=document.getElementById(`results-count`),r=document.getElementById(`empty-state`),i=document.getElementById(`request-details`),a=document.getElementById(`request-processing`),o=null,s=[];document.addEventListener(`DOMContentLoaded`,()=>{if(window.location.href.includes(`localhost`)){console.log(`Running in development mode, using mock data.`),s=x(JSON.parse(C())),S();return}google.script.run.withSuccessHandler(b).withFailureHandler(e=>{console.error(`Server Error:`,e.message),console.error(`Stack Trace:`,e.stack)}).getDataFromServer()});function c(){return!Array.isArray(s)||!s.length?[`all`]:[`all`,...Array.from(new Set(s.map(e=>e.school))).sort()]}function l(){t.innerHTML=c().map(e=>`<option value="${e}">${e===`all`?`All schools`:e}</option>`).join(``)}function u(){let e=t.value;return e===`all`?s:s.filter(t=>t.school===e)}function d(){let t=u();if(n.textContent=`${t.length} entr${t.length===1?`y`:`ies`}`,!t.length){e.innerHTML=``,r.hidden=!1,i.innerHTML=`<div class="empty-state">Select a request row to view details here.</div>`;return}r.hidden=!0,e.innerHTML=t.map(e=>`
+      <tr data-id="${e.id}" class="${e.id===o?`active`:``}">
+        <td><span class="badge ${y(e.status)}">${e.status}</span></td>
         <td>${e.requestDate.toLocaleDateString()}</td>
         <td>${e.submittedDate.toLocaleDateString()}</td>
-        <td>${e.name}</td>
         <td>${e.reqType}</td>
-      </tr>`).join(``),d(),(!a||!t.some(e=>e.id===a))&&(a=t[0].id),p(a)}function d(){e.querySelectorAll(`tr`).forEach(e=>{e.addEventListener(`click`,()=>{a=e.dataset.id,console.log(`Row clicked, activeRowId set to:`,a),f(),p(a)})})}function f(){e.querySelectorAll(`tr`).forEach(e=>{e.classList.toggle(`active`,e.dataset.id===a)})}function p(e){let t=o.find(t=>t.id===e);if(!t){i.innerHTML=`<div class="empty-state">No request selected.</div>`;return}t.reqType===`Interpretation`?i.innerHTML=`
-      <div class="detail-item">
-        <label>Request ID ${t.id}</label>
+        <td>${e.name}</td>
+      </tr>`).join(``),f(),(!o||!t.some(e=>e.id===o))&&(o=t[0].id),m(o)}function f(){e.querySelectorAll(`tr`).forEach(e=>{e.addEventListener(`click`,()=>{o=e.dataset.id,console.log(`Row clicked, activeRowId set to:`,o),p(),m(o)})})}function p(){e.querySelectorAll(`tr`).forEach(e=>{e.classList.toggle(`active`,e.dataset.id===o)})}function m(e){let t=s.find(t=>t.id===e);if(!t){i.innerHTML=`<div class="empty-state">No request selected.</div>`;return}t.reqType===`Interpretation`?(i.innerHTML=h(t),a.innerHTML=_(t)):t.reqType===`Translation`&&(i.innerHTML=g(t),a.innerHTML=v(t))}function h(e){return`
+    <div class="detail-item">
+      <label>Request ID ${e.id}</label>
+    </div>
+    <div class="detail-item">
+      <label>Languages</label>
+      <div class="detail-value">${e.originalLanguage} to ${e.targetLanguage}</div>
+    </div>
+    <div class="detail-item">
+      <label>Event Details</label>
+    <div class="detail-value">${e.requestDate.toLocaleDateString(`en-US`,{month:`short`,day:`numeric`,year:`numeric`})}, 
+      ${e.startTime.toLocaleTimeString([],{hour:`2-digit`,minute:`2-digit`,hour12:!0})}
+      -${e.endTime.toLocaleTimeString([],{hour:`2-digit`,minute:`2-digit`,hour12:!0})}
+    </div>
+    <div class="detail-value">${e.eventLocation}</div>
+    </div>
+    <div class="detail-item">
+      <label>Details</label>
+      <div class="detail-value">${e.description}</div>
+    </div>`}function g(e){return`
+    <div class="detail-item">
+      <label>Request ID ${e.id}</label>
+    </div>
+    <div class="detail-item">
+      <label>Languages</label>
+      <div class="detail-value">${e.originalLanguage} to ${e.targetLanguage}</div>
+    </div>
+    <div class="detail-item">
+      <label>Document Link</label>
+    <div>
+      <a href="${e.docLink}" target="_blank">Document original</a>
+    </div>
+    </div>
+    <div class="detail-item">
+      <label>Page Count</label>
+      <div class="detail-value">${e.docPageCount}</div>
+    </div>
+    <div class="detail-item">
+      <label>Details</label>
+      <div class="detail-value">${e.description}</div>
+    </div>`}function _(e){return`
+    <div class="detail-item">
+      <label>Status</label>
+    <div><span class="badge ${y(e.status)}">${e.status}</span></div>
+    </div>
+    <div class="detail-item">
+      <label>Interpreter selected</label>
+      <select id="interpreter-select">
+        <option value="">Select an interpreter</option>
+        <option value="Lexikeet">Lexikeet</option>
+        <option value="MAPA">MAPA</option>
+        <option value="Google Translate">Google Translate</option>
+        
+        <option value="Staff member">Staff member</option>
+        <option value="Contractor">Contractor</option>
+      </select>
+      <div class="interpreter-name" style="display:none;margin-top:8px;">
+        <label>Name</label>
+         <div class="detail-value"></div>
       </div>
-      <div class="detail-item">
-        <label>Status</label>
-        <div><span class="badge">${t.status}</span></div>
+    </div>
+    <div class="detail-item">
+      <label>Interpreter contracted</label>
+      <div class="detail-value"></div>
+    </div>
+    <div class="detail-item">
+      <label>Guest attendance confirmed</label>
+      <div class="detail-value"></div>
+    </div>
+    <div class="detail-item">
+      <label>Technology confirmed</label>
+      <div class="detail-value"></div>
+    </div>
+    `}function v(e){return`
+    <div class="detail-item">
+      <label>Status</label>
+    <div><span class="badge ${y(e.status)}">${e.status}</span></div>
+    </div>
+    <div class="detail-item">
+      <label>Translation service</label>
+      <select id="translation-select">
+        <option value="">Select a translation service</option>
+        <option value="Lexikeet">Lexikeet</option>
+        <option value="MAPA">MAPA</option>
+        <option value="Google Translate">Google Translate</option>
+        <option value="Staff member">Staff member</option>
+        <option value="Contractor">Contractor</option>
+      </select>
+      <div class="interpreter-name" style="display:none;margin-top:8px;">
+        <label>Name</label>
+        <div class="detail-value"></div>
       </div>
-      <div class="detail-item">
-        <label>Event Details</label>
-        <div class="detail-value">${t.requestDate.toLocaleDateString(`en-US`,{month:`short`,day:`numeric`,year:`numeric`})}, 
-        ${t.startTime.toLocaleTimeString([],{hour:`2-digit`,minute:`2-digit`,hour12:!0})}
-        -${t.endTime.toLocaleTimeString([],{hour:`2-digit`,minute:`2-digit`,hour12:!0})}
-        </div>
-        <div class="detail-value">${t.eventLocation}</div>
-      </div>
-      <div class="detail-item">
-        <label>Details</label>
-        <div class="detail-value">${t.description}</div>
-      </div>`:t.reqType===`Translation`&&(i.innerHTML=`
-      <div class="detail-item">
-        <label>Request ID ${t.id}</label>
-      </div>
-      <div class="detail-item">
-        <label>Status</label>
-        <div><span class="badge">${t.status}</span></div>
-      </div>
-      <div class="detail-item">
-        <label>Document Link</label>
-        <div>
-          <a href="${t.docLink}" target="_blank">Document original</a>
-        </div>
-      </div>
-      <div class="detail-item">
-        <label>Page Count</label>
-        <div class="detail-value">${t.docPageCount}</div>
-      </div>
-      <div class="detail-item">
-        <label>Details</label>
-        <div class="detail-value">${t.description}</div>
-      </div>`)}document.addEventListener(`DOMContentLoaded`,()=>{google.script.run.withSuccessHandler(m).withFailureHandler(e=>{console.error(`Server Error:`,e.message),console.error(`Stack Trace:`,e.stack)}).getDataFromServer()});function m(e){console.log(`Raw data from server:`,e),o=h(JSON.parse(e)),g()}function h(e){return e.forEach(e=>{e.requestDate=e.requestDate?new Date(e.requestDate):``,e.submittedDate=e.submittedDate?new Date(e.submittedDate):``,e.startTime=e.startTime?new Date(e.startTime):``,e.endTime=e.endTime?new Date(e.endTime):``}),e}function g(){c(),u(),t.addEventListener(`change`,()=>{a=null,u()})}</script>
-  <style rel="stylesheet" crossorigin>:root{color:#1d2939;background:#f5f7fb;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;line-height:1.5}*{box-sizing:border-box}body{min-height:100vh;margin:0;padding:24px}header{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;display:flex}h1{margin:0;font-size:clamp(1.75rem,2.4vw,2.5rem)}.subtitle{color:#475569;max-width:720px;font-size:.98rem}.panel{grid-template-columns:1.9fr 1fr;gap:24px;display:grid}.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:24px;box-shadow:0 10px 30px #0f172a14}.card h2{color:#0f172a;margin-top:0;font-size:1.1rem}.filters{flex-wrap:wrap;align-items:center;gap:12px;display:flex}label{color:#334155;font-size:.95rem}select{color:#0f172a;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;min-width:200px;padding:10px 12px}table{border-collapse:collapse;width:100%;margin-top:16px;font-size:.95rem}thead{text-transform:uppercase;letter-spacing:.02em;background:#f1f5f9;font-size:.8rem}th,td{text-align:left;border-bottom:1px solid #e2e8f0;padding:14px 16px}tbody tr{cursor:pointer;transition:background .18s}tbody tr:hover{background:#eff6ff}tbody tr.active{background:#e0f2fe}.empty-state{text-align:center;color:#64748b;padding:32px 16px}.detail-item{margin-bottom:14px}.detail-item label{color:#334155;margin-bottom:6px;font-weight:700;display:block}.detail-value{color:#0f172a;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px}.badge{color:#0369a1;background:#e0f2fe;border-radius:999px;align-items:center;gap:8px;padding:8px 12px;font-weight:600;display:inline-flex}.row-count{color:#64748b;margin-top:10px;font-size:.9rem}@media (width<=960px){.panel{grid-template-columns:1fr}}@media (width<=640px){body{padding:18px}th,td{padding:12px 10px}}
+    </div>
+    <div class="detail-item">
+      <label>Document sent (date)</label>
+      <div class="detail-value"></div>
+    </div>
+    <div class="detail-item">
+      <label>Document received (date)</label>
+      <div class="detail-value"></div>
+    </div>
+    `}function y(e){switch(e.toLowerCase()){case`pending`:return`badge-pending`;case`in progress`:return`badge-in-progress`;case`completed`:return`badge-completed`;default:return`badge`}}function b(e){s=x(JSON.parse(e)),S()}function x(e){return e.forEach(e=>{e.requestDate=e.requestDate?new Date(e.requestDate):``,e.submittedDate=e.submittedDate?new Date(e.submittedDate):``,e.startTime=e.startTime?new Date(e.startTime):``,e.endTime=e.endTime?new Date(e.endTime):``}),e}function S(){l(),d(),t.addEventListener(`change`,()=>{o=null,d()})}function C(){return JSON.stringify(w.requests)}var w={requests:[{id:`12345`,status:`Pending`,requestDate:new Date,submittedDate:new Date,name:`John Doe`,reqType:`Translation`,eventLocation:`123 Main St, Anytown, USA`,description:`Requesting translation of syllabus.`,docLink:`https://example.com/document`,docPageCount:10,school:`Washington High School`,originalLanguage:`English`,targetLanguage:`Spanish`},{id:`67890`,status:`Completed`,requestDate:new Date,submittedDate:new Date,name:`Jane Smith`,reqType:`Interpretation`,eventLocation:`456 Oak Ave, Somewhere, USA`,description:`Requesting interpretation services for an upcoming event.`,startTime:new Date(`5/25/2026 6:00 PM`),endTime:new Date(`5/25/2026 7:00 PM`),school:`Lincoln High School`,originalLanguage:`English`,targetLanguage:`Chinese`}]};</script>
+  <style rel="stylesheet" crossorigin>:root{color:#1d2939;background:#f5f7fb;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;line-height:1.5}*{box-sizing:border-box}body{min-height:100vh;margin:0;padding:24px}header{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;display:flex}h1{margin:0;font-size:clamp(1.75rem,2.4vw,2.5rem)}.subtitle{color:#475569;max-width:720px;font-size:.98rem}.panel{grid-template-columns:1.2fr 1fr;gap:24px;display:grid}.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:24px;box-shadow:0 10px 30px #0f172a14}.card h2{color:#0f172a;margin-top:0;font-size:1.1rem}.filters{flex-wrap:wrap;align-items:center;gap:12px;display:flex}label{color:#334155;font-size:.95rem}select{color:#0f172a;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;min-width:200px;padding:10px 12px}table{border-collapse:collapse;width:100%;margin-top:16px;font-size:.95rem}thead{text-transform:uppercase;letter-spacing:.02em;background:#f1f5f9;font-size:.8rem}th,td{text-align:left;border-bottom:1px solid #e2e8f0;padding:14px 16px}tbody tr{cursor:pointer;transition:background .18s}tbody tr:hover{background:#eff6ff}tbody tr.active{background:#e0f2fe}.empty-state{text-align:center;color:#64748b;padding:32px 16px}.detail-item{margin-bottom:14px}.detail-item label{color:#334155;margin-bottom:6px;font-weight:700;display:block}.detail-value{color:#0f172a;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px}.row-count{color:#64748b;margin-top:10px;font-size:.9rem}.details-card{grid-template-columns:1fr 1fr;gap:24px;display:grid}.badge{color:#0369a1;background:#e0f2fe;border-radius:999px;align-items:center;gap:8px;padding:8px 12px;font-weight:600;display:inline-flex}.badge-pending{color:#92400e;background:#fffbeb}.badge-in-progress{color:#1e40af;background:#dbeafe}.badge-completed{color:#047857;background:#d1fae5}@media (width<=960px){.panel{grid-template-columns:1fr}}@media (width<=640px){body{padding:18px}th,td{padding:12px 10px}}
 /*$vite$:1*/</style>
 </head>
 <body>
@@ -62,8 +123,8 @@
       <p class="subtitle">Browse submitted requests, filter them by school, and inspect the request details without leaving the page.</p>
     </div>
     <div class="filters">
-      <label for="schoolFilter">Filter by school</label>
-      <select id="schoolFilter" aria-label="Filter requests by school">
+      <label for="school-filter">Filter by school</label>
+      <select id="school-filter" aria-label="Filter requests by school">
         <option value="all">All schools</option>
       </select>
     </div>
@@ -73,7 +134,7 @@
     <section class="card">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;">
         <h2>Requests</h2>
-        <span id="resultsCount" class="row-count">0 entries</span>
+        <span id="results-count" class="row-count">0 entries</span>
       </div>
       <div class="table-wrapper">
         <table aria-label="Requests table">
@@ -81,24 +142,33 @@
             <tr>
               <th>Status</th>
               <th>Request Date</th>
-              <th>Submitted Date</th>
-              <th>Username</th>
+              <th>Submitted</th>
               <th>Type</th>
+              <th>Requested By</th>
             </tr>
           </thead>
-          <tbody id="requestsTableBody"></tbody>
+          <tbody id="requests-table-body"></tbody>
         </table>
       </div>
-      <div id="emptyState" class="empty-state" hidden>No requests match the selected school.</div>
+      <div id="empty-state" class="empty-state" hidden>No requests match the selected school.</div>
     </section>
 
-    <section class="card">
-      <h2>Request Details</h2>
-      <div id="requestDetails">
-        <div class="empty-state">Select a request row to view details here.</div>
+    <section class="card details-card">
+      <div>
+        <div id="request-details">
+          <div class="empty-state">Select a request row to view details here.</div>
+        </div>
+      </div>
+      <div>
+        <div id="request-processing">
+          <div class="empty-state">Select a request row to view details here.</div>
+        </div>
       </div>
     </section>
-  </div>
+    <div>
 
+    </div>
+  </div>
+
 </body>
 </html>
