@@ -5,7 +5,14 @@ export default defineConfig({
   plugins: [viteSingleFile()],
   build: {
     outDir: '../../dist',
-    emptyOutDir: false, // Don't clear dist so we don't delete server files
+    emptyOutDir: false, // Don't clear dist so we don't delete server files,
+    sourcemap: true
   },
-  root: 'src/client'
+  root: 'src/client',
+  server: {
+    sourcemapIgnoreList: false
+  },
+  test: {
+    environment: 'jsdom'
+  }
 });

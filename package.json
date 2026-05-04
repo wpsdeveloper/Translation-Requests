@@ -7,9 +7,11 @@
     "clasp": "^1.0.0",
     "eslint": "^10.3.0",
     "globals": "^17.5.0",
+    "jsdom": "^29.1.1",
     "shx": "^0.4.0",
     "vite": "^8.0.10",
-    "vite-plugin-singlefile": "^2.3.3"
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^4.1.5"
   },
   "keywords": [],
   "license": "ISC",
@@ -20,7 +22,8 @@
     "build:client": "vite build",
     "build:server": "xcopy src\\server\\*.gs dist\\ /Y && xcopy appsscript.json dist\\ /Y",
     "deploy": "npm run build && clasp push",
-    "dev": "npx vite"
+    "dev": "npx vite",
+    "test": "vitest"
   },
   "version": "1.0.0",
   "description": ""

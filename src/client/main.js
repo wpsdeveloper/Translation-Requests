@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (url.includes('localhost')) {
     console.log("Running in development mode, using mock data.");
     allRequests = parseData(JSON.parse(getMockData()));
-    renderRequests();
+    renderRequests(allRequests);
     return;
   }
   
@@ -33,16 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     .getDataFromServer();
 });
 
-function getSchoolOptions() {
-  if (!Array.isArray(allRequests) || !allRequests.length) {
+export function getSchoolOptions(requests) {
+  if (!Array.isArray(requests) || !requests.length) {
     return ['all'];
   }
-  const schools = Array.from(new Set(allRequests.map((request) => request.school))).sort();
+  const schools = Array.from(new Set(requests.map((request) => request.school))).sort();
   return ['all', ...schools];
 }
 
-function renderFilterOptions() {
-  const options = getSchoolOptions();
+export function renderFilterOptions(requests) {
+  const options = getSchoolOptions(requests);
   schoolFilter.innerHTML = options
     .map((school) => {
       const label = school === 'all' ? 'All schools' : school;
@@ -51,16 +51,16 @@ function renderFilterOptions() {
     .join('');
 }
 
-function getFilteredRequests() {
+function getFilteredRequests(requests) {
   const selectedSchool = schoolFilter.value;
   if (selectedSchool === 'all') {
-    return allRequests;
+    return requests;
   }
-  return allRequests.filter((request) => request.school === selectedSchool);
+  return requests.filter((request) => request.school === selectedSchool);
 }
 
-function renderTable() {
-  const filteredRequests = getFilteredRequests();
+function renderTable(requests) {
+  const filteredRequests = getFilteredRequests(requests);
   resultsCount.textContent = `${filteredRequests.length} entr${filteredRequests.length === 1 ? 'y' : 'ies'}`;
 
   if (!filteredRequests.length) {
@@ -257,7 +257,8 @@ function getDetailsHTMLInterpretation(request) {
   function receiveDataFromServer(serializedData) {
     const dataRaw = JSON.parse(serializedData);
     allRequests = parseData(dataRaw);
-    renderRequests();
+    console.log(allRequests);
+    renderRequests(allRequests);
   }
 
 function parseData(data) {
@@ -270,12 +271,12 @@ function parseData(data) {
   return data;
 }
 
-function renderRequests() {
-  renderFilterOptions();
-  renderTable();
+function renderRequests(requests) {
+  renderFilterOptions(requests);
+  renderTable(requests);
   schoolFilter.addEventListener('change', () => {
     activeRowId = null;
-    renderTable();
+    renderTable(requests);
   });
 }
 
