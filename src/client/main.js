@@ -1,25 +1,26 @@
 /// <reference types="google-apps-script" />
 
+import * as htmlTemplates from './html-templates.js';
+
 /** @type {google.script.run} */
 // const gsr = google.script.run;
-
-// 
 
 const tableBody = document.getElementById('requests-table-body');
 const schoolFilter = document.getElementById('school-filter');
 const resultsCount = document.getElementById('results-count');
-const emptyState = document.getElementById('empty-state');
+const emptyState = document.querySelectorAll('.empty-state');
 const requestDetails = document.getElementById('request-details');
 const processingDetails = document.getElementById('request-processing');
-let activeRowId = null;/** @type {string|null} */ (null);
-let allRequests = []; /** @type {Array} */ ([]);
+let activeRowId = null;
+let allRequests = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   const url = window.location.href;
   if (url.includes('localhost')) {
-    console.log("Running in development mode, using mock data.");
-    allRequests = parseData(JSON.parse(getMockData()));
-    renderRequests(allRequests);
+    import('./mock-data.js').then((module) => {
+      console.log("Mock data loaded dynamically");
+      receiveDataFromServer(module.getMockData());
+    });
     return;
   }
   
@@ -32,6 +33,33 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .getDataFromServer();
 });
+
+function receiveDataFromServer(serializedData) {
+  const dataRaw = JSON.parse(serializedData);
+  allRequests = parseData(dataRaw);
+  console.log(allRequests);
+  renderRequests(allRequests);
+}
+
+function parseData(data) {
+  data.forEach(item => {
+    item.requestDate = item.requestDate ? new Date(item.requestDate) : '';
+    item.submittedDate = item.submittedDate ? new Date(item.submittedDate) : '';
+    item.startTime = item.startTime ? new Date(item.startTime) : '';
+    item.endTime = item.endTime ? new Date(item.endTime) : '';
+  });
+  return data;
+}
+
+function renderRequests(requests) {
+  renderFilterOptions(requests);
+  renderTable(requests);
+  schoolFilter.addEventListener('change', () => {
+    activeRowId = null;
+    renderTable(requests);
+  });
+}
+
 
 export function getSchoolOptions(requests) {
   if (!Array.isArray(requests) || !requests.length) {
@@ -62,34 +90,38 @@ function getFilteredRequests(requests) {
 function renderTable(requests) {
   const filteredRequests = getFilteredRequests(requests);
   resultsCount.textContent = `${filteredRequests.length} entr${filteredRequests.length === 1 ? 'y' : 'ies'}`;
-
+  
   if (!filteredRequests.length) {
-    tableBody.innerHTML = '';
     emptyState.hidden = false;
-    requestDetails.innerHTML = '<div class="empty-state">Select a request row to view details here.</div>';
+    requestDetails.innerHTML = htmlTemplates.emptyRowTemplate();
     return;
   }
-
+  
   emptyState.hidden = true;
-  tableBody.innerHTML = filteredRequests
-    .map(
-      (request) => `
-      <tr data-id="${request.id}" class="${request.id === activeRowId ? 'active' : ''}">
-        <td><span class="badge ${getBadgeClass(request.status)}">${request.status}</span></td>
-        <td>${request.requestDate.toLocaleDateString()}</td>
-        <td>${request.submittedDate.toLocaleDateString()}</td>
-        <td>${request.reqType}</td>
-        <td>${request.name}</td>
-      </tr>`
-    )
-    .join('');
-
+  tableBody.innerHTML = renderTableRows(filteredRequests);
+  
   attachRowHandlers();
 
-  if (!activeRowId || !filteredRequests.some((item) => item.id === activeRowId)) {
-    activeRowId = filteredRequests[0].id;
-  }
+  // if (!activeRowId || !filteredRequests.some((item) => item.id === activeRowId)) {
+  //   activeRowId = filteredRequests[0].id;
+  // }
   renderDetails(activeRowId);
+}
+
+export function renderTableRows(requests) {
+  if (!requests || (requests.length === 0)) {
+    return "";
+  }
+  return requests
+    .map(
+      (request) => htmlTemplates.tableRowTemplate(request,{
+        badgeClass: getBadgeClass(request.status),
+        requestDate: formatDate(request.requestDate, "M/D/YYYY"),
+        submittedDate: formatDate(request.submittedDate, "M/D/YYYY"),
+        isActive: request.id === activeRowId
+      })
+    )
+    .join('');
 }
 
 function attachRowHandlers() {
@@ -113,7 +145,7 @@ function updateActiveRow() {
 function renderDetails(requestId) {
   const request = allRequests.find((item) => item.id === requestId);
   if (!request) {
-    requestDetails.innerHTML = '<div class="empty-state">No request selected.</div>';
+    requestDetails.innerHTML = htmlTemplates.emptyDetailsTemplate();
     return;
   }
   if (request.reqType === 'Interpretation') {
@@ -126,120 +158,30 @@ function renderDetails(requestId) {
 }
 
 function getDetailsHTMLInterpretation(request) {
-  return `
-    <div class="detail-item">
-      <label>Request ID ${request.id}</label>
-    </div>
-    <div class="detail-item">
-      <label>Languages</label>
-      <div class="detail-value">${request.originalLanguage} to ${request.targetLanguage}</div>
-    </div>
-    <div class="detail-item">
-      <label>Event Details</label>
-    <div class="detail-value">${request.requestDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}, 
-      ${request.startTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
-      -${request.endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
-    </div>
-    <div class="detail-value">${request.eventLocation}</div>
-    </div>
-    <div class="detail-item">
-      <label>Details</label>
-      <div class="detail-value">${request.description}</div>
-    </div>`;
-  }
-  function getDetailsHTMLTranslation(request) {
-    return `
-    <div class="detail-item">
-      <label>Request ID ${request.id}</label>
-    </div>
-    <div class="detail-item">
-      <label>Languages</label>
-      <div class="detail-value">${request.originalLanguage} to ${request.targetLanguage}</div>
-    </div>
-    <div class="detail-item">
-      <label>Document Link</label>
-    <div>
-      <a href="${request.docLink}" target="_blank">Document original</a>
-    </div>
-    </div>
-    <div class="detail-item">
-      <label>Page Count</label>
-      <div class="detail-value">${request.docPageCount}</div>
-    </div>
-    <div class="detail-item">
-      <label>Details</label>
-      <div class="detail-value">${request.description}</div>
-    </div>`;
-  }
-  
-  function getProcessingHTMLInterpretation(request) {
-    return `
-    <div class="detail-item">
-      <label>Status</label>
-    <div><span class="badge ${getBadgeClass(request.status)}">${request.status}</span></div>
-    </div>
-    <div class="detail-item">
-      <label>Interpreter selected</label>
-      <select id="interpreter-select">
-        <option value="">Select an interpreter</option>
-        <option value="Lexikeet">Lexikeet</option>
-        <option value="MAPA">MAPA</option>
-        <option value="Google Translate">Google Translate</option>
-        
-        <option value="Staff member">Staff member</option>
-        <option value="Contractor">Contractor</option>
-      </select>
-      <div class="interpreter-name" style="display:none;margin-top:8px;">
-        <label>Name</label>
-         <div class="detail-value"></div>
-      </div>
-    </div>
-    <div class="detail-item">
-      <label>Interpreter contracted</label>
-      <div class="detail-value"></div>
-    </div>
-    <div class="detail-item">
-      <label>Guest attendance confirmed</label>
-      <div class="detail-value"></div>
-    </div>
-    <div class="detail-item">
-      <label>Technology confirmed</label>
-      <div class="detail-value"></div>
-    </div>
-    `;
-  }
-  
-  function getProcessingHTMLTranslation(request) {
-    return`
-    <div class="detail-item">
-      <label>Status</label>
-    <div><span class="badge ${getBadgeClass(request.status)}">${request.status}</span></div>
-    </div>
-    <div class="detail-item">
-      <label>Translation service</label>
-      <select id="translation-select">
-        <option value="">Select a translation service</option>
-        <option value="Lexikeet">Lexikeet</option>
-        <option value="MAPA">MAPA</option>
-        <option value="Google Translate">Google Translate</option>
-        <option value="Staff member">Staff member</option>
-        <option value="Contractor">Contractor</option>
-      </select>
-      <div class="interpreter-name" style="display:none;margin-top:8px;">
-        <label>Name</label>
-        <div class="detail-value"></div>
-      </div>
-    </div>
-    <div class="detail-item">
-      <label>Document sent (date)</label>
-      <div class="detail-value"></div>
-    </div>
-    <div class="detail-item">
-      <label>Document received (date)</label>
-      <div class="detail-value"></div>
-    </div>
-    `;
-  }
+  return htmlTemplates.detailsInterpretationTemplate(request, {
+    requestDate: formatDate(request.requestDate, "MMM D, YYYY"),
+    startTime: formatTime(request.startTime, "h:mm A"),
+    endTime: formatTime(request.endTime, "h:mm A")
+  });
+}
+
+function getDetailsHTMLTranslation(request) {
+  return htmlTemplates.detailsTranslationTemplate(request, {
+    requestDate: formatDate(request.requestDate, "MMM D, YYYY"),
+  });
+}
+
+function getProcessingHTMLInterpretation(request) {  
+  return htmlTemplates.processingInterpretationTemplate(request, {
+    badgeClass: getBadgeClass(request.status),
+  });
+}
+
+function getProcessingHTMLTranslation(request) {
+  return htmlTemplates.processingTranslationTemplate(request, {
+    badgeClass: getBadgeClass(request.status),
+  });
+}
 
   function getBadgeClass(status) {
     switch (status.toLowerCase()) {
@@ -254,65 +196,33 @@ function getDetailsHTMLInterpretation(request) {
     }
   }
 
-  function receiveDataFromServer(serializedData) {
-    const dataRaw = JSON.parse(serializedData);
-    allRequests = parseData(dataRaw);
-    console.log(allRequests);
-    renderRequests(allRequests);
+
+export function formatDate(date, format) {
+  try {
+    switch (format) {
+      case 'MM/DD/YYYY':
+        return date.toLocaleDateString('en-US');
+      case 'MMM D, YYYY':
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      default:
+        return date.toLocaleDateString();
+      }
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return '';
+  }
+}
+
+export function formatTime(time, format) {
+  if (!time || !(time instanceof Date) || isNaN(time)) {  
+    return '';
   }
 
-function parseData(data) {
-  data.forEach(item => {
-    item.requestDate = item.requestDate ? new Date(item.requestDate) : '';
-    item.submittedDate = item.submittedDate ? new Date(item.submittedDate) : '';
-    item.startTime = item.startTime ? new Date(item.startTime) : '';
-    item.endTime = item.endTime ? new Date(item.endTime) : '';
-  });
-  return data;
+  switch (format) {
+    case 'h:mm A':
+      return time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+    default:
+      return time.toLocaleTimeString();
+  }
 }
 
-function renderRequests(requests) {
-  renderFilterOptions(requests);
-  renderTable(requests);
-  schoolFilter.addEventListener('change', () => {
-    activeRowId = null;
-    renderTable(requests);
-  });
-}
-
-function getMockData() {
-  return JSON.stringify(mockData.requests);
-};
-
-const mockData = {
-  requests: [{
-    id: '12345',
-    status: 'Pending',
-    requestDate: new Date(),
-    submittedDate: new Date(),  
-    name: 'John Doe',
-    reqType: 'Translation',
-    eventLocation: '123 Main St, Anytown, USA',
-    description: 'Requesting translation of syllabus.',
-    docLink: 'https://example.com/document',
-    docPageCount: 10,
-    school: 'Washington High School',
-    originalLanguage: 'English',
-    targetLanguage: 'Spanish',
-  },
-  {
-    id: '67890',
-    status: 'Completed',
-    requestDate: new Date(),
-    submittedDate: new Date(),
-    name: 'Jane Smith',
-    reqType: 'Interpretation',
-    eventLocation: '456 Oak Ave, Somewhere, USA',
-    description: 'Requesting interpretation services for an upcoming event.',
-    startTime: new Date('5/25/2026 6:00 PM'),
-    endTime: new Date('5/25/2026 7:00 PM'),
-    school: 'Lincoln High School',
-    originalLanguage: 'English',
-    targetLanguage: 'Chinese',
-  }]
-};
