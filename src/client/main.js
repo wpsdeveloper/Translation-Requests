@@ -9,8 +9,8 @@ const tableBody = document.getElementById('requests-table-body');
 const schoolFilter = document.getElementById('school-filter');
 const resultsCount = document.getElementById('results-count');
 const emptyState = document.querySelectorAll('.empty-state');
-const requestDetails = document.getElementById('request-details');
-const processingDetails = document.getElementById('request-processing');
+const detailsCard = document.getElementById('details-card-body');
+const requestDetails = document.getElementById('details-column-1');
 let activeRowId = null;
 let allRequests = [];
 
@@ -146,55 +146,46 @@ function renderDetails(requestId) {
   const request = allRequests.find((item) => item.id === requestId);
   if (!request) {
     requestDetails.innerHTML = htmlTemplates.emptyDetailsTemplate();
+    emptyState.hidden = false;
     return;
   }
+
   if (request.reqType === 'Interpretation') {
-    requestDetails.innerHTML = getDetailsHTMLInterpretation(request);
-    processingDetails.innerHTML = getProcessingHTMLInterpretation(request);
+    detailsCard.innerHTML = getDetailsHTMLInterpretation(request);
   } else if (request.reqType === 'Translation') {
-    requestDetails.innerHTML = getDetailsHTMLTranslation(request);
-    processingDetails.innerHTML = getProcessingHTMLTranslation(request);
+    detailsCard.innerHTML = getDetailsHTMLTranslation(request);
   }
+  emptyState.hidden = true;
 }
 
 function getDetailsHTMLInterpretation(request) {
   return htmlTemplates.detailsInterpretationTemplate(request, {
     requestDate: formatDate(request.requestDate, "MMM D, YYYY"),
     startTime: formatTime(request.startTime, "h:mm A"),
-    endTime: formatTime(request.endTime, "h:mm A")
+    endTime: formatTime(request.endTime, "h:mm A"),
+    badgeClass: getBadgeClass(request.status),
   });
 }
 
 function getDetailsHTMLTranslation(request) {
   return htmlTemplates.detailsTranslationTemplate(request, {
     requestDate: formatDate(request.requestDate, "MMM D, YYYY"),
-  });
-}
-
-function getProcessingHTMLInterpretation(request) {  
-  return htmlTemplates.processingInterpretationTemplate(request, {
     badgeClass: getBadgeClass(request.status),
   });
 }
 
-function getProcessingHTMLTranslation(request) {
-  return htmlTemplates.processingTranslationTemplate(request, {
-    badgeClass: getBadgeClass(request.status),
-  });
-}
-
-  function getBadgeClass(status) {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return 'badge-pending';
-      case 'in progress':
-        return 'badge-in-progress';
-      case 'completed':
-        return 'badge-completed';
-      default:
-        return 'badge';
-    }
+function getBadgeClass(status) {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return 'badge-pending';
+    case 'in progress':
+      return 'badge-in-progress';
+    case 'completed':
+      return 'badge-completed';
+    default:
+      return 'badge';
   }
+}
 
 
 export function formatDate(date, format) {

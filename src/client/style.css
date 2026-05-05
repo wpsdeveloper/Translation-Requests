@@ -112,7 +112,7 @@ tbody tr.active {
   color: #334155;
   margin-bottom: 6px;
 }
-.detail-value {
+.detail-value, .form-control {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -124,14 +124,14 @@ tbody tr.active {
   color: #64748b;
   font-size: 0.9rem;
 }
-.details-card {
+#details-card-body {
   display: grid;
   gap: 24px;
   grid-template-columns: 1fr 1fr;
 
   @media (max-width: 1080px) {
-    display: block;
-}
+    grid-template-columns: 1fr;
+  }
 }
 .badge {
   display: inline-flex;

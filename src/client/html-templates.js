@@ -8,7 +8,7 @@ export function emptyDetailsTemplate() {
 
 export function tableRowTemplate(request, formattedData) { 
   return `<tr data-id="${request.id}" class="${formattedData.isActive ? 'active' : 'inactive'}">
-    <td><span class="badge ${formattedData.statusBadge}">${request.status}</span></td>
+    <td><span class="badge ${formattedData.badgeClass}">${request.status}</span></td>
     <td>${formattedData.requestDate}</td>
     <td>${formattedData.submittedDate}</td>
     <td>${request.reqType}</td>
@@ -18,102 +18,109 @@ export function tableRowTemplate(request, formattedData) {
 
 export function detailsInterpretationTemplate(request, formattedData) {
   return `
+  <div id="details-column-1">
     <div class="detail-item">
       <label>Request ID ${request.id}</label>
     </div>
     <div class="detail-item">
+      <label>Status</label>
+      <div><span class="badge ${formattedData.badgeClass}">${request.status}</span></div>
+    </div>
+    <div class="detail-item">
       <label>Languages</label>
-      <div class="detail-value">${request.originalLanguage} to ${request.targetLanguage}</div>
+      <div>${request.originalLanguage} to ${request.targetLanguage}</div>
     </div>
     <div class="detail-item">
       <label>Event Details</label>
-    <div class="detail-value">${formattedData.requestDate}, 
-      ${formattedData.startTime}-${formattedData.endTime}
-    </div>
-    <div class="detail-value">${request.eventLocation}</div>
-    </div>
-    <div class="detail-item">
-      <label>Details</label>
-      <div class="detail-value">${request.description}</div>
-    </div>`;
-  }
-  
-  export function detailsTranslationTemplate(request) {
-    return `
-    <div class="detail-item">
-      <label>Request ID ${request.id}</label>
-    </div>
-    <div class="detail-item">
-      <label>Languages</label>
-      <div class="detail-value">${request.originalLanguage} to ${request.targetLanguage}</div>
-    </div>
-    <div class="detail-item">
-      <label>Document Link</label>
-    <div>
-      <a href="${request.docLink}" target="_blank">Document original</a>
-    </div>
-    </div>
-    <div class="detail-item">
-      <label>Page Count</label>
-      <div class="detail-value">${request.docPageCount}</div>
+      <div>
+        ${formattedData.requestDate}<br> 
+        ${formattedData.startTime}-${formattedData.endTime}<br>
+        ${request.eventLocation}
+      </div>
     </div>
     <div class="detail-item">
       <label>Details</label>
-      <div class="detail-value">${request.description}</div>
-    </div>`;
-  }
-  
-  export function processingInterpretationTemplate(request, formattedData) {
-    return `
-    <div class="detail-item">
-      <label>Status</label>
-    <div><span class="badge ${formattedData.badgeClass}">${request.status}</span></div>
+      <div>${request.description}</div>
     </div>
+  </div>
+  <div id="column-2">
     <div class="detail-item">
       <label>Interpreter selected</label>
       ${contractorSelectTemplate()}
-      <div class="interpreter-name" style="display:none;margin-top:8px;">
-        <label>Name</label>
-         <div class="detail-value"></div>
+    </div>
+    <div class="detail-item">
+      <div class="interpreter-name">
+        <label>InterpreterName</label>
+        <input type="text" class="form-control" id="interpreter-name" /> 
       </div>
     </div>
     <div class="detail-item">
       <label>Interpreter contracted</label>
-      <div class="detail-value"></div>
+      <input type="date" class="form-control" id="interpreter-contracted-date" /> 
     </div>
     <div class="detail-item">
       <label>Guest attendance confirmed</label>
-      <div class="detail-value"></div>
+      <input type="date" class="form-control" id="guest-attendance-date" /> 
     </div>
     <div class="detail-item">
       <label>Technology confirmed</label>
-      <div class="detail-value"></div>
+      <input type="date" class="form-control" id="technology-confirmed-date" /> 
     </div>
-    `;
+  </div>
+  `;
   }
   
-  export function processingTranslationTemplate(request, formattedData) {
-    return`
-    <div class="detail-item">
-      <label>Status</label>
-    <div><span class="badge ${formattedData.badgeClass}">${request.status}</span></div>
-    </div>
-    <div class="detail-item">
-      <label>Translation service</label>
-      ${contractorSelectTemplate()}
-      <div class="interpreter-name" style="display:none;margin-top:8px;">
-        <label>Name</label>
-        <div class="detail-value"></div>
+  export function detailsTranslationTemplate(request, formattedData) {
+    return `
+      <div id="details-column-1">
+        <div class="detail-item">
+          <label>Request ID ${request.id}</label>
+        </div>
+        <div class="detail-item">
+          <label>Status</label>
+          <div><span class="badge ${formattedData.badgeClass}">${request.status}</span></div>
+        </div>
+        <div class="detail-item">
+          <label>Languages</label>
+          <div>${request.originalLanguage} to ${request.targetLanguage}</div>
+        </div>
+        <div class="detail-item">
+          <label>Document Link</label>
+          <div><a href="${request.docLink}" target="_blank">Document original</a></div>
+        </div>
+        <div class="detail-item">
+          <label>Length</label>
+          <div>${request.docPageCount} pages</div>
+        </div>
+        <div class="detail-item">
+          <label>Details</label>
+          <div>${request.description}</div>
+        </div>
       </div>
-    </div>
-    <div class="detail-item">
-      <label>Document sent (date)</label>
-      <div class="detail-value"></div>
-    </div>
-    <div class="detail-item">
-      <label>Document received (date)</label>
-      <div class="detail-value"></div>
-    </div>
+      <div id="details-column-2">
+        <div class="detail-item">
+          <label>Translation service</label>
+          ${contractorSelectTemplate()}
+          <div class="interpreter-name" style="display:none;margin-top:8px;">
+            <label>Name</label>
+            <div class="detail-value"></div>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="interpreter-name">
+            <label>Interpreter Name</label>
+            <input type="text" class="form-control" id="interpreter-name" /> 
+          </div>
+        </div>
+        <div class="detail-item">
+          <label>Document sent</label>
+          <input type="date" class="form-control" id="document-sent-date" /> 
+        </div>
+        <div class="detail-item">
+          <label>Document received</label>
+          <input type="date" class="form-control" id="document-received-date" /> 
+        </div>
+      </div>
     `;
   }
 
