@@ -48,15 +48,13 @@ export function detailsInterpretationTemplate(request, formattedData) {
       <label>Interpreter selected</label>
       ${contractorSelectTemplate()}
     </div>
-    <div class="detail-item">
-      <div class="interpreter-name">
-        <label>InterpreterName</label>
-        <input type="text" class="form-control" id="interpreter-name" /> 
-      </div>
+    <div class="detail-item contractor-name" style="display:none;">
+      <label>Interpreter Name</label>
+      <input type="text" class="form-control" id="contractor-name" /> 
     </div>
     <div class="detail-item">
       <label>Interpreter contracted</label>
-      <input type="date" class="form-control" id="interpreter-contracted-date" /> 
+      <input type="date" class="form-control" id="contractor-contracted-date" /> 
     </div>
     <div class="detail-item">
       <label>Guest attendance confirmed</label>
@@ -101,16 +99,10 @@ export function detailsInterpretationTemplate(request, formattedData) {
         <div class="detail-item">
           <label>Translation service</label>
           ${contractorSelectTemplate()}
-          <div class="interpreter-name" style="display:none;margin-top:8px;">
-            <label>Name</label>
-            <div class="detail-value"></div>
-          </div>
         </div>
-        <div class="detail-item">
-          <div class="interpreter-name">
-            <label>Interpreter Name</label>
-            <input type="text" class="form-control" id="interpreter-name" /> 
-          </div>
+        <div class="detail-item contractor-name" style="display:none;">
+          <label>Interpreter Name</label>
+          <input type="text" class="form-control" id="contractor-name" /> 
         </div>
         <div class="detail-item">
           <label>Document sent</label>

@@ -1,5 +1,5 @@
 import {describe, expect, test} from "vitest";
-import {getSchoolOptions, renderTableRows, formatDate, formatTime} from "./main.js";
+import {getSchoolOptions, formatDate, formatTime, getBadgeClass} from "./main.js";
 
 const sampleData = [
   {
@@ -47,36 +47,6 @@ describe('getSchoolOptions', () => {
   });
 });
 
-// describe('renderTableRows', () => {
-//   test('blank for empty array', () => {
-//     expect(renderTableRows([])).toBe("");
-//   });
-
-//   test('creates rows', () => {
-//     expect(renderTableRows(sampleData)).toBe(
-//       `<tr data-id="12345657" class="">
-//         <td><span class="badge badge-pending">Pending</span></td>
-//         <td>1/1/2023</td>
-//         <td>12/20/2022</td>
-//         <td>Interpretation</td>
-//         <td>John Doe</td>
-//       </tr><tr data-id="12345658" class="">
-//         <td><span class="badge badge-in-progress">In Progress</span></td>
-//         <td>1/2/2023</td>
-//         <td>12/10/2022</td>
-//         <td>Translation</td>
-//         <td>Jane Smith</td>
-//       </tr><tr data-id="12345659" class="">
-//         <td><span class="badge badge-completed">Completed</span></td>
-//         <td>1/3/2023</td>
-//         <td>12/11/2022</td>
-//         <td>Interpretation</td>
-//         <td>Bob Johnson</td>
-//       </tr>`
-//     );
-//   });
-// });
-
 describe('format dates and times', () => {  
   const date = new Date("2022-12-20T09:27:13.000-05:00");
   console.log("time:", date.toLocaleTimeString);
@@ -90,4 +60,16 @@ describe('format dates and times', () => {
     expect(formatTime("09:00:00")).toBe("");
     expect(formatTime(date, "h:mm A")).toBe("9:27 AM");
   });
+});
+
+describe('get badge class', () => {
+  test('returns correct badge class', () => {
+    expect(getBadgeClass("Pending")).toBe("badge-pending"); 
+    expect(getBadgeClass("In Progress")).toBe("badge-in-progress");
+    expect(getBadgeClass("Completed")).toBe("badge-completed");
+    expect(getBadgeClass("Unknown")).toBe("badge"); 
+    expect(getBadgeClass("")).toBe("badge"); 
+    expect(getBadgeClass()).toBe("badge"); 
+  
+  })
 });

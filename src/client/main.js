@@ -156,6 +156,7 @@ function renderDetails(requestId) {
     detailsCard.innerHTML = getDetailsHTMLTranslation(request);
   }
   emptyState.hidden = true;
+  attachDetailsHandlers();
 }
 
 function getDetailsHTMLInterpretation(request) {
@@ -174,7 +175,11 @@ function getDetailsHTMLTranslation(request) {
   });
 }
 
-function getBadgeClass(status) {
+export function getBadgeClass(status) {
+  if (!status || typeof status !== 'string') {
+    return 'badge';
+  }
+  
   switch (status.toLowerCase()) {
     case 'pending':
       return 'badge-pending';
@@ -185,6 +190,30 @@ function getBadgeClass(status) {
     default:
       return 'badge';
   }
+}
+
+function attachDetailsHandlers() {
+  console.log("Attaching details handlers");
+  const translationSelect = document.getElementById('translation-select');
+  const contractorNameDiv = document.querySelector('.contractor-name');
+  const contractorNameInput = document.getElementById('contractor-name');
+  translationSelect.addEventListener('change', () => {
+    console.log("Translation service selected:", translationSelect.value);
+      const selectValue = translationSelect.value;
+      switch(selectValue) {
+        case 'Lexikeet':
+        case 'MAPA':
+        case 'Google Translate':
+          // Handle the selected translation service
+          contractorNameDiv.style.display = 'none';
+          break;
+        case 'Staff member':
+        case 'Contractor':
+        default:
+          contractorNameDiv.style.display = 'block';
+          // Handle unknown selection
+      }
+    });
 }
 
 
