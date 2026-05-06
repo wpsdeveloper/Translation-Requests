@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "lib": ["DOM", "ESNext"],
     "checkJs": false,
+    "ignoreDeprecations": "6.0",
     "types": ["google-apps-script"]
   },
   "include": [
