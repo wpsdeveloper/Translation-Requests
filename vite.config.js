@@ -5,8 +5,16 @@ export default defineConfig({
   plugins: [viteSingleFile()],
   build: {
     outDir: '../../dist',
-    emptyOutDir: false, // Don't clear dist so we don't delete server files,
-    sourcemap: true
+    emptyOutDir: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        // This removes the [hash] from the filename
+        entryFileNames: `assets/[name].js`,
+        chunkFileNames: `assets/[name].js`,
+        assetFileNames: `assets/[name].[ext]`
+      }
+    }
   },
   root: 'src/client',
   server: {
