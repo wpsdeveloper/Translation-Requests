@@ -13,10 +13,10 @@ const detailsCard = document.getElementById('details-card-body');
 const requestDetails = document.getElementById('details-column-1');
 let activeRowId = null;
 let allRequests = [];
+let isDebug = window.location.href.includes('localhost');
 
 document.addEventListener('DOMContentLoaded', () => {
-  const url = window.location.href;
-  if (url.includes('localhost')) {
+  if (isDebug) {
     import('./mock-data.js').then((module) => {
       console.log('Mock data loaded dynamically');
       receiveDataFromServer(module.getMockData());
@@ -42,13 +42,17 @@ function receiveDataFromServer(serializedData) {
 }
 
 function parseData(data) {
+  const parsedData = [];
   data.forEach((item) => {
+    item.id = item.id ? item.id.toString() : '';
     item.requestDate = item.requestDate ? new Date(item.requestDate) : '';
     item.submittedDate = item.submittedDate ? new Date(item.submittedDate) : '';
     item.startTime = item.startTime ? new Date(item.startTime) : '';
     item.endTime = item.endTime ? new Date(item.endTime) : '';
+    console.log('Parsed item:', item);
+    parsedData.push(item);
   });
-  return data;
+  return parsedData;
 }
 
 function renderRequests(requests) {
@@ -101,9 +105,6 @@ function renderTable(requests) {
 
   attachRowHandlers();
 
-  // if (!activeRowId || !filteredRequests.some((item) => item.id === activeRowId)) {
-  //   activeRowId = filteredRequests[0].id;
-  // }
   renderDetails(activeRowId);
 }
 
@@ -115,8 +116,8 @@ export function renderTableRows(requests) {
     .map((request) =>
       htmlTemplates.tableRowTemplate(request, {
         badgeClass: getBadgeClass(request.status),
-        requestDate: formatDate(request.requestDate, 'M/D/YYYY'),
-        submittedDate: formatDate(request.submittedDate, 'M/D/YYYY'),
+        requestDate: formatDate(request.requestDate, 'MMM D, YYYY'),
+        submittedDate: formatDate(request.submittedDate, 'MMM D, YYYY'),
         isActive: request.id === activeRowId,
       })
     )
@@ -155,6 +156,7 @@ function renderDetails(requestId) {
     detailsCard.innerHTML = getDetailsHTMLTranslation(request);
   }
   emptyState.hidden = true;
+  document.getElementById('status-select').value = request.status;
   attachDetailsHandlers(requestId);
 }
 
@@ -227,7 +229,6 @@ function attachStatusSelectHandler() {
 
   statusSelect.addEventListener('change', (e) => {
     const statusText = e.target.options[e.target.selectedIndex].text;
-    console.log(e);
 
     // 1. Update the text
     statusBadge.textContent = statusText;
@@ -237,6 +238,7 @@ function attachStatusSelectHandler() {
     statusBadge.classList.add(getBadgeClass(statusText)); // Add new class based on status
 
     updateStatusBadges(statusText, activeRowId);
+    saveStatusChange(activeRowId, statusText);
   });
 }
 
@@ -257,6 +259,36 @@ function updateStatusBadges(status, requestId) {
   rowBadge.classList.add(badgeClass);
 }
 
+function saveStatusChange(requestId, newStatus) {
+  saveRequestProperty(requestId, 'status', newStatus);
+} 
+
+function saveRequestProperty(requestId, propName, propValue) {
+  if (isDebug) {
+    const request = allRequests.find((req) => req.id === requestId);
+    if (request) {
+      request[propName] = propValue;
+      updatedRequest(request);
+    }
+    return;
+  }
+
+  google.script.run
+    .withSuccessHandler(updatedRequest)
+    .updateRequestProperty(requestId, propName, propValue);
+} 
+
+function updatedRequest(request) {
+  console.log('Updated request received from server:', request);
+  const index = allRequests.findIndex((req) => req.id === request.id);
+  if (index !== -1) {
+    allRequests[index] = request;
+    renderTable(allRequests);
+    renderDetails(request.id);
+  }
+}
+
+
 export function formatDate(date, format) {
   try {
     switch (format) {
@@ -268,7 +300,7 @@ export function formatDate(date, format) {
         return date.toLocaleDateString();
     }
   } catch (error) {
-    console.error('Error formatting date:', error);
+    // console.warn('Error formatting date:', error);
     return '';
   }
 }

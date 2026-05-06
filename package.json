@@ -10,6 +10,7 @@
     "jsdom": "^29.1.1",
     "shx": "^0.4.0",
     "vite": "^8.0.10",
+    "vite-plugin-gas": "^0.5.2",
     "vite-plugin-singlefile": "^2.3.3",
     "vitest": "^4.1.5"
   },

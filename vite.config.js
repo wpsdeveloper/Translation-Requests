@@ -13,6 +13,7 @@ export default defineConfig({
     sourcemapIgnoreList: false
   },
   test: {
-    environment: 'jsdom'
+    environment: 'jsdom',
+    include: ['../test/**/*.{test,spec}.{js,ts}'],
   }
 });

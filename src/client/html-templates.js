@@ -7,7 +7,7 @@ export function emptyDetailsTemplate() {
 }
 
 export function tableRowTemplate(request, formattedData) { 
-  return `<tr data-id="${request.id}" class="${formattedData.isActive ? 'active' : 'inactive'}">
+  return `<tr data-id="${request.id}" class="${formattedData.isActive ? 'active' : ''}">
     <td><span class="badge ${formattedData.badgeClass}">${request.status}</span></td>
     <td>${formattedData.requestDate}</td>
     <td>${formattedData.submittedDate}</td>
@@ -132,6 +132,7 @@ export function detailsInterpretationTemplate(request, formattedData) {
       <div class="status-container">
       <span id="status-badge" class="badge ${className}">${status}</span>
       <select id="status-select">
+        <option value="" disabled>Select a status</option>
         <option value="Needs Approval">Needs Approval</option>
         <option value="Approved">Approved</option>
         <option value="Completed">Completed</option>

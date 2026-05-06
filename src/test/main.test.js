@@ -1,5 +1,5 @@
 import {describe, expect, test} from "vitest";
-import {getSchoolOptions, formatDate, formatTime, getBadgeClass} from "./main.js";
+import {getSchoolOptions, formatDate, formatTime, getBadgeClass} from "../client/main.js";
 
 const sampleData = [
   {
@@ -49,7 +49,6 @@ describe('getSchoolOptions', () => {
 
 describe('format dates and times', () => {  
   const date = new Date("2022-12-20T09:27:13.000-05:00");
-  console.log("time:", date.toLocaleTimeString);
   test('formats date', () => {
     expect(formatDate("")).toBe("");
     expect(formatDate("2023/01/01")).toBe("");
