@@ -5,7 +5,7 @@ export function getMockData() {
 const mockData = {
   requests: [{
     id: '12345',
-    status: 'Pending',
+    status: 'Needs Approval',
     requestDate: new Date(),
     submittedDate: new Date(),  
     name: 'John Doe',
@@ -32,5 +32,21 @@ const mockData = {
     school: 'Lincoln High School',
     originalLanguage: 'English',
     targetLanguage: 'Chinese',
-  }]
+  },
+  {
+    id: '67891',
+    status: 'Scheduled',
+    requestDate: new Date(),
+    submittedDate: new Date(),
+    name: 'Bob Robertson',
+    reqType: 'Interpretation',
+    eventLocation: '456 Oak Ave, Somewhere, USA',
+    description: 'Requesting interpretation services for an upcoming event.',
+    startTime: new Date('6/3/2026 6:00 PM'),
+    endTime: new Date('6/3/2026 7:00 PM'),
+    school: 'Lincoln High School',
+    originalLanguage: 'English',
+    targetLanguage: 'Portuguese',
+  },
+]
 };

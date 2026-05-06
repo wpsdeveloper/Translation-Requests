@@ -5,7 +5,7 @@ const sampleData = [
   {
     id: 12345657,
     school: "Washington HS",
-    status: "Pending",
+    status: "Needs Approval",
     requestDate: new Date("2023/01/01"),
     startTime: new Date("09:00:00"),
     endTime: new Date("10:00:00"),
@@ -16,7 +16,7 @@ const sampleData = [
   {
     id: 12345658,
     school: "Lincoln HS",
-    status: "In Progress",
+    status: "Scheduled",
     requestDate: new Date("2023/01/02"),
     startTime: new Date("09:00:00"),
     endTime: new Date("10:00:00"),
@@ -64,8 +64,11 @@ describe('format dates and times', () => {
 
 describe('get badge class', () => {
   test('returns correct badge class', () => {
-    expect(getBadgeClass("Pending")).toBe("badge-pending"); 
-    expect(getBadgeClass("In Progress")).toBe("badge-in-progress");
+    expect(getBadgeClass("Needs Approval")).toBe("badge-needs-approval"); 
+    expect(getBadgeClass("Approved")).toBe("badge-approved");
+    expect(getBadgeClass("Scheduled")).toBe("badge-scheduled");
+    expect(getBadgeClass("Sent for translation")).toBe("badge-sent-for-translation");
+    expect(getBadgeClass("Denied")).toBe("badge-denied");
     expect(getBadgeClass("Completed")).toBe("badge-completed");
     expect(getBadgeClass("Unknown")).toBe("badge"); 
     expect(getBadgeClass("")).toBe("badge"); 

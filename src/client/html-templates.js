@@ -24,7 +24,7 @@ export function detailsInterpretationTemplate(request, formattedData) {
     </div>
     <div class="detail-item">
       <label>Status</label>
-      <div><span class="badge ${formattedData.badgeClass}">${request.status}</span></div>
+      ${statusSelectTemplate(formattedData.badgeClass, request.status)}
     </div>
     <div class="detail-item">
       <label>Languages</label>
@@ -76,7 +76,7 @@ export function detailsInterpretationTemplate(request, formattedData) {
         </div>
         <div class="detail-item">
           <label>Status</label>
-          <div><span class="badge ${formattedData.badgeClass}">${request.status}</span></div>
+          ${statusSelectTemplate(formattedData.badgeClass, request.status)}
         </div>
         <div class="detail-item">
           <label>Languages</label>
@@ -125,4 +125,19 @@ export function detailsInterpretationTemplate(request, formattedData) {
         <option value="Staff member">Staff member</option>
         <option value="Contractor">Contractor</option>
       </select>`;
+  }
+
+  function statusSelectTemplate(className, status) {
+    return `
+      <div class="status-container">
+      <span id="status-badge" class="badge ${className}">${status}</span>
+      <select id="status-select">
+        <option value="Needs Approval">Needs Approval</option>
+        <option value="Approved">Approved</option>
+        <option value="Completed">Completed</option>
+        <option value="Scheduled">Scheduled</option>
+        <option value="Sent for Translation">Sent for Translation</option>
+        <option value="Denied">Denied</option>
+      </select>
+      </div>`;
   }

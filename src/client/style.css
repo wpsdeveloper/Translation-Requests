@@ -142,18 +142,46 @@ tbody tr.active {
   background: #e0f2fe;
   color: #0369a1;
   font-weight: 600;
+  line-height: 0.8;
 }
-.badge-pending {
+.badge-needs-approval {
   background: #fffbeb;
   color: #92400e;
 }
-.badge-in-progress {
+.badge-approved {
   background: #dbeafe;
   color: #1e40af;
 }
 .badge-completed {
   background: #d1fae5;
   color: #047857;
+}
+.badge-scheduled {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-sent-for-translation {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-denied {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-container {
+  position: relative;
+  display: inline-block;
+}
+
+#status-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 @media (max-width: 960px) {
