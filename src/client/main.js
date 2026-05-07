@@ -2,17 +2,20 @@
 
 import contactorSelectTemplate from './components/contractorSelect.htm?raw';
 import schoolSelectTemplate from './components/schoolSelect.htm?raw';
+import statusSelectTemplate from './components/statusSelect.htm?raw';
 import detailsTranslationTemplate from './components/detailsTranslation.htm?raw';
 import detailsInterpretationTemplate from './components/detailsInterpretation.htm?raw';
 import emptyRowTemplate from './components/emptyTableRow.htm?raw';
 import emptyDetailsTemplate from './components/emptyDetails.htm?raw';
 import tableRowTemplate from './components/tableRow.htm?raw';
 
+
+
 /** @type {google.script.run} */
 // const gsr = google.script.run;
 
 const tableBody = document.getElementById('requests-table-body');
-const schoolFilter = document.getElementById('school-filter');
+const schoolFilterWrapper = document.getElementById('school-filter-wrapper');
 const resultsCount = document.getElementById('results-count');
 const emptyState = document.querySelectorAll('.empty-state');
 const detailsCard = document.getElementById('details-card-body');
@@ -63,11 +66,19 @@ function parseData(data) {
 }
 
 function initializeUI(requests) {
-  schoolFilter.innerHTML = schoolSelectTemplate;
-  schoolFilter.addEventListener('change', () => {
-    activeRowId = null;
-    renderRequestsTable(requests);
-  });
+ renderList(
+    null, 
+    schoolFilterWrapper, 
+    schoolSelectBlueprint, 
+    (row) => {
+      // All the specific filling logic stays here
+      row.id = "school-filter";
+      row.addEventListener('change', () => {
+        activeRowId = null;
+        renderRequestsTable(requests);
+      });
+    }
+  );
 }
 
 function renderRequestsTable(requests) {
@@ -81,6 +92,7 @@ function renderRequestsTable(requests) {
 }
 
 function getFilteredRequests(requests) {
+  const schoolFilter = schoolFilterWrapper.querySelector('.school-filter');
   const selectedSchool = schoolFilter.value;
   if (selectedSchool === 'all') {
     return requests;
@@ -104,7 +116,8 @@ function renderTableRows(requests) {
     tableRowBlueprint, 
     (row, request) => {
       // All the specific filling logic stays here
-      row.querySelector('.name').textContent = request.name;
+      row.querySelector('.requester-name').textContent = request.name;
+      row.querySelector('.requester-school').textContent = request.school;
       row.querySelector('.status').textContent = request.status;
       row.querySelector('.request-date').textContent = formatDate(request.requestDate, 'MMM D, YYYY');
       row.querySelector('.submitted-date').textContent = formatDate(request.submittedDate, 'MMM D, YYYY');
@@ -143,21 +156,112 @@ function renderDetails(requestId) {
   }
 
   if (request.reqType === 'Interpretation') {
-    detailsCard.innerHTML = getDetailsHTMLInterpretation(request);
+    getDetailsHTMLInterpretation(request);
   } else if (request.reqType === 'Translation') {
-    detailsCard.innerHTML = getDetailsHTMLTranslation(request);
+    getDetailsHTMLTranslation(request);
   }
-  emptyState.hidden = true;
-  document.getElementById('status-select').value = request.status;
-  attachDetailsHandlers(requestId);
+  //emptyState.hidden = true;
+  //attachDetailsHandlers(requestId);
 }
 
 function getDetailsHTMLInterpretation(request) {
-  return detailsInterpretationTemplate; 
+  detailsCard.innerHTML = '';
+
+  if (!request || request.reqType !== 'Interpretation') { 
+    // We clone it so we can potentially reuse it or change its text
+    const emptyDetails = emptyDetailsBlueprint.cloneNode(true);
+    detailsCard.appendChild(emptyDetails);
+    return;
+  }
+
+  renderList(
+    request, 
+    detailsCard, 
+    detailsInterpretationBlueprint, 
+    (row, request) => {
+      // All the specific filling logic stays here
+      row.querySelector('.request-id .content').textContent = request.name;
+      row.querySelector('.languages .content').textContent = request.originalLanguage + ' to ' + request.targetLanguage;
+      row.querySelector('.request-date').textContent = formatDate(request.requestDate, 'MMM D, YYYY');
+      row.querySelector('.start-end-time').textContent = formatTime(request.startTime, 'h:mm A') + ' - ' + formatTime(request.endTime, 'h:mm A');
+      row.querySelector('.description .content').textContent = request.description;
+      row.querySelector('.contractor .content').innerHTML = contractorSelectBlueprint;
+      row.querySelector('.contractor-name input').value = request.description;
+      row.querySelector('.contractor-contracted-date input').value = formatDate(request.contractorContractedDate, 'MMM D, YYYY');
+      row.querySelector('.guest-attendance-date input').value = formatDate(request.guestConfirmationDate, 'MMM D, YYYY');
+      row.querySelector('.technology-confirmed-date input').value = formatDate(request.technologyConfirmationDate, 'MMM D, YYYY');
+      
+      const status = row.querySelector('.status .content');
+      renderList(
+        request, 
+        status, 
+        statusSelectBlueprint, 
+        (row, request) => {
+          const badge = row.querySelector('.badge');
+          badge.textContent = request.status;
+          badge.className = `badge ${getBadgeClass(request.status)}`;
+          const select = row.querySelector('select');
+          select.value = request.status;
+        });
+
+      const contractor = row.querySelector('.contractor .content');
+      renderList(
+        request, 
+        contractor, 
+        contractorSelectBlueprint, 
+        (row, request) => {
+          row.value = request.contractor || '';
+        });
+    }); 
 }
 
 function getDetailsHTMLTranslation(request) {
-  return detailsTranslationTemplate;
+  detailsCard.innerHTML = '';
+
+  if (!request || request.reqType !== 'Translation') { 
+    // We clone it so we can potentially reuse it or change its text
+    const emptyDetails = emptyDetailsBlueprint.cloneNode(true);
+    detailsCard.appendChild(emptyDetails);
+    return;
+  }
+
+  renderList(
+    request, 
+    detailsCard, 
+    detailsTranslationBlueprint, 
+    (row, request) => {
+      // All the specific filling logic stays here
+      row.querySelector('.request-id .content').textContent = request.name;
+      row.querySelector('.languages .content').textContent = request.originalLanguage + ' to ' + request.targetLanguage;
+      row.querySelector('.document-link a').href = request.documentLink || '#';
+      row.querySelector('.description .content').textContent = request.description;
+      row.querySelector('.contractor .content').innerHTML = contractorSelectBlueprint;
+      row.querySelector('.contractor-name input').value = request.description;
+      row.querySelector('.document-sent-date input').value = formatDate(request.documentSentDate, 'MMM D, YYYY');
+      row.querySelector('.document-received-date input').value = formatDate(request.documentReceivedDate, 'MMM D, YYYY');
+      
+      const status = row.querySelector('.status .content');
+      renderList(
+        request, 
+        status, 
+        statusSelectBlueprint, 
+        (row, request) => {
+          const badge = row.querySelector('.badge');
+          badge.textContent = request.status;
+          badge.className = `badge ${getBadgeClass(request.status)}`;
+          const select = row.querySelector('select');
+          select.value = request.status;
+        });
+
+      const contractor = row.querySelector('.contractor .content');
+      renderList(
+        request, 
+        contractor, 
+        contractorSelectBlueprint, 
+        (row, request) => {
+          row.value = request.contractor || '';
+        });
+    }); 
 }
 
 export function getBadgeClass(status) {
@@ -181,11 +285,6 @@ export function getBadgeClass(status) {
     default:
       return 'badge';
   }
-}
-
-function attachDetailsHandlers() {
-  attachTranslationSelectHandler();
-  attachStatusSelectHandler();
 }
 
 function attachTranslationSelectHandler() {
@@ -224,6 +323,21 @@ function attachStatusSelectHandler() {
     updateStatusBadges(statusText, activeRowId);
     saveStatusChange(activeRowId, statusText);
   });
+}
+
+function handleStatusChange(e, requestId, newStatus, statusElement) {
+  const statusText = e.target.options[e.target.selectedIndex].text;
+  const statusBadge = statusElement.querySelector('.status-badge');
+
+    // 1. Update the text
+    statusBadge.textContent = statusText;
+
+    // 2. Optional: Update colors based on status
+    statusBadge.className = 'badge'; // Reset to base class
+    statusBadge.classList.add(getBadgeClass(statusText)); // Add new class based on status
+
+    updateStatusBadges(statusText, activeRowId);
+    saveStatusChange(activeRowId, statusText);
 }
 
 function updateStatusBadges(status, requestId) {
@@ -292,7 +406,9 @@ const createBlueprint = (htmlString, selector) => {
  */
 function renderList(data, container, blueprint, populateFn) {
   container.innerHTML = '';
-  if (!data?.length) return;
+  if (!Array.isArray(data) || !data?.length) {
+    data = [data]; // We need at least one item to render the empty state
+  };
 
   const fragment = document.createDocumentFragment();
   
@@ -306,13 +422,6 @@ function renderList(data, container, blueprint, populateFn) {
   container.appendChild(fragment);
 };
 
-const tableRowBlueprint = createBlueprint(tableRowTemplate, '.request-row');
-const emptyRowBlueprint = createBlueprint(emptyRowTemplate, '.empty-state');  
-const detailsTranslationBlueprint = createBlueprint(detailsTranslationTemplate, '.details-translation');
-const detailsInterpretationBlueprint = createBlueprint(detailsInterpretationTemplate, '.details-interpretation');
-const contractorSelectBlueprint = createBlueprint(contactorSelectTemplate, '#translation-select');
-const schoolSelectBlueprint = createBlueprint(schoolSelectTemplate, '#school-filter');
-const emptyDetailsBlueprint = createBlueprint(emptyDetailsTemplate, '.empty-state');
 
 export function formatDate(date, format) {
   try {
@@ -342,3 +451,12 @@ export function formatTime(time, format) {
       return time.toLocaleTimeString();
   }
 }
+
+const schoolSelectBlueprint = createBlueprint(schoolSelectTemplate, '.school-filter');
+const emptyDetailsBlueprint = createBlueprint(emptyDetailsTemplate, '.empty-state');
+const emptyRowBlueprint = createBlueprint(emptyRowTemplate, '.empty-state');  
+const tableRowBlueprint = createBlueprint(tableRowTemplate, '.request-row');
+const detailsTranslationBlueprint = createBlueprint(detailsTranslationTemplate, '.details-translation');
+const detailsInterpretationBlueprint = createBlueprint(detailsInterpretationTemplate, '.details-interpretation');
+const contractorSelectBlueprint = createBlueprint(contactorSelectTemplate, '#translation-select');
+const statusSelectBlueprint = createBlueprint(statusSelectTemplate, '.status-container');
