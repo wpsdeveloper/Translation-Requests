@@ -1,5 +1,5 @@
 import {describe, expect, test} from "vitest";
-import {getSchoolOptions, formatDate, formatTime, getBadgeClass} from "../client/main.js";
+import {formatDate, formatTime, getBadgeClass} from "../client/main.js";
 
 const sampleData = [
   {
@@ -36,16 +36,6 @@ const sampleData = [
     name: "Bob Johnson",
   },
 ];
-
-describe('getSchoolOptions', () => {
-  test('returns only all for empty array', () => {
-    expect(getSchoolOptions([])).toEqual(['all']);
-  });
-
-  test('return All and two schools, no duplicates', () => {
-    expect(getSchoolOptions(sampleData)).toEqual(['all', "Lincoln HS", "Washington HS"]);
-  });
-});
 
 describe('format dates and times', () => {  
   const date = new Date("2022-12-20T09:27:13.000-05:00");

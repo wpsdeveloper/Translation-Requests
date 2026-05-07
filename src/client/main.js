@@ -1,6 +1,12 @@
 /// <reference types="google-apps-script" />
 
-import * as htmlTemplates from './html-templates.js';
+import contactorSelectTemplate from './components/contractorSelect.htm?raw';
+import schoolSelectTemplate from './components/schoolSelect.htm?raw';
+import detailsTranslationTemplate from './components/detailsTranslation.htm?raw';
+import detailsInterpretationTemplate from './components/detailsInterpretation.htm?raw';
+import emptyRowTemplate from './components/emptyTableRow.htm?raw';
+import emptyDetailsTemplate from './components/emptyDetails.htm?raw';
+import tableRowTemplate from './components/tableRow.htm?raw';
 
 /** @type {google.script.run} */
 // const gsr = google.script.run;
@@ -38,7 +44,8 @@ function receiveDataFromServer(serializedData) {
   const dataRaw = JSON.parse(serializedData);
   allRequests = parseData(dataRaw);
   console.log(allRequests);
-  renderRequests(allRequests);
+  initializeUI(allRequests);
+  renderRequestsTable(allRequests);
 }
 
 function parseData(data) {
@@ -55,31 +62,22 @@ function parseData(data) {
   return parsedData;
 }
 
-function renderRequests(requests) {
-  renderFilterOptions(requests);
-  renderTable(requests);
+function initializeUI(requests) {
+  schoolFilter.innerHTML = schoolSelectTemplate;
   schoolFilter.addEventListener('change', () => {
     activeRowId = null;
-    renderTable(requests);
+    renderRequestsTable(requests);
   });
 }
 
-export function getSchoolOptions(requests) {
-  if (!Array.isArray(requests) || !requests.length) {
-    return ['all'];
-  }
-  const schools = Array.from(new Set(requests.map((request) => request.school))).sort();
-  return ['all', ...schools];
-}
-
-export function renderFilterOptions(requests) {
-  const options = getSchoolOptions(requests);
-  schoolFilter.innerHTML = options
-    .map((school) => {
-      const label = school === 'all' ? 'All schools' : school;
-      return `<option value="${school}">${label}</option>`;
-    })
-    .join('');
+function renderRequestsTable(requests) {
+  const filteredRequests = getFilteredRequests(requests);
+  resultsCount.textContent = `${filteredRequests.length} entr${filteredRequests.length === 1 ? 'y' : 'ies'}`;
+  
+  renderTableRows(filteredRequests);
+  attachRowHandlers();
+  
+  renderDetails(activeRowId);
 }
 
 function getFilteredRequests(requests) {
@@ -90,38 +88,32 @@ function getFilteredRequests(requests) {
   return requests.filter((request) => request.school === selectedSchool);
 }
 
-function renderTable(requests) {
-  const filteredRequests = getFilteredRequests(requests);
-  resultsCount.textContent = `${filteredRequests.length} entr${filteredRequests.length === 1 ? 'y' : 'ies'}`;
+function renderTableRows(requests) {
+  tableBody.innerHTML = '';
 
-  if (!filteredRequests.length) {
-    emptyState.hidden = false;
-    requestDetails.innerHTML = htmlTemplates.emptyRowTemplate();
+  if (!requests || requests.length === 0) {
+    // We clone it so we can potentially reuse it or change its text
+    const emptyRow = emptyRowBlueprint.cloneNode(true);
+    tableBody.appendChild(emptyRow);
     return;
   }
 
-  emptyState.hidden = true;
-  tableBody.innerHTML = renderTableRows(filteredRequests);
-
-  attachRowHandlers();
-
-  renderDetails(activeRowId);
-}
-
-export function renderTableRows(requests) {
-  if (!requests || requests.length === 0) {
-    return '';
-  }
-  return requests
-    .map((request) =>
-      htmlTemplates.tableRowTemplate(request, {
-        badgeClass: getBadgeClass(request.status),
-        requestDate: formatDate(request.requestDate, 'MMM D, YYYY'),
-        submittedDate: formatDate(request.submittedDate, 'MMM D, YYYY'),
-        isActive: request.id === activeRowId,
-      })
-    )
-    .join('');
+  renderList(
+    requests, 
+    tableBody, 
+    tableRowBlueprint, 
+    (row, request) => {
+      // All the specific filling logic stays here
+      row.querySelector('.name').textContent = request.name;
+      row.querySelector('.status').textContent = request.status;
+      row.querySelector('.request-date').textContent = formatDate(request.requestDate, 'MMM D, YYYY');
+      row.querySelector('.submitted-date').textContent = formatDate(request.submittedDate, 'MMM D, YYYY');
+      row.querySelector('.reqType').textContent = request.reqType;
+      const badge = row.querySelector('.badge');
+      badge.className = `badge ${getBadgeClass(request.status)}`;
+      row.dataset.id = request.id;
+    }
+  );
 }
 
 function attachRowHandlers() {
@@ -145,7 +137,7 @@ function updateActiveRow() {
 function renderDetails(requestId) {
   const request = allRequests.find((item) => item.id === requestId);
   if (!request) {
-    requestDetails.innerHTML = htmlTemplates.emptyDetailsTemplate();
+    requestDetails.innerHTML = emptyDetailsTemplate;
     emptyState.hidden = false;
     return;
   }
@@ -161,19 +153,11 @@ function renderDetails(requestId) {
 }
 
 function getDetailsHTMLInterpretation(request) {
-  return htmlTemplates.detailsInterpretationTemplate(request, {
-    requestDate: formatDate(request.requestDate, 'MMM D, YYYY'),
-    startTime: formatTime(request.startTime, 'h:mm A'),
-    endTime: formatTime(request.endTime, 'h:mm A'),
-    badgeClass: getBadgeClass(request.status),
-  });
+  return detailsInterpretationTemplate; 
 }
 
 function getDetailsHTMLTranslation(request) {
-  return htmlTemplates.detailsTranslationTemplate(request, {
-    requestDate: formatDate(request.requestDate, 'MMM D, YYYY'),
-    badgeClass: getBadgeClass(request.status),
-  });
+  return detailsTranslationTemplate;
 }
 
 export function getBadgeClass(status) {
@@ -283,11 +267,52 @@ function updatedRequest(request) {
   const index = allRequests.findIndex((req) => req.id === request.id);
   if (index !== -1) {
     allRequests[index] = request;
-    renderTable(allRequests);
+    renderRequestsTable(allRequests);
     renderDetails(request.id);
   }
 }
 
+/**
+ * Utility to turn an HTML string into a reusable DOM element
+ */
+const createBlueprint = (htmlString, selector) => {
+  const temp = document.createElement('template');
+  temp.innerHTML = htmlString.trim();
+  const element = temp.content.querySelector(selector);
+  
+  if (!element) {
+    throw new Error(`Could not find selector "${selector}" in template`);
+  }
+  
+  return element;
+};
+
+/**
+ * Generic renderer that handles the fragment logic
+ */
+function renderList(data, container, blueprint, populateFn) {
+  container.innerHTML = '';
+  if (!data?.length) return;
+
+  const fragment = document.createDocumentFragment();
+  
+  data.forEach(item => {
+    const clone = blueprint.cloneNode(true);
+    // Let the specific component decide how to fill the data
+    populateFn(clone, item); 
+    fragment.appendChild(clone);
+  });
+
+  container.appendChild(fragment);
+};
+
+const tableRowBlueprint = createBlueprint(tableRowTemplate, '.request-row');
+const emptyRowBlueprint = createBlueprint(emptyRowTemplate, '.empty-state');  
+const detailsTranslationBlueprint = createBlueprint(detailsTranslationTemplate, '.details-translation');
+const detailsInterpretationBlueprint = createBlueprint(detailsInterpretationTemplate, '.details-interpretation');
+const contractorSelectBlueprint = createBlueprint(contactorSelectTemplate, '#translation-select');
+const schoolSelectBlueprint = createBlueprint(schoolSelectTemplate, '#school-filter');
+const emptyDetailsBlueprint = createBlueprint(emptyDetailsTemplate, '.empty-state');
 
 export function formatDate(date, format) {
   try {
