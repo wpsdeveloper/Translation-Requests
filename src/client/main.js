@@ -9,15 +9,9 @@ import emptyRowTemplate from './components/emptyTableRow.htm?raw';
 import emptyDetailsTemplate from './components/emptyDetails.htm?raw';
 import tableRowTemplate from './components/tableRow.htm?raw';
 
-
-
-/** @type {google.script.run} */
-// const gsr = google.script.run;
-
 const tableBody = document.getElementById('requests-table-body');
 const schoolFilterWrapper = document.getElementById('school-filter-wrapper');
 const resultsCount = document.getElementById('results-count');
-const emptyState = document.querySelectorAll('.empty-state');
 const detailsCard = document.getElementById('details-card-body');
 const requestDetails = document.getElementById('details-column-1');
 let activeRowId = null;
@@ -66,28 +60,21 @@ function parseData(data) {
 }
 
 function initializeUI(requests) {
- renderList(
-    null, 
-    schoolFilterWrapper, 
-    schoolSelectBlueprint, 
-    (row) => {
-      // All the specific filling logic stays here
-      row.id = "school-filter";
-      row.addEventListener('change', () => {
-        activeRowId = null;
-        renderRequestsTable(requests);
-      });
-    }
-  );
+  renderList(null, schoolFilterWrapper, schoolSelectBlueprint, (row) => {
+    // All the specific filling logic stays here
+    row.id = 'school-filter';
+    row.addEventListener('change', () => {
+      activeRowId = null;
+      renderRequestsTable(requests);
+    });
+  });
 }
 
 function renderRequestsTable(requests) {
   const filteredRequests = getFilteredRequests(requests);
   resultsCount.textContent = `${filteredRequests.length} entr${filteredRequests.length === 1 ? 'y' : 'ies'}`;
-  
+
   renderTableRows(filteredRequests);
-  attachRowHandlers();
-  
   renderDetails(activeRowId);
 }
 
@@ -110,35 +97,32 @@ function renderTableRows(requests) {
     return;
   }
 
-  renderList(
-    requests, 
-    tableBody, 
-    tableRowBlueprint, 
-    (row, request) => {
-      // All the specific filling logic stays here
-      row.querySelector('.requester-name').textContent = request.name;
-      row.querySelector('.requester-school').textContent = request.school;
-      row.querySelector('.status').textContent = request.status;
-      row.querySelector('.request-date').textContent = formatDate(request.requestDate, 'MMM D, YYYY');
-      row.querySelector('.submitted-date').textContent = formatDate(request.submittedDate, 'MMM D, YYYY');
-      row.querySelector('.reqType').textContent = request.reqType;
-      const badge = row.querySelector('.badge');
-      badge.className = `badge ${getBadgeClass(request.status)}`;
-      row.dataset.id = request.id;
-    }
-  );
+  renderList(requests, tableBody, tableRowBlueprint, (row, request) => {
+    populateRowData(row, request);
+  });
 }
 
-function attachRowHandlers() {
-  const rows = tableBody.querySelectorAll('tr');
-  rows.forEach((row) => {
-    row.addEventListener('click', () => {
-      activeRowId = row.dataset.id;
-      console.log('Row clicked, activeRowId set to:', activeRowId);
-      updateActiveRow();
-      renderDetails(activeRowId);
-    });
+function populateRowData(row, request) {
+  row.dataset.id = request.id;
+  row.querySelector('.requester-name').textContent = request.name;
+  row.querySelector('.requester-school').textContent = request.school;
+  row.querySelector('.status').textContent = request.status;
+  row.querySelector('.request-date').textContent = formatDate(request.requestDate, 'MMM D, YYYY');
+  row.querySelector('.submitted-date').textContent = formatDate(request.submittedDate, 'MMM D, YYYY');
+  row.querySelector('.reqType').textContent = request.reqType;
+  const badge = row.querySelector('.badge');
+  badge.className = `badge ${getBadgeClass(request.status)}`;
+
+  row.addEventListener('click', () => {
+    handleRowClicks(row);
   });
+}
+
+function handleRowClicks(row) {
+  activeRowId = row.dataset.id;
+  console.log('Row clicked, activeRowId set to:', activeRowId);
+  updateActiveRow();
+  renderDetails(activeRowId);
 }
 
 function updateActiveRow() {
@@ -151,117 +135,147 @@ function renderDetails(requestId) {
   const request = allRequests.find((item) => item.id === requestId);
   if (!request) {
     requestDetails.innerHTML = emptyDetailsTemplate;
-    emptyState.hidden = false;
     return;
   }
 
-  if (request.reqType === 'Interpretation') {
-    getDetailsHTMLInterpretation(request);
-  } else if (request.reqType === 'Translation') {
-    getDetailsHTMLTranslation(request);
-  }
-  //emptyState.hidden = true;
-  //attachDetailsHandlers(requestId);
+  const blueprint = request.reqType === 'Interpretation' ? detailsInterpretationBlueprint : detailsTranslationBlueprint;
+
+  renderList(request, detailsCard, blueprint, (row, request) => {
+    populateDetailsData(row, request, blueprint === detailsInterpretationBlueprint ? 'Interpretation' : 'Translation');
+  });
 }
 
-function getDetailsHTMLInterpretation(request) {
-  detailsCard.innerHTML = '';
-
-  if (!request || request.reqType !== 'Interpretation') { 
-    // We clone it so we can potentially reuse it or change its text
-    const emptyDetails = emptyDetailsBlueprint.cloneNode(true);
-    detailsCard.appendChild(emptyDetails);
-    return;
+function populateDetailsData(element, request, type) {
+  populateCommonDetails(element, request);
+  const specificMapper = detailMappers[type];
+  if (specificMapper) {
+    specificMapper(element, request);
+  } else {
+    console.warn(`No detail mapper found for type "${type}"`);
   }
-
-  renderList(
-    request, 
-    detailsCard, 
-    detailsInterpretationBlueprint, 
-    (row, request) => {
-      // All the specific filling logic stays here
-      row.querySelector('.request-id .content').textContent = request.name;
-      row.querySelector('.languages .content').textContent = request.originalLanguage + ' to ' + request.targetLanguage;
-      row.querySelector('.request-date').textContent = formatDate(request.requestDate, 'MMM D, YYYY');
-      row.querySelector('.start-end-time').textContent = formatTime(request.startTime, 'h:mm A') + ' - ' + formatTime(request.endTime, 'h:mm A');
-      row.querySelector('.description .content').textContent = request.description;
-      row.querySelector('.contractor .content').innerHTML = contractorSelectBlueprint;
-      row.querySelector('.contractor-name input').value = request.description;
-      row.querySelector('.contractor-contracted-date input').value = formatDate(request.contractorContractedDate, 'MMM D, YYYY');
-      row.querySelector('.guest-attendance-date input').value = formatDate(request.guestConfirmationDate, 'MMM D, YYYY');
-      row.querySelector('.technology-confirmed-date input').value = formatDate(request.technologyConfirmationDate, 'MMM D, YYYY');
-      
-      const status = row.querySelector('.status .content');
-      renderList(
-        request, 
-        status, 
-        statusSelectBlueprint, 
-        (row, request) => {
-          const badge = row.querySelector('.badge');
-          badge.textContent = request.status;
-          badge.className = `badge ${getBadgeClass(request.status)}`;
-          const select = row.querySelector('select');
-          select.value = request.status;
-        });
-
-      const contractor = row.querySelector('.contractor .content');
-      renderList(
-        request, 
-        contractor, 
-        contractorSelectBlueprint, 
-        (row, request) => {
-          row.value = request.contractor || '';
-        });
-    }); 
 }
 
-function getDetailsHTMLTranslation(request) {
-  detailsCard.innerHTML = '';
+const detailMappers = {
+  Translation: (element, request) => {
+    element.querySelector('.document-link a').href = request.documentLink || '#';
+    element.querySelector('.document-sent-date input').value = formatDate(request.documentSentDate, 'MMM D, YYYY');
+    element.querySelector('.document-received-date input').value = formatDate(
+      request.documentReceivedDate,
+      'MMM D, YYYY'
+    );
+  },
+  Interpretation: (element, request) => {
+    element.querySelector('.request-date').textContent = formatDate(request.requestDate, 'MMM D, YYYY');
+    element.querySelector('.start-end-time').textContent =
+      formatTime(request.startTime, 'h:mm A') + ' - ' + formatTime(request.endTime, 'h:mm A');
+    element.querySelector('.contractor-contracted-date input').value = formatDate(
+      request.contractorContractedDate,
+      'MMM D, YYYY'
+    );
+    element.querySelector('.guest-attendance-date input').value = formatDate(
+      request.guestConfirmationDate,
+      'MMM D, YYYY'
+    );
+    element.querySelector('.technology-confirmed-date input').value = formatDate(
+      request.technologyConfirmationDate,
+      'MMM D, YYYY'
+    );
+  },
+};
 
-  if (!request || request.reqType !== 'Translation') { 
-    // We clone it so we can potentially reuse it or change its text
-    const emptyDetails = emptyDetailsBlueprint.cloneNode(true);
-    detailsCard.appendChild(emptyDetails);
+function populateCommonDetails(element, request) {
+  element.querySelector('.request-id .content').textContent = request.id;
+  element.querySelector('.languages .content').textContent = request.originalLanguage + ' to ' + request.targetLanguage;
+  element.querySelector('.description .content').textContent = request.description;
+  element.querySelector('.contractor .content').innerHTML = contractorSelectBlueprint;
+  element.querySelector('.contractor-name input').value = request.contractorName || '';
+
+  const status = element.querySelector('.status .content');
+  renderList(request, status, statusSelectBlueprint, (element, request) => {
+    const badge = element.querySelector('.badge');
+    badge.textContent = request.status;
+    badge.className = `badge ${getBadgeClass(request.status)}`;
+    const select = element.querySelector('select');
+    select.value = request.status;
+    select.addEventListener('change', (e) => {
+      handleStatusChange(e, request.id, request.status, element);
+    });
+  });
+
+  const contractor = element.querySelector('.contractor .content');
+  renderList(request, contractor, contractorSelectBlueprint, (element, request) => {
+    element.value = request.contractor || '';
+    element.addEventListener('change', () => {
+      handleContractorChange();
+    });
+  });
+  handleContractorChange(); // Set initial visibility based on current value
+}
+
+function handleContractorChange() {
+  const selectValue = document.querySelector('#details-card .contractor select').value;
+  switch (selectValue) {
+    case 'Lexikeet':
+    case 'MAPA':
+    case 'Google Translate':
+      document.querySelector('#details-card .contractor-name').style.display = 'none';
+      break;
+    case 'Staff member':
+    case 'Contractor':
+    default:
+      document.querySelector('#details-card .contractor-name').style.display = '';
+  }
+  console.log(document.querySelector('#details-card .contractor-name'));
+  saveRequestProperty(activeRowId, 'contractor', selectValue);
+}
+
+function handleStatusChange(e, requestId, newStatus, statusElement) {
+  const statusText = e.target.options[e.target.selectedIndex].text;
+  const statusBadge = statusElement.querySelector('.badge');
+
+  // 1. Update the text
+  statusBadge.textContent = statusText;
+
+  // 2. Optional: Update colors based on status
+  statusBadge.className = 'badge'; // Reset to base class
+  statusBadge.classList.add(getBadgeClass(statusText)); // Add new class based on status
+
+  updateStatusBadges(statusText, activeRowId);
+  saveStatusChange(activeRowId, statusText);
+}
+
+function updateStatusBadges(status, requestId) {
+  const statusBadgeDetails = document.getElementById('status-badge');
+  const rowBadge = document.querySelector(`[data-id="${requestId}"] .badge`);
+
+  statusBadgeDetails.textContent = status;
+  rowBadge.textContent = status;
+
+  // Remove existing status classes
+  statusBadgeDetails.className = 'badge';
+  rowBadge.className = 'badge';
+
+  const badgeClass = getBadgeClass(status);
+
+  statusBadgeDetails.classList.add(badgeClass);
+  rowBadge.classList.add(badgeClass);
+}
+
+function saveStatusChange(requestId, newStatus) {
+  saveRequestProperty(requestId, 'status', newStatus);
+}
+
+function saveRequestProperty(requestId, propName, propValue) {
+  if (isDebug) {
+    const request = allRequests.find((req) => req.id === requestId);
+    if (request) {
+      request[propName] = propValue;
+      updatedRequest(request);
+    }
     return;
   }
 
-  renderList(
-    request, 
-    detailsCard, 
-    detailsTranslationBlueprint, 
-    (row, request) => {
-      // All the specific filling logic stays here
-      row.querySelector('.request-id .content').textContent = request.name;
-      row.querySelector('.languages .content').textContent = request.originalLanguage + ' to ' + request.targetLanguage;
-      row.querySelector('.document-link a').href = request.documentLink || '#';
-      row.querySelector('.description .content').textContent = request.description;
-      row.querySelector('.contractor .content').innerHTML = contractorSelectBlueprint;
-      row.querySelector('.contractor-name input').value = request.description;
-      row.querySelector('.document-sent-date input').value = formatDate(request.documentSentDate, 'MMM D, YYYY');
-      row.querySelector('.document-received-date input').value = formatDate(request.documentReceivedDate, 'MMM D, YYYY');
-      
-      const status = row.querySelector('.status .content');
-      renderList(
-        request, 
-        status, 
-        statusSelectBlueprint, 
-        (row, request) => {
-          const badge = row.querySelector('.badge');
-          badge.textContent = request.status;
-          badge.className = `badge ${getBadgeClass(request.status)}`;
-          const select = row.querySelector('select');
-          select.value = request.status;
-        });
-
-      const contractor = row.querySelector('.contractor .content');
-      renderList(
-        request, 
-        contractor, 
-        contractorSelectBlueprint, 
-        (row, request) => {
-          row.value = request.contractor || '';
-        });
-    }); 
+  google.script.run.withSuccessHandler(updatedRequest).updateRequestProperty(requestId, propName, propValue);
 }
 
 export function getBadgeClass(status) {
@@ -287,95 +301,6 @@ export function getBadgeClass(status) {
   }
 }
 
-function attachTranslationSelectHandler() {
-  const translationSelect = document.getElementById('translation-select');
-  const contractorNameDiv = document.querySelector('.contractor-name');
-  translationSelect.addEventListener('change', () => {
-    console.log('Translation service selected:', translationSelect.value);
-    const selectValue = translationSelect.value;
-    switch (selectValue) {
-      case 'Lexikeet':
-      case 'MAPA':
-      case 'Google Translate':
-        contractorNameDiv.style.display = 'none';
-        break;
-      case 'Staff member':
-      case 'Contractor':
-      default:
-        contractorNameDiv.style.display = 'block';
-    }
-  });
-}
-function attachStatusSelectHandler() {
-  const statusBadge = document.getElementById('status-badge');
-  const statusSelect = document.getElementById('status-select');
-
-  statusSelect.addEventListener('change', (e) => {
-    const statusText = e.target.options[e.target.selectedIndex].text;
-
-    // 1. Update the text
-    statusBadge.textContent = statusText;
-
-    // 2. Optional: Update colors based on status
-    statusBadge.className = 'badge'; // Reset to base class
-    statusBadge.classList.add(getBadgeClass(statusText)); // Add new class based on status
-
-    updateStatusBadges(statusText, activeRowId);
-    saveStatusChange(activeRowId, statusText);
-  });
-}
-
-function handleStatusChange(e, requestId, newStatus, statusElement) {
-  const statusText = e.target.options[e.target.selectedIndex].text;
-  const statusBadge = statusElement.querySelector('.status-badge');
-
-    // 1. Update the text
-    statusBadge.textContent = statusText;
-
-    // 2. Optional: Update colors based on status
-    statusBadge.className = 'badge'; // Reset to base class
-    statusBadge.classList.add(getBadgeClass(statusText)); // Add new class based on status
-
-    updateStatusBadges(statusText, activeRowId);
-    saveStatusChange(activeRowId, statusText);
-}
-
-function updateStatusBadges(status, requestId) {
-  const statusBadgeDetails = document.getElementById('status-badge');
-  const rowBadge = document.querySelector(`[data-id="${requestId}"] .badge`);
-
-  statusBadgeDetails.textContent = status;
-  rowBadge.textContent = status;
-
-  // Remove existing status classes
-  statusBadgeDetails.className = 'badge';
-  rowBadge.className = 'badge';
-
-  const badgeClass = getBadgeClass(status);
-
-  statusBadgeDetails.classList.add(badgeClass);
-  rowBadge.classList.add(badgeClass);
-}
-
-function saveStatusChange(requestId, newStatus) {
-  saveRequestProperty(requestId, 'status', newStatus);
-} 
-
-function saveRequestProperty(requestId, propName, propValue) {
-  if (isDebug) {
-    const request = allRequests.find((req) => req.id === requestId);
-    if (request) {
-      request[propName] = propValue;
-      updatedRequest(request);
-    }
-    return;
-  }
-
-  google.script.run
-    .withSuccessHandler(updatedRequest)
-    .updateRequestProperty(requestId, propName, propValue);
-} 
-
 function updatedRequest(request) {
   console.log('Updated request received from server:', request);
   const index = allRequests.findIndex((req) => req.id === request.id);
@@ -393,11 +318,11 @@ const createBlueprint = (htmlString, selector) => {
   const temp = document.createElement('template');
   temp.innerHTML = htmlString.trim();
   const element = temp.content.querySelector(selector);
-  
+
   if (!element) {
     throw new Error(`Could not find selector "${selector}" in template`);
   }
-  
+
   return element;
 };
 
@@ -408,20 +333,19 @@ function renderList(data, container, blueprint, populateFn) {
   container.innerHTML = '';
   if (!Array.isArray(data) || !data?.length) {
     data = [data]; // We need at least one item to render the empty state
-  };
+  }
 
   const fragment = document.createDocumentFragment();
-  
-  data.forEach(item => {
+
+  data.forEach((item) => {
     const clone = blueprint.cloneNode(true);
     // Let the specific component decide how to fill the data
-    populateFn(clone, item); 
+    populateFn(clone, item);
     fragment.appendChild(clone);
   });
 
   container.appendChild(fragment);
-};
-
+}
 
 export function formatDate(date, format) {
   try {
@@ -454,7 +378,7 @@ export function formatTime(time, format) {
 
 const schoolSelectBlueprint = createBlueprint(schoolSelectTemplate, '.school-filter');
 const emptyDetailsBlueprint = createBlueprint(emptyDetailsTemplate, '.empty-state');
-const emptyRowBlueprint = createBlueprint(emptyRowTemplate, '.empty-state');  
+const emptyRowBlueprint = createBlueprint(emptyRowTemplate, '.empty-state');
 const tableRowBlueprint = createBlueprint(tableRowTemplate, '.request-row');
 const detailsTranslationBlueprint = createBlueprint(detailsTranslationTemplate, '.details-translation');
 const detailsInterpretationBlueprint = createBlueprint(detailsInterpretationTemplate, '.details-interpretation');
