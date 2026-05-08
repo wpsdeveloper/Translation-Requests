@@ -1,10 +1,22 @@
-// src/client/services/api.js
-const FORCE_SERVER = false;
-const IS_MOCK = !FORCE_SERVER && !window.location.href.includes('google') && !window.location.href.includes('script');
+const IS_MOCK = !window.location.href.includes('google') && !window.location.href.includes('script');
+
+// Safety proxy for local development to prevent 'google is not defined' errors
+if (IS_MOCK && typeof window.google === 'undefined') {
+  window.google = {
+    script: {
+      run: {
+        withSuccessHandler: function() { return this; },
+        withFailureHandler: function() { return this; },
+        getRequestsFromAppSheet: function() { console.warn('google.script.run.getRequestsFromAppSheet called in mock mode'); },
+        saveDataToServer: function() { console.warn('google.script.run.saveDataToServer called in mock mode'); }
+      }
+    }
+  };
+}
 
 export const fetchData = () => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK && !FORCE_SERVER) {
+    if (IS_MOCK) {
       import('./mock-data.js').then((module) => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
@@ -15,11 +27,17 @@ export const fetchData = () => {
     }
     google.script.run
       .withSuccessHandler((data) => {
-        const cleanRequests = data.requests.map(hydrate);
-        resolve({ requests: cleanRequests, schools: data.schools });
+        console.log('Data received from server:', data);
+        const requests = data.requests || [];
+        const schools = data.schools || [];
+        const cleanRequests = requests.map(hydrate);
+        resolve({ requests: cleanRequests, schools: schools });
       })
-      .withFailureHandler(reject)
-      .getDataFromServer();
+      .withFailureHandler((err) => {
+        console.error('Server error:', err);
+        reject(err);
+      })
+      .getDataFromAppSheet();
   });
 };
 

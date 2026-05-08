@@ -13,5 +13,7 @@ function doGet() {
 }
 
 function getDataFromServer() {
-  return JSON.stringify(getRequests());
+  const data = getDataFromAppSheet();
+  Logger.log(data);
+  return JSON.stringify(data);
 }
