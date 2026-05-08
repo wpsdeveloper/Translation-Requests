@@ -4,7 +4,7 @@
       <h2>Request Details</h2>
       <status-select id="detail-status"></status-select>
     </div>
-    
+
     <div id="approval-info" class="shared-meta" style="display: none;">
       <div class="detail-item">
         <label>Approved By:</label>
@@ -15,18 +15,12 @@
         <span id="detail-approved-date"></span>
       </div>
     </div>
-
+    <hr>
     <div class="shared-meta">
-      <div class="detail-item">
-        <label>Type:</label>
-        <span id="view-reqType"></span>
-      </div>
-
       <div class="detail-item">
         <label>Submitted:</label>
         <span id="view-submitted"></span>
       </div>
-
       <div class="detail-item">
         <label>Requester Name:</label>
         <span id="view-requester-name" class="view-mode"></span>
@@ -34,38 +28,44 @@
       </div>
 
       <div class="detail-item">
-        <label>School:</label>
         <school-select id="detail-school"></school-select>
       </div>
 
-      <div class="detail-item">
-        <label>Original Language:</label>
-        <span id="view-orig-lang" class="view-mode"></span>
-        <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none;" />
-      </div>
-
-      <div class="detail-item">
-        <label>Target Language:</label>
-        <span id="view-target-lang" class="view-mode"></span>
-        <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none;" />
-      </div>
-
-      <div class="detail-item">
-        <label>Description:</label>
-        <div id="view-description" class="view-mode"></div>
-        <textarea id="edit-description" class="form-control edit-mode" style="display: none;"></textarea>
-      </div>
     </div>
   </header>
 
   <hr>
+  <div class="detail-item">
+    <label>Type:</label>
+    <span id="view-reqType"></span>
+  </div>
+  <div class="detail-item">
+    <label class="view-mode">Languages:</label>
+    <span id="view-languages" class="view-mode"></span>
+  </div>
+  <div class="detail-item">
+    <label class="edit-mode" style="display: none;">Original Language:</label>
+    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none;" />
+  </div>
+
+  <div class="detail-item">
+    <label class="edit-mode" style="display: none;">Target Language:</label>
+    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none;" />
+  </div>
+
+  <div class="detail-item">
+    <label>Description:</label>
+    <div id="view-description" class="view-mode"></div>
+    <textarea id="edit-description" class="form-control edit-mode" style="display: none;"></textarea>
+  </div>
 
   <div id="dynamic-content"></div>
 
-  <footer>
-    <button id="close-btn">Close</button>
-    <button id="edit-btn">Edit</button>
-    <button id="save-btn" class="primary" style="display: none;">Save Changes</button>
-    <button id="cancel-btn" style="display: none;">Cancel</button>
-  </footer>
-</div>
+  <div class="detail-item">
+    <footer>
+      <button id="close-btn">Close</button>
+      <button id="edit-btn">Edit</button>
+      <button id="save-btn" class="primary" style="display: none;">Save Changes</button>
+      <button id="cancel-btn" style="display: none;">Cancel</button>
+    </footer>
+  </div>

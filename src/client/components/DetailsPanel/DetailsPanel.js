@@ -70,8 +70,8 @@ class DetailsPanel extends HTMLElement {
     root.querySelector('#cancel-btn').style.display = isEdit ? 'inline-block' : 'none';
 
     // Toggle shared view/edit elements
-    const viewEls = root.querySelectorAll('.shared-meta .view-mode');
-    const editEls = root.querySelectorAll('.shared-meta .edit-mode');
+    const viewEls = root.querySelectorAll('.view-mode');
+    const editEls = root.querySelectorAll('.edit-mode');
 
     viewEls.forEach((el) => (el.style.display = isEdit ? 'none' : ''));
     editEls.forEach((el) => (el.style.display = isEdit ? '' : 'none'));
@@ -110,6 +110,8 @@ class DetailsPanel extends HTMLElement {
     root.querySelector('#view-submitted').textContent = formatDate(data.submittedDate, 'MMM D, YYYY') || 'N/A';
 
     // View Mode Shared Fields
+    const languages = [data.originalLanguage, data.targetLanguage].filter(Boolean).join(' to ');
+    root.querySelector('#view-languages').textContent = languages || 'N/A';
     root.querySelector('#view-requester-name').textContent = data.name || 'N/A';
 
     const schoolSelect = root.querySelector('#detail-school');
@@ -118,8 +120,6 @@ class DetailsPanel extends HTMLElement {
       schoolSelect.mode = this._mode;
     }
 
-    root.querySelector('#view-orig-lang').textContent = data.originalLanguage || 'N/A';
-    root.querySelector('#view-target-lang').textContent = data.targetLanguage || 'N/A';
     root.querySelector('#view-description').textContent = data.description || 'No description provided.';
 
     // Edit Mode Shared Fields
