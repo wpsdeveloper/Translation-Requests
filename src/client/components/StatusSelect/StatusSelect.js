@@ -1,9 +1,13 @@
 import styles from './StatusSelect.css?inline';
 import template from './StatusSelect.htm?raw';
+import statusColors from '../shared/StatusColors.css?inline';
 import '../StatusBadge/StatusBadge.js';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
+
+const colorSheet = new CSSStyleSheet();
+colorSheet.replaceSync(statusColors);
 
 class StatusSelect extends HTMLElement {
   static get observedAttributes() {
@@ -13,7 +17,7 @@ class StatusSelect extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet];
+    this.shadowRoot.adoptedStyleSheets = [sheet, colorSheet];
     this._status = '';
     this._mode = 'view';
   }

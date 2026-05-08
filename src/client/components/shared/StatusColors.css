@@ -1,0 +1,37 @@
+/* StatusColors.css - Centralized status colors */
+
+:host([status="Needs Approval"]) .status-indicator {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+:host([status="Scheduled"]) .status-indicator {
+  background-color: #17a2b8;
+  color: white;
+}
+
+:host([status="Completed"]) .status-indicator {
+  background-color: #28a745;
+  color: white;
+}
+
+:host([status="Canceled"]) .status-indicator {
+  background-color: #dc3545;
+  color: white;
+}
+
+:host([status="Approved"]) .status-indicator {
+  background-color: #4b86ff;
+  color: white;
+}
+
+:host([status="Denied"]) .status-indicator {
+  background-color: #dc3545;
+  color: white;
+}
+
+:host([status="Out for Translation"]) .status-indicator,
+:host([status="Sent for translation"]) .status-indicator {
+  background-color: #4b86ff;
+  color: white;
+}

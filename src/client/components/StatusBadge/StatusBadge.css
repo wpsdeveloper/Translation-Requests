@@ -13,11 +13,6 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: white;
-  background-color: #6c757d; /* Default Gray */
+  background-color: #6c757d;
+  /* Default Gray */
 }
-
-/* Status-specific colors */
-:host([status="Needs Approval"]) .badge { background-color: #ffc107; color: #212529; }
-:host([status="Scheduled"]) .badge { background-color: #17a2b8; }
-:host([status="Completed"]) .badge { background-color: #28a745; }
-:host([status="Canceled"]) .badge { background-color: #dc3545; }
