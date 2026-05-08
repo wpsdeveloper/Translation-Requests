@@ -1,7 +1,13 @@
 <div class="panel-container">
+  <button id="close-btn" class="close-icon" aria-label="Close panel">&times;</button>
   <header>
     <div class="header-main">
-      <h2>Request Details</h2>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <h2>Request Details</h2>
+        <button id="edit-btn" class="edit-icon-btn" title="Edit request">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        </button>
+      </div>
       <status-select id="detail-status"></status-select>
     </div>
 
@@ -63,8 +69,6 @@
 
   <div class="detail-item">
     <footer>
-      <button id="close-btn">Close</button>
-      <button id="edit-btn">Edit</button>
       <button id="save-btn" class="primary" style="display: none;">Save Changes</button>
       <button id="cancel-btn" style="display: none;">Cancel</button>
     </footer>
