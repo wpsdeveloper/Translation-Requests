@@ -1,20 +1,24 @@
 import { store } from '../../services/state.js';
 import { formatDate } from '../../services/utils.js';
 import panelTemplate from './DetailsPanel.htm?raw';
+import sharedPanelStyles from '../shared/DetailsStyles.css?inline';
 import panelStyles from './DetailsPanel.css?inline';
 
 import '../DetailsInterpretation/DetailsInterpretation.js';
 import '../DetailsTranslation/DetailsTranslation.js';
 import '../StatusSelect/StatusSelect.js';
 
-const sheet = new CSSStyleSheet();
-sheet.replaceSync(panelStyles);
+const sharedSheet = new CSSStyleSheet();
+sharedSheet.replaceSync(sharedPanelStyles);
+
+const panelSheet = new CSSStyleSheet();
+panelSheet.replaceSync(panelStyles);
 
 class DetailsPanel extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet];
+    this.shadowRoot.adoptedStyleSheets = [sharedSheet, panelSheet];
     this._mode = 'view';
   }
 
@@ -96,8 +100,10 @@ class DetailsPanel extends HTMLElement {
     let featureEl;
     if (data.reqType === 'Interpretation') {
       featureEl = document.createElement('details-interpretation');
+      featureEl.classList.add('details-interpretation');
     } else if (data.reqType === 'Translation') {
       featureEl = document.createElement('details-translation');
+      featureEl.classList.add('details-translation');
     }
 
     if (featureEl) {

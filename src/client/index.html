@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Translation Requests</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <header>
     <div>
       <h1>Translation Requests</h1>
-      <p class="subtitle">Browse submitted requests, filter them by school, and inspect the request details without leaving the page.</p>
+      <p class="subtitle">Browse submitted requests, filter them by school, and inspect the request details without
+        leaving the page.</p>
     </div>
     <div class="filters">
       <label for="school-filter">Filter by school</label>
@@ -29,7 +32,8 @@
     </section>
 
     <section id="details-card">
-      <details-panel></details-panel> <!-- Custom element for the details panel, will render content internally -->
+      <details-panel class="details-panel"></details-panel>
+      <!-- Custom element for the details panel, will render content internally -->
     </section>
     <div>
 
@@ -38,4 +42,5 @@
 
   <script type="module" src="main.js"></script>
 </body>
+
 </html>

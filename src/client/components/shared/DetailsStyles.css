@@ -1,0 +1,67 @@
+ :host {
+     font-size: 0.9rem;
+     margin: 5px 0;
+ }
+
+ :host .detail-item label {
+     font-size: 0.85rem;
+     font-weight: 700;
+     margin-bottom: 0;
+     display: block;
+ }
+
+
+ .form-control {
+     width: 100%;
+     background: #f8fafc;
+     border: 1px solid #e2e8f0;
+     border-radius: 12px;
+     padding: 10px 12px;
+     font-family: inherit;
+ }
+
+ h2 {
+     font-size: 1.2rem;
+ }
+
+ h3 {
+     font-size: 1rem;
+     border-bottom: 1px solid #eee;
+     padding-bottom: 5px;
+ }
+
+ .header-main {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 15px;
+ }
+
+ .shared-meta p {
+     font-size: 0.9rem;
+     margin: 5px 0;
+ }
+
+ .details-section label {
+     display: block;
+     font-weight: bold;
+     font-size: 0.8rem;
+     margin-top: 10px;
+ }
+
+ footer {
+     margin-top: 30px;
+     display: flex;
+     gap: 10px;
+ }
+
+ button {
+     padding: 8px 16px;
+     cursor: pointer;
+ }
+
+ button.primary {
+     background: #007bff;
+     color: white;
+     border: none;
+ }

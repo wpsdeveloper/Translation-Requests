@@ -1,4 +1,4 @@
-import styles from './DetailsTranslation.css?inline';
+import styles from '../shared/DetailsStyles.css?inline';
 import template from './DetailsTranslation.htm?raw';
 import '../ContractorSelect/ContractorSelect.js';
 
@@ -47,7 +47,7 @@ class DetailsTranslation extends HTMLElement {
     const viewLink = root.querySelector('#view-document-link');
     viewLink.href = this._data.docLink || '#';
     viewLink.style.display = this._data.docLink ? 'inline' : 'none';
-    
+
     // Formatting dates for view mode
     const sentDate = this._data.docSentDate ? new Date(this._data.docSentDate).toLocaleDateString() : 'N/A';
     const receivedDate = this._data.docReceivedDate ? new Date(this._data.docReceivedDate).toLocaleDateString() : 'N/A';
@@ -57,7 +57,7 @@ class DetailsTranslation extends HTMLElement {
     // Edit Mode Hydration
     root.querySelector('#edit-document-length').value = this._data.docPageCount || '';
     root.querySelector('#edit-document-link').value = this._data.docLink || '';
-    
+
     // Date inputs expect YYYY-MM-DD
     const formatDateForInput = (date) => date ? new Date(date).toISOString().split('T')[0] : '';
     root.querySelector('#edit-date-sent').value = formatDateForInput(this._data.docSentDate);
@@ -71,7 +71,7 @@ class DetailsTranslation extends HTMLElement {
       };
       contractorSelect.mode = this._mode;
     }
-    
+
     this.mode = this._mode; // Apply current mode visibility
   }
 }

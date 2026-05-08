@@ -1,6 +1,7 @@
-import styles from './DetailsInterpretation.css?inline';
+import styles from '../shared/DetailsStyles.css?inline';
 import template from './DetailsInterpretation.htm?raw';
 import '../ContractorSelect/ContractorSelect.js';
+import { formatDate, formatTime } from '../../services/utils.js';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
@@ -43,14 +44,32 @@ class DetailsInterpretation extends HTMLElement {
     const root = this.shadowRoot;
 
     // View Mode Hydration
-    root.querySelector('.lang').textContent = this._data.language || 'N/A';
-    root.querySelector('.loc').textContent = this._data.location || 'N/A';
-    root.querySelector('.time').textContent = this._data.meetingTime || 'N/A';
+    root.querySelector('#view-event-date').textContent = this._data.requestDate ? formatDate(this._data.requestDate, 'MMM D, YYYY') : 'N/A';
+
+    const startStr = this._data.startTime ? formatTime(this._data.startTime, 'h:mm A') : '';
+    const endStr = this._data.endTime ? formatTime(this._data.endTime, 'h:mm A') : '';
+    root.querySelector('#view-event-time').textContent = startStr && endStr ? `${startStr} to ${endStr}` : (startStr || endStr || 'N/A');
+
+    root.querySelector('#view-event-location').textContent = this._data.eventLocation || 'N/A';
+    root.querySelector('#view-interpreter-type').textContent = this._data.interpreterType || 'N/A';
+
+    root.querySelector('#view-date-scheduled').textContent = this._data.scheduledDate ? formatDate(this._data.scheduledDate, 'MMM D, YYYY') : 'N/A';
+    root.querySelector('#view-date-guest-confirmed').textContent = this._data.guestConfirmedDate ? formatDate(this._data.guestConfirmedDate, 'MMM D, YYYY') : 'N/A';
+    root.querySelector('#view-date-tech-confirmed').textContent = this._data.techConfirmedDate ? formatDate(this._data.techConfirmedDate, 'MMM D, YYYY') : 'N/A';
 
     // Edit Mode Hydration
-    root.querySelector('.edit-lang').value = this._data.language || '';
-    root.querySelector('.edit-loc').value = this._data.location || '';
-    root.querySelector('.edit-time').value = this._data.meetingTime || '';
+    const formatDateForInput = (date) => date ? new Date(date).toISOString().split('T')[0] : '';
+    const formatTimeForInput = (date) => date ? new Date(date).toTimeString().slice(0, 5) : '';
+
+    root.querySelector('#edit-event-date').value = formatDateForInput(this._data.requestDate);
+    root.querySelector('#edit-start-time').value = formatTimeForInput(this._data.startTime);
+    root.querySelector('#edit-end-time').value = formatTimeForInput(this._data.endTime);
+    root.querySelector('#edit-event-location').value = this._data.eventLocation || '';
+    root.querySelector('#edit-interpreter-type').value = this._data.interpreterType || '';
+
+    root.querySelector('#edit-date-scheduled').value = formatDateForInput(this._data.scheduledDate);
+    root.querySelector('#edit-date-guest-confirmed').value = formatDateForInput(this._data.guestConfirmedDate);
+    root.querySelector('#edit-date-tech-confirmed').value = formatDateForInput(this._data.techConfirmedDate);
 
     const contractorSelect = root.querySelector('#contractor-select');
     if (contractorSelect) {
