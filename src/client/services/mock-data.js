@@ -34,6 +34,7 @@ const mockData = {
     targetLanguage: 'Chinese',
     approvedBy: 'Admin User',
     approvedDate: new Date('5/15/2026 3:30 PM'),
+    interpretationType: 'One-way presentation',
   },
   {
     id: '67891',
@@ -51,6 +52,7 @@ const mockData = {
     targetLanguage: 'Portuguese',
     approvedBy: 'Admin User',
     approvedDate: new Date('5/12/2026 2:00 PM'),
+    interpretationType: 'Two-way conversation',
   },
   ],
   schools: [

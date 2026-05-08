@@ -51,7 +51,7 @@ class DetailsInterpretation extends HTMLElement {
     root.querySelector('#view-event-time').textContent = startStr && endStr ? `${startStr} to ${endStr}` : (startStr || endStr || 'N/A');
 
     root.querySelector('#view-event-location').textContent = this._data.eventLocation || 'N/A';
-    root.querySelector('#view-interpreter-type').textContent = this._data.interpreterType || 'N/A';
+    root.querySelector('#view-interpretation-type').textContent = this._data.interpretationType || 'N/A';
 
     root.querySelector('#view-date-scheduled').textContent = this._data.scheduledDate ? formatDate(this._data.scheduledDate, 'MMM D, YYYY') : 'N/A';
     root.querySelector('#view-date-guest-confirmed').textContent = this._data.guestConfirmedDate ? formatDate(this._data.guestConfirmedDate, 'MMM D, YYYY') : 'N/A';
@@ -65,7 +65,7 @@ class DetailsInterpretation extends HTMLElement {
     root.querySelector('#edit-start-time').value = formatTimeForInput(this._data.startTime);
     root.querySelector('#edit-end-time').value = formatTimeForInput(this._data.endTime);
     root.querySelector('#edit-event-location').value = this._data.eventLocation || '';
-    root.querySelector('#edit-interpreter-type').value = this._data.interpreterType || '';
+    root.querySelector('#edit-interpretation-type').value = this._data.interpretationType || '';
 
     root.querySelector('#edit-date-scheduled').value = formatDateForInput(this._data.scheduledDate);
     root.querySelector('#edit-date-guest-confirmed').value = formatDateForInput(this._data.guestConfirmedDate);
