@@ -5,7 +5,11 @@
       <div style="display: flex; align-items: center; gap: 8px;">
         <h2>Request Details</h2>
         <button id="edit-btn" class="edit-icon-btn" title="Edit request">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
         </button>
       </div>
       <status-select id="detail-status"></status-select>
@@ -13,22 +17,22 @@
 
     <div id="approval-info" class="shared-meta" style="display: none;">
       <div class="detail-item">
-        <label>Approved By:</label>
+        <label>Approved By</label>
         <span id="detail-approved-by"></span>
       </div>
       <div class="detail-item">
-        <label>Approved Date:</label>
+        <label>Approved Date</label>
         <span id="detail-approved-date"></span>
       </div>
     </div>
     <hr>
     <div class="shared-meta">
       <div class="detail-item">
-        <label>Submitted:</label>
+        <label>Submitted</label>
         <span id="view-submitted"></span>
       </div>
       <div class="detail-item">
-        <label>Requester Name:</label>
+        <label>Requester Name</label>
         <span id="view-requester-name" class="view-mode"></span>
         <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none;" />
       </div>
@@ -42,25 +46,25 @@
 
   <hr>
   <div class="detail-item">
-    <label>Type:</label>
+    <label>Type</label>
     <span id="view-reqType"></span>
   </div>
   <div class="detail-item">
-    <label class="view-mode">Languages:</label>
+    <label class="view-mode">Languages</label>
     <span id="view-languages" class="view-mode"></span>
   </div>
   <div class="detail-item">
-    <label class="edit-mode" style="display: none;">Original Language:</label>
+    <label class="edit-mode" style="display: none;">Original Language</label>
     <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none;" />
   </div>
 
   <div class="detail-item">
-    <label class="edit-mode" style="display: none;">Target Language:</label>
+    <label class="edit-mode" style="display: none;">Target Language</label>
     <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none;" />
   </div>
 
   <div class="detail-item">
-    <label>Description:</label>
+    <label>Description</label>
     <div id="view-description" class="view-mode"></div>
     <textarea id="edit-description" class="form-control edit-mode" style="display: none;"></textarea>
   </div>
@@ -71,7 +75,7 @@
     <footer>
       <button id="process-btn" class="primary">Process</button>
       <button id="save-btn" class="primary" style="display: none;">Save Changes</button>
-      <button id="cancel-btn" style="display: none;">Cancel</button>
+      <button id="cancel-btn" class="secondary" style="display: none;">Cancel</button>
     </footer>
   </div>
 </div>
