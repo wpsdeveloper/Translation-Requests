@@ -28,6 +28,7 @@ function hydrate(request) {
     ...request,
     requestDate: request.requestDate ? new Date(request.requestDate) : null,
     submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
+    approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
     startTime: request.startTime ? new Date(request.startTime) : null,
     endTime: request.endTime ? new Date(request.endTime) : null,
   };

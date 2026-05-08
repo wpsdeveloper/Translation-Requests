@@ -32,6 +32,8 @@ const mockData = {
     school: 'Boyden',
     originalLanguage: 'English',
     targetLanguage: 'Chinese',
+    approvedBy: 'Admin User',
+    approvedDate: new Date('5/15/2026 3:30 PM'),
   },
   {
     id: '67891',
@@ -47,6 +49,8 @@ const mockData = {
     school: 'Old Post Road',
     originalLanguage: 'English',
     targetLanguage: 'Portuguese',
+    approvedBy: 'Admin User',
+    approvedDate: new Date('5/12/2026 2:00 PM'),
   },
   ],
   schools: [

@@ -52,6 +52,12 @@ class DetailsPanel extends HTMLElement {
         this.setMode('view');
       }
     });
+
+    this.shadowRoot.addEventListener('change', (e) => {
+      if (e.target.id === 'detail-status') {
+        this.updateApprovalVisibility(e.detail.status);
+      }
+    });
   }
 
   setMode(mode) {
@@ -68,7 +74,7 @@ class DetailsPanel extends HTMLElement {
     const editEls = root.querySelectorAll('.shared-meta .edit-mode');
 
     viewEls.forEach((el) => (el.style.display = isEdit ? 'none' : ''));
-    editEls.forEach((el) => (el.style.display = isEdit ? 'block' : 'none'));
+    editEls.forEach((el) => (el.style.display = isEdit ? '' : 'none'));
 
     // Notify the dynamic component
     const dynamicEl = root.querySelector('#dynamic-content').firstElementChild;
@@ -105,7 +111,7 @@ class DetailsPanel extends HTMLElement {
 
     // View Mode Shared Fields
     root.querySelector('#view-requester-name').textContent = data.name || 'N/A';
-    
+
     const schoolSelect = root.querySelector('#detail-school');
     if (schoolSelect) {
       schoolSelect.value = data.school || '';
@@ -121,6 +127,11 @@ class DetailsPanel extends HTMLElement {
     root.querySelector('#edit-orig-lang').value = data.originalLanguage || '';
     root.querySelector('#edit-target-lang').value = data.targetLanguage || '';
     root.querySelector('#edit-description').value = data.description || '';
+
+    // Hydrate Approval Info
+    root.querySelector('#detail-approved-by').textContent = data.approvedBy || 'N/A';
+    root.querySelector('#detail-approved-date').textContent = data.approvedDate ? formatDate(data.approvedDate, 'MMM D, YYYY') : 'N/A';
+    this.updateApprovalVisibility(data.status);
 
     // 2. Hydrate Dynamic Content
     const container = root.querySelector('#dynamic-content');
@@ -139,6 +150,13 @@ class DetailsPanel extends HTMLElement {
       container.appendChild(featureEl);
       featureEl.data = data; // Push data into the new component
       featureEl.mode = this._mode; // Set initial mode
+    }
+  }
+
+  updateApprovalVisibility(status) {
+    const approvalInfo = this.shadowRoot.querySelector('#approval-info');
+    if (approvalInfo) {
+      approvalInfo.style.display = status !== 'Needs Approval' ? 'block' : 'none';
     }
   }
 }
