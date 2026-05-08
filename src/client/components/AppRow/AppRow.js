@@ -1,5 +1,6 @@
 import AppRowStyles from './AppRow.css?inline';
 import AppRowTemplate from './AppRow.htm?raw';
+import '../StatusBadge/StatusBadge';
 import { store } from '../../services/state.js';
 import { formatDate } from '../../services/utils';
 
@@ -48,7 +49,8 @@ class AppRow extends HTMLElement {
 
   populateData() {
     console.log('Populating row with data:', this._data);
-    this.shadowRoot.querySelector('.status').textContent = this._data.status || '';
+    // Inside render()
+    this.shadowRoot.querySelector('.status-cell').setAttribute('status', this._data.status);
     this.shadowRoot.querySelector('.request-date').textContent = formatDate(this._data.requestDate, 'MMM D, YYYY') || '';
     this.shadowRoot.querySelector('.submitted-date').textContent = formatDate(this._data.submittedDate, 'MMM D, YYYY') || '';
     this.shadowRoot.querySelector('.reqType').textContent = this._data.reqType || '';

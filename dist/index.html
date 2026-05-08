@@ -4,150 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Translation Requests</title>
-  <script type="module" crossorigin>var e=Object.defineProperty,t=(e,t)=>()=>(e&&(t=e(e=0)),t),n=(t,n)=>{let r={};for(var i in t)e(r,i,{get:t[i],enumerable:!0});return n||e(r,Symbol.toStringTag,{value:`Module`}),r};(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return;for(let e of document.querySelectorAll(`link[rel="modulepreload"]`))n(e);new MutationObserver(e=>{for(let t of e)if(t.type===`childList`)for(let e of t.addedNodes)e.tagName===`LINK`&&e.rel===`modulepreload`&&n(e)}).observe(document,{childList:!0,subtree:!0});function t(e){let t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),e.crossOrigin===`use-credentials`?t.credentials=`include`:e.crossOrigin===`anonymous`?t.credentials=`omit`:t.credentials=`same-origin`,t}function n(e){if(e.ep)return;e.ep=!0;let n=t(e);fetch(e.href,n)}})();var r=`<select id="translation-select">
-  <option value="" disabled>Select a translation service</option>
-  <option value="Lexikeet">Lexikeet</option>
-  <option value="MAPA">MAPA</option>
-  <option value="Google Translate">Google Translate</option>
-  <option value="Staff member">Staff member</option>
-  <option value="Contractor">Contractor</option>
-</select>`,i=`<select class="school-filter" aria-label="Filter requests by school">
-  <option value="all">All schools</option>
-  <option value="Feeney">Feeney</option>
-  <option value="Boyden">Boyden</option>
-  <option value="Elm Street">Elm Street</option>
-  <option value="Old Post Road">Old Post Road</option>
-  <option value="Walpole Middle School">Walpole Middle School</option>
-  <option value="Walpole High School">Walpole High School</option>
-  <option value="Central Administration">Central Administration</option>
-  <option value="Student Services">Student Services</option>
-</select>`,a=`<div class="status-container">
-  <span id="status-badge" class="badge"></span>
-  <select id="status-select">
-    <option value="" disabled>Select a status</option>
-    <option value="Needs Approval">Needs Approval</option>
-    <option value="Approved">Approved</option>
-    <option value="Completed">Completed</option>
-    <option value="Scheduled">Scheduled</option>
-    <option value="Sent for Translation">Sent for Translation</option>
-    <option value="Denied">Denied</option>
-  </select>
-</div>`,o=`<div class="details-translation details-view">
-  <div id="details-column-1">
-    <div class="detail-item request-id">
-      <label>Request ID</label>
-      <div class="content"></div>
-    </div>
-    <div class="detail-item status">
-      <label>Status</label>
-      <div class="content"></div>
-    </div>
-    <div class="detail-item languages">
-      <label>Languages</label>
-      <div class="content"></div>
-    </div>
-    <div class="detail-item document-link">
-      <label>Document Link</label>
-      <div class="content"><a href="" target="_blank">Document original</a></div>
-    </div>
-    <div class="detail-item document-length">
-      <label>Length</label>
-      <div class="content"></div>
-    </div>
-    <div class="detail-item description">
-      <label>Details</label>
-      <div class="content"></div>
-    </div>
-  </div>
-  <div id="details-column-2">
-    <div class="detail-item contractor">
-      <label>Translation service</label>
-      <div class="content"></div>
-      <div class="detail-item contractor-name">
-        <label>Interpreter Name</label>
-        <input type="text" class="form-control" id="contractor-name" />
-      </div>
-    </div>
-    <div class="detail-item document-sent-date">
-      <label>Document sent</label>
-      <input type="date" class="form-control" id="document-sent-date" />
-    </div>
-    <div class="detail-item document-received-date">
-      <label>Document received</label>
-      <input type="date" class="form-control" id="document-received-date" />
-    </div>
-  </div>
+  <script type="module" crossorigin>var e=Object.defineProperty,t=(e,t)=>()=>(e&&(t=e(e=0)),t),n=(t,n)=>{let r={};for(var i in t)e(r,i,{get:t[i],enumerable:!0});return n||e(r,Symbol.toStringTag,{value:`Module`}),r};(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return;for(let e of document.querySelectorAll(`link[rel="modulepreload"]`))n(e);new MutationObserver(e=>{for(let t of e)if(t.type===`childList`)for(let e of t.addedNodes)e.tagName===`LINK`&&e.rel===`modulepreload`&&n(e)}).observe(document,{childList:!0,subtree:!0});function t(e){let t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),e.crossOrigin===`use-credentials`?t.credentials=`include`:e.crossOrigin===`anonymous`?t.credentials=`omit`:t.credentials=`same-origin`,t}function n(e){if(e.ep)return;e.ep=!0;let n=t(e);fetch(e.href,n)}})();var r=new class{constructor(){this._state={selectedRow:null,allRows:[],isPanelOpen:!1},this._listeners=[]}subscribe(e){this._listeners.push(e)}setState(e){this._state={...this._state,...e},this._listeners.forEach(e=>e(this._state))}getState(){return this._state}},i=`modulepreload`,a=function(e,t){return new URL(e,t).href},o={},s=function(e,t,n){let r=Promise.resolve();if(t&&t.length>0){let e=document.getElementsByTagName(`link`),s=document.querySelector(`meta[property=csp-nonce]`),c=s?.nonce||s?.getAttribute(`nonce`);function l(e){return Promise.all(e.map(e=>Promise.resolve(e).then(e=>({status:`fulfilled`,value:e}),e=>({status:`rejected`,reason:e}))))}r=l(t.map(t=>{if(t=a(t,n),t in o)return;o[t]=!0;let r=t.endsWith(`.css`),s=r?`[rel="stylesheet"]`:``;if(n)for(let n=e.length-1;n>=0;n--){let i=e[n];if(i.href===t&&(!r||i.rel===`stylesheet`))return}else if(document.querySelector(`link[href="${t}"]${s}`))return;let l=document.createElement(`link`);if(l.rel=r?`stylesheet`:i,r||(l.as=`script`),l.crossOrigin=``,l.href=t,c&&l.setAttribute(`nonce`,c),document.head.appendChild(l),r)return new Promise((e,n)=>{l.addEventListener(`load`,e),l.addEventListener(`error`,()=>n(Error(`Unable to preload CSS for ${t}`)))})}))}function s(e){let t=new Event(`vite:preloadError`,{cancelable:!0});if(t.payload=e,window.dispatchEvent(t),!t.defaultPrevented)throw e}return r.then(t=>{for(let e of t||[])e.status===`rejected`&&s(e.reason);return e().catch(s)})},c=n({getMockData:()=>l});function l(){return JSON.stringify(u.requests)}var u,d=t((()=>{u={requests:[{id:`12345`,status:`Needs Approval`,requestDate:new Date,submittedDate:new Date,name:`John Doe`,reqType:`Translation`,eventLocation:`123 Main St, Anytown, USA`,description:`Requesting translation of syllabus.`,docLink:`https://example.com/document`,docPageCount:10,school:`Walpole High School`,originalLanguage:`English`,targetLanguage:`Spanish`},{id:`67890`,status:`Completed`,requestDate:new Date,submittedDate:new Date,name:`Jane Smith`,reqType:`Interpretation`,eventLocation:`456 Oak Ave, Somewhere, USA`,description:`Requesting interpretation services for an upcoming event.`,startTime:new Date(`5/25/2026 6:00 PM`),endTime:new Date(`5/25/2026 7:00 PM`),school:`Boyden`,originalLanguage:`English`,targetLanguage:`Chinese`},{id:`67891`,status:`Scheduled`,requestDate:new Date,submittedDate:new Date,name:`Bob Robertson`,reqType:`Interpretation`,eventLocation:`456 Oak Ave, Somewhere, USA`,description:`Requesting interpretation services for an upcoming event.`,startTime:new Date(`6/3/2026 6:00 PM`),endTime:new Date(`6/3/2026 7:00 PM`),school:`Old Post Road`,originalLanguage:`English`,targetLanguage:`Portuguese`}]}})),f=window.location.href.includes(`localhost`),p=()=>new Promise((e,t)=>{if(f){s(()=>Promise.resolve().then(()=>(d(),c)).then(t=>{console.log(`Mock data loaded dynamically`);let n=JSON.parse(t.getMockData()).map(m);setTimeout(()=>e(n),500)}),void 0,import.meta.url);return}google.script.run.withSuccessHandler(e).withFailureHandler(t).getDataFromServer()});function m(e){return{...e,requestDate:e.requestDate?new Date(e.requestDate):null,submittedDate:e.submittedDate?new Date(e.submittedDate):null,startTime:e.startTime?new Date(e.startTime):null,endTime:e.endTime?new Date(e.endTime):null}}var h=`.thead{cursor:pointer;text-transform:uppercase;letter-spacing:.02em;background:#f1f5f9;border-bottom:1px solid #eee;flex-direction:row;font-size:.8rem;font-weight:700;transition:background-color .2s;display:flex!important}:host:hover{background-color:#f8f9fa}:host.selected{background-color:#e8f0fe!important}.badge{border-radius:12px;padding:4px 8px;font-size:.8rem;font-weight:700}.th{vertical-align:middle;flex:1;padding:12px 8px}`,g=`<div class="thead">
+    <div class="th">Status</div>
+    <div class="th">Request Date</div>
+    <div class="th">Submitted</div>
+    <div class="th">Type</div>
+    <div class="th">Requested By</div>
 </div>
-`,s=`<div class="details-interpretation details-view">
-  <div id="details-column-1">
-    <div class="detail-item request-id">
-      <label>Request ID</label>
-      <div class="content"></div>
-    </div>
-    <div class="detail-item status">
-      <label>Status</label>
-      <div class="content"></div>
-    </div>
-    <div class="detail-item languages">
-      <label>Languages</label>
-      <div class="content"></div>
-    </div>
-    <div class="detail-item event-details">
-      <label>Event Details</label>
-      <div class="content">
-        <span class="request-date"></span><br />
-        <span class="start-end-time"></span>-<span class="end-time"></span><br />
-        <span class="event-location"></span>
-      </div>
-    </div>
-    <div class="detail-item description">
-      <label>Details</label>
-      <div class="content"></div>
-    </div>
-  </div>
-  <div id="details-column-2">
-    <div class="detail-item contractor">
-      <label>Interpreter selected</label>
-      <div class="content"></div>
-      <div class="detail-item contractor-name">
-        <label>Interpreter Name</label>
-        <input type="text" class="form-control" id="contractor-name" />
-      </div>
-    </div>
-    <div class="detail-item contractor-contracted-date">
-      <label>Interpreter contracted</label>
-      <input type="date" class="form-control" id="contractor-contracted-date" />
-    </div>
-    <div class="detail-item guest-attendance-date">
-      <label>Guest attendance confirmed</label>
-      <input type="date" class="form-control" id="guest-attendance-date" />
-    </div>
-    <div class="detail-item technology-confirmed-date">
-      <label>Technology confirmed</label>
-      <input type="date" class="form-control" id="technology-confirmed-date" />
-    </div>
-  </div>
+<div class="tbody" id="requests-table-body"></div>
+`,_=`:host{cursor:pointer;border-bottom:1px solid #eee;flex-direction:row;transition:background-color .2s;display:flex!important}:host:hover{background-color:#f8f9fa}:host.selected{background-color:#e8f0fe!important}:host .badge{border-radius:12px;padding:4px 8px;font-size:.8rem;font-weight:700}:host .td{vertical-align:middle;flex:1;padding:12px 8px}:host .requester-school{color:#555;font-size:.85rem}`,v=`<div class="td">
+  <status-badge class="status-cell" status="Unknown"></status-badge>
 </div>
-`,c=`<tr><td colspan="5" class="empty-state">
-  Select a request row to view details here.
-</td></tr>`,l=`<div class="empty-state">No request selected.</div>`,u=new class{constructor(){this._state={selectedRow:null,allRows:[],isPanelOpen:!1},this._listeners=[]}subscribe(e){this._listeners.push(e)}setState(e){this._state={...this._state,...e},this._listeners.forEach(e=>e(this._state))}getState(){return this._state}},d=`modulepreload`,f=function(e,t){return new URL(e,t).href},p={},m=function(e,t,n){let r=Promise.resolve();if(t&&t.length>0){let e=document.getElementsByTagName(`link`),i=document.querySelector(`meta[property=csp-nonce]`),a=i?.nonce||i?.getAttribute(`nonce`);function o(e){return Promise.all(e.map(e=>Promise.resolve(e).then(e=>({status:`fulfilled`,value:e}),e=>({status:`rejected`,reason:e}))))}r=o(t.map(t=>{if(t=f(t,n),t in p)return;p[t]=!0;let r=t.endsWith(`.css`),i=r?`[rel="stylesheet"]`:``;if(n)for(let n=e.length-1;n>=0;n--){let i=e[n];if(i.href===t&&(!r||i.rel===`stylesheet`))return}else if(document.querySelector(`link[href="${t}"]${i}`))return;let o=document.createElement(`link`);if(o.rel=r?`stylesheet`:d,r||(o.as=`script`),o.crossOrigin=``,o.href=t,a&&o.setAttribute(`nonce`,a),document.head.appendChild(o),r)return new Promise((e,n)=>{o.addEventListener(`load`,e),o.addEventListener(`error`,()=>n(Error(`Unable to preload CSS for ${t}`)))})}))}function i(e){let t=new Event(`vite:preloadError`,{cancelable:!0});if(t.payload=e,window.dispatchEvent(t),!t.defaultPrevented)throw e}return r.then(t=>{for(let e of t||[])e.status===`rejected`&&i(e.reason);return e().catch(i)})},h=n({getMockData:()=>g});function g(){return JSON.stringify(_.requests)}var _,v=t((()=>{_={requests:[{id:`12345`,status:`Needs Approval`,requestDate:new Date,submittedDate:new Date,name:`John Doe`,reqType:`Translation`,eventLocation:`123 Main St, Anytown, USA`,description:`Requesting translation of syllabus.`,docLink:`https://example.com/document`,docPageCount:10,school:`Walpole High School`,originalLanguage:`English`,targetLanguage:`Spanish`},{id:`67890`,status:`Completed`,requestDate:new Date,submittedDate:new Date,name:`Jane Smith`,reqType:`Interpretation`,eventLocation:`456 Oak Ave, Somewhere, USA`,description:`Requesting interpretation services for an upcoming event.`,startTime:new Date(`5/25/2026 6:00 PM`),endTime:new Date(`5/25/2026 7:00 PM`),school:`Boyden`,originalLanguage:`English`,targetLanguage:`Chinese`},{id:`67891`,status:`Scheduled`,requestDate:new Date,submittedDate:new Date,name:`Bob Robertson`,reqType:`Interpretation`,eventLocation:`456 Oak Ave, Somewhere, USA`,description:`Requesting interpretation services for an upcoming event.`,startTime:new Date(`6/3/2026 6:00 PM`),endTime:new Date(`6/3/2026 7:00 PM`),school:`Old Post Road`,originalLanguage:`English`,targetLanguage:`Portuguese`}]}})),y=window.location.href.includes(`localhost`),b=()=>new Promise((e,t)=>{if(y){m(()=>Promise.resolve().then(()=>(v(),h)).then(t=>{console.log(`Mock data loaded dynamically`);let n=JSON.parse(t.getMockData()).map(x);setTimeout(()=>e(n),500)}),void 0,import.meta.url);return}google.script.run.withSuccessHandler(e).withFailureHandler(t).getDataFromServer()});function x(e){return{...e,requestDate:e.requestDate?new Date(e.requestDate):null,submittedDate:e.submittedDate?new Date(e.submittedDate):null,startTime:e.startTime?new Date(e.startTime):null,endTime:e.endTime?new Date(e.endTime):null}}var S=`.thead .table-row{cursor:pointer;border-bottom:1px solid #eee;flex-direction:row;transition:background-color .2s;display:flex!important}:host:hover{background-color:#f8f9fa}:host.selected{background-color:#e8f0fe!important}.badge{border-radius:12px;padding:4px 8px;font-size:.8rem;font-weight:700}.th{vertical-align:middle;flex:1;padding:12px 8px}`,C=`<thead>
-  <tr>
-    <th>Status</th>
-    <th>Request Date</th>
-    <th>Submitted</th>
-    <th>Type</th>
-    <th>Requested By</th>
-  </tr>
-</thead>
-<tbody id="requests-table-body"></tbody>
-`,w=`:host{cursor:pointer;border-bottom:1px solid #eee;flex-direction:row;transition:background-color .2s;display:flex!important}:host:hover{background-color:#f8f9fa}:host.selected{background-color:#e8f0fe!important}:host .badge{border-radius:12px;padding:4px 8px;font-size:.8rem;font-weight:700}:host .td{vertical-align:middle;flex:1;padding:12px 8px}`,T=`<div class="td"><span class="badge status"></span></div>
 <div class="td request-date"></div>
 <div class="td submitted-date"></div>
 <div class="td reqType"></div>
 <div class="td name">
   <div class="requester-name"></div>
   <div class="requester-school"></div>
-</div>`;function E(e,t){try{switch(t){case`MM/DD/YYYY`:return e.toLocaleDateString(`en-US`);case`MMM D, YYYY`:return e.toLocaleDateString(`en-US`,{month:`short`,day:`numeric`,year:`numeric`});default:return e.toLocaleDateString()}}catch(e){return console.warn(`Error formatting date:`,e),``}}var D=new CSSStyleSheet;D.replaceSync(w);var O=class extends HTMLElement{constructor(){super(),this.attachShadow({mode:`open`}),this.shadowRoot.adoptedStyleSheets=[D],this._data={}}set data(e){this._data=e,this.isConnected&&this.render()}connectedCallback(){this._data&&Object.keys(this._data).length>0&&this.render(),this.addEventListener(`click`,()=>{u.setState({selectedRow:this._data,isPanelOpen:!0})})}render(){this.shadowRoot.innerHTML=T,this.populateData(),this.checkSelection()}populateData(){console.log(`Populating row with data:`,this._data),this.shadowRoot.querySelector(`.status`).textContent=this._data.status||``,this.shadowRoot.querySelector(`.request-date`).textContent=E(this._data.requestDate,`MMM D, YYYY`)||``,this.shadowRoot.querySelector(`.submitted-date`).textContent=E(this._data.submittedDate,`MMM D, YYYY`)||``,this.shadowRoot.querySelector(`.reqType`).textContent=this._data.reqType||``,this.shadowRoot.querySelector(`.requester-name`).textContent=this._data.name||``,this.shadowRoot.querySelector(`.requester-school`).textContent=this._data.school||``}checkSelection(){u.getState().selectedRow?.id===this._data.id?this.shadowRoot.querySelector(`.td`).style.backgroundColor=`#e8f0fe`:this.shadowRoot.querySelector(`.td`).style.backgroundColor=`transparent`}};customElements.define(`app-row`,O);var k=new CSSStyleSheet;k.replaceSync(S);var A=class extends HTMLElement{constructor(){super(),this.attachShadow({mode:`open`}),this.shadowRoot.adoptedStyleSheets=[k]}connectedCallback(){this.renderShell(),u.subscribe(e=>{this.updateRows(e.allRows,e.loading)})}renderShell(){this.shadowRoot.innerHTML=C}updateRows(e,t){let n=this.shadowRoot.getElementById(`row-container`);t||(n.innerHTML=``,e.forEach(e=>{let t=document.createElement(`app-row`);n.appendChild(t),t.data=e}))}};customElements.define(`app-table`,A),document.getElementById(`requests-table-body`),document.getElementById(`school-filter-wrapper`),document.getElementById(`results-count`),document.getElementById(`details-card-body`),document.getElementById(`details-column-1`),window.location.href.includes(`localhost`),document.addEventListener(`DOMContentLoaded`,()=>{j()});async function j(){u.setState({loading:!0,allRows:[]});try{let e=await b();u.setState({allRows:e,loading:!1}),console.log(u.getState())}catch(e){console.error(`Failed to load data:`,e),u.setState({loading:!1,error:e.message})}}var M=(e,t)=>{let n=document.createElement(`template`);n.innerHTML=e.trim();let r=n.content.querySelector(t);if(!r)throw Error(`Could not find selector "${t}" in template`);return r};M(i,`.school-filter`),M(l,`.empty-state`),M(c,`.empty-state`),M(o,`.details-translation`),M(s,`.details-interpretation`),M(r,`#translation-select`),M(a,`.status-container`);</script>
+</div>`;function y(e,t){try{switch(t){case`MM/DD/YYYY`:return e.toLocaleDateString(`en-US`);case`MMM D, YYYY`:return e.toLocaleDateString(`en-US`,{month:`short`,day:`numeric`,year:`numeric`});default:return e.toLocaleDateString()}}catch(e){return console.warn(`Error formatting date:`,e),``}}var b=new CSSStyleSheet;b.replaceSync(_);var x=class extends HTMLElement{constructor(){super(),this.attachShadow({mode:`open`}),this.shadowRoot.adoptedStyleSheets=[b],this._data={}}set data(e){this._data=e,this.isConnected&&this.render()}connectedCallback(){this._data&&Object.keys(this._data).length>0&&this.render(),this.addEventListener(`click`,()=>{r.setState({selectedRow:this._data,isPanelOpen:!0})})}render(){this.shadowRoot.innerHTML=v,this.populateData(),this.checkSelection()}populateData(){console.log(`Populating row with data:`,this._data),this.shadowRoot.querySelector(`.status-cell`).setAttribute(`status`,this._data.status),this.shadowRoot.querySelector(`.request-date`).textContent=y(this._data.requestDate,`MMM D, YYYY`)||``,this.shadowRoot.querySelector(`.submitted-date`).textContent=y(this._data.submittedDate,`MMM D, YYYY`)||``,this.shadowRoot.querySelector(`.reqType`).textContent=this._data.reqType||``,this.shadowRoot.querySelector(`.requester-name`).textContent=this._data.name||``,this.shadowRoot.querySelector(`.requester-school`).textContent=this._data.school||``}checkSelection(){r.getState().selectedRow?.id===this._data.id?this.shadowRoot.querySelector(`.td`).style.backgroundColor=`#e8f0fe`:this.shadowRoot.querySelector(`.td`).style.backgroundColor=`transparent`}};customElements.define(`app-row`,x);var S=new CSSStyleSheet;S.replaceSync(h);var C=class extends HTMLElement{constructor(){super(),this.attachShadow({mode:`open`}),this.shadowRoot.adoptedStyleSheets=[S]}connectedCallback(){this.render(),r.subscribe(e=>{this.updateRows(e.allRows,e.loading)})}render(){this.shadowRoot.innerHTML=g}updateRows(e,t){let n=this.shadowRoot.getElementById(`requests-table-body`);t||(n.innerHTML=``,e.forEach(e=>{let t=document.createElement(`app-row`);n.appendChild(t),t.data=e}))}};customElements.define(`app-table`,C),document.getElementById(`requests-table-body`),document.getElementById(`school-filter-wrapper`),document.getElementById(`results-count`),document.getElementById(`details-card-body`),document.getElementById(`details-column-1`),window.location.href.includes(`localhost`),document.addEventListener(`DOMContentLoaded`,()=>{w()});async function w(){r.setState({loading:!0,allRows:[]});try{let e=await p();r.setState({allRows:e,loading:!1}),console.log(r.getState())}catch(e){console.error(`Failed to load data:`,e),r.setState({loading:!1,error:e.message})}}</script>
   <style rel="stylesheet" crossorigin>:root{color:#1d2939;background:#f5f7fb;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;line-height:1.5}*{box-sizing:border-box}body{min-height:100vh;margin:0;padding:24px}header{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;display:flex}h1{margin:0;font-size:clamp(1.75rem,2.4vw,2.5rem)}.subtitle{color:#475569;max-width:720px;font-size:.98rem}.panel{grid-template-columns:1.2fr 1fr;gap:24px;display:grid}.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:24px;box-shadow:0 10px 30px #0f172a14}.card h2{color:#0f172a;margin-top:0;font-size:1.1rem}.filters{flex-wrap:wrap;align-items:center;gap:12px;display:flex}label{color:#334155;font-size:.95rem}select{color:#0f172a;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;min-width:200px;padding:10px 12px}table{border-collapse:collapse;width:100%;margin-top:16px;font-size:.95rem}thead{text-transform:uppercase;letter-spacing:.02em;background:#f1f5f9;font-size:.8rem}th,td{text-align:left;border-bottom:1px solid #e2e8f0;padding:14px 16px}tbody tr{cursor:pointer;transition:background .18s}tbody tr:hover{background:#eff6ff}tbody tr.active{background:#e0f2fe}.empty-state{text-align:center;color:#64748b;padding:32px 16px}.detail-item{margin-bottom:14px}.detail-item label{color:#334155;margin-bottom:6px;font-weight:700;display:block}.detail-value,.form-control{color:#0f172a;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px}.row-count{color:#64748b;margin-top:10px;font-size:.9rem}#details-card-body .details-view{grid-template-columns:1fr 1fr;gap:24px;display:grid}@media (width<=1080px){#details-card-body .details-view{grid-template-columns:1fr}}.badge{color:#0369a1;background:#e0f2fe;border-radius:999px;align-items:center;gap:8px;padding:8px 12px;font-weight:600;line-height:.8;display:inline-flex}.badge-needs-approval{color:#92400e;background:#fffbeb}.badge-approved{color:#1e40af;background:#dbeafe}.badge-completed{color:#047857;background:#d1fae5}.badge-scheduled,.badge-sent-for-translation{color:#92400e;background:#fef3c7}.badge-denied{color:#b91c1c;background:#fee2e2}.status-container{display:inline-block;position:relative}#status-select{opacity:0;cursor:pointer;width:100%;height:100%;position:absolute;top:0;left:0}.request-row .requester-school{font-size:.85rem;font-style:italic}@media (width<=960px){.panel{grid-template-columns:1fr}}@media (width<=640px){body{padding:18px}th,td{padding:12px 10px}}
 /*$vite$:1*/</style>
 </head>
@@ -170,21 +44,6 @@
         <h2>Requests</h2>
         <span id="results-count" class="row-count">0 entries</span>
       </div>
-      <div class="table-wrapper">
-        <table aria-label="Requests table">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Request Date</th>
-              <th>Submitted</th>
-              <th>Type</th>
-              <th>Requested By</th>
-            </tr>
-          </thead>
-          <tbody id="requests-table-body"></tbody>
-        </table>
-      </div>
-      <div id="empty-state" class="empty-state" hidden>No requests match the selected school.</div>
       <app-table></app-table> <!-- Custom element for the table, will render rows internally -->
     </section>
 

@@ -1,0 +1,23 @@
+/* StatusBadge.css */
+:host {
+  display: inline-block;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: white;
+  background-color: #6c757d; /* Default Gray */
+}
+
+/* Status-specific colors */
+:host([status="Needs Approval"]) .badge { background-color: #ffc107; color: #212529; }
+:host([status="Scheduled"]) .badge { background-color: #17a2b8; }
+:host([status="Completed"]) .badge { background-color: #28a745; }
+:host([status="Canceled"]) .badge { background-color: #dc3545; }
