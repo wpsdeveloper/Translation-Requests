@@ -25,21 +25,7 @@
         <h2>Requests</h2>
         <span id="results-count" class="row-count">0 entries</span>
       </div>
-      <div class="table-wrapper">
-        <table aria-label="Requests table">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Request Date</th>
-              <th>Submitted</th>
-              <th>Type</th>
-              <th>Requested By</th>
-            </tr>
-          </thead>
-          <tbody id="requests-table-body"></tbody>
-        </table>
-      </div>
-      <div id="empty-state" class="empty-state" hidden>No requests match the selected school.</div>
+      <app-table></app-table> <!-- Custom element for the table, will render rows internally -->
     </section>
 
     <section id="details-card" class="card">

@@ -7,7 +7,10 @@ import detailsTranslationTemplate from './components/detailsTranslation.htm?raw'
 import detailsInterpretationTemplate from './components/detailsInterpretation.htm?raw';
 import emptyRowTemplate from './components/emptyTableRow.htm?raw';
 import emptyDetailsTemplate from './components/emptyDetails.htm?raw';
-import tableRowTemplate from './components/tableRow.htm?raw';
+
+import { store } from './services/state.js';
+import { fetchData } from './services/api.js';
+import './components/AppTable/AppTable.js'; // Ensure the main table component is registered
 
 const tableBody = document.getElementById('requests-table-body');
 const schoolFilterWrapper = document.getElementById('school-filter-wrapper');
@@ -19,23 +22,26 @@ let allRequests = [];
 let isDebug = window.location.href.includes('localhost');
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (isDebug) {
-    import('./mock-data.js').then((module) => {
-      console.log('Mock data loaded dynamically');
-      receiveDataFromServer(module.getMockData());
-    });
-    return;
-  }
-
-  google.script.run
-    .withSuccessHandler(receiveDataFromServer)
-    .withFailureHandler((error) => {
-      // This will give you the ACTUAL server-side error message
-      console.error('Server Error:', error.message);
-      console.error('Stack Trace:', error.stack);
-    })
-    .getDataFromServer();
+  init();
 });
+
+async function init() {
+  // 1. Set initial loading state
+  store.setState({ loading: true, allRows: [] });
+
+  try {
+    // 2. Fetch the data (either mock or GAS)
+    const data = await fetchData();
+
+    // 3. Update the store
+    // This triggers the Table component to render the rows automatically
+    store.setState({ allRows: data, loading: false });
+    console.log(store.getState());
+  } catch (err) {
+    console.error("Failed to load data:", err);
+    store.setState({ loading: false, error: err.message });
+  }
+}
 
 function receiveDataFromServer(serializedData) {
   const dataRaw = JSON.parse(serializedData);
@@ -96,10 +102,6 @@ function renderTableRows(requests) {
     tableBody.appendChild(emptyRow);
     return;
   }
-
-  renderList(requests, tableBody, tableRowBlueprint, (row, request) => {
-    populateRowData(row, request);
-  });
 }
 
 function populateRowData(row, request) {
@@ -379,7 +381,6 @@ export function formatTime(time, format) {
 const schoolSelectBlueprint = createBlueprint(schoolSelectTemplate, '.school-filter');
 const emptyDetailsBlueprint = createBlueprint(emptyDetailsTemplate, '.empty-state');
 const emptyRowBlueprint = createBlueprint(emptyRowTemplate, '.empty-state');
-const tableRowBlueprint = createBlueprint(tableRowTemplate, '.request-row');
 const detailsTranslationBlueprint = createBlueprint(detailsTranslationTemplate, '.details-translation');
 const detailsInterpretationBlueprint = createBlueprint(detailsInterpretationTemplate, '.details-interpretation');
 const contractorSelectBlueprint = createBlueprint(contactorSelectTemplate, '#translation-select');

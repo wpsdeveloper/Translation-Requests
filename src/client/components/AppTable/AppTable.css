@@ -1,0 +1,36 @@
+.thead {
+  display: flex !important;
+  flex-direction: row;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #eee;
+
+  background: #f1f5f9;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+:host:hover {
+  background-color: #f8f9fa;
+}
+
+:host.selected {
+  background-color: #e8f0fe !important;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Add any specific styling for your cells here */
+.th {
+  padding: 12px 8px;
+  vertical-align: middle;
+  flex: 1;
+}
+
