@@ -4,12 +4,47 @@
       <h2>Request Details</h2>
       <status-select id="detail-status"></status-select>
     </div>
+    
     <div class="shared-meta">
-      <p><strong>Type:</strong> <span id="detail-reqType"></span></p>
-      <p><strong>Submitted:</strong> <span id="detail-submitted"></span></p>
-      <p><strong>Requester:</strong> <span id="detail-requester"></span></p>
-      <p><strong>Languages:</strong> <span id="detail-languages"></span></p>
-      <p><strong>Description:</strong> <span id="detail-description"></span></p>
+      <div class="detail-item">
+        <label>Type:</label>
+        <span id="view-reqType"></span>
+      </div>
+
+      <div class="detail-item">
+        <label>Submitted:</label>
+        <span id="view-submitted"></span>
+      </div>
+
+      <div class="detail-item">
+        <label>Requester Name:</label>
+        <span id="view-requester-name" class="view-mode"></span>
+        <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none;" />
+      </div>
+
+      <div class="detail-item">
+        <label>School:</label>
+        <span id="view-requester-school" class="view-mode"></span>
+        <input type="text" id="edit-requester-school" class="form-control edit-mode" style="display: none;" />
+      </div>
+
+      <div class="detail-item">
+        <label>Original Language:</label>
+        <span id="view-orig-lang" class="view-mode"></span>
+        <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none;" />
+      </div>
+
+      <div class="detail-item">
+        <label>Target Language:</label>
+        <span id="view-target-lang" class="view-mode"></span>
+        <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none;" />
+      </div>
+
+      <div class="detail-item">
+        <label>Description:</label>
+        <div id="view-description" class="view-mode"></div>
+        <textarea id="edit-description" class="form-control edit-mode" style="display: none;"></textarea>
+      </div>
     </div>
   </header>
 

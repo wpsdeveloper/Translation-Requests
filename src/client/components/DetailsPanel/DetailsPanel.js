@@ -62,6 +62,13 @@ class DetailsPanel extends HTMLElement {
     root.querySelector('#save-btn').style.display = isEdit ? 'inline-block' : 'none';
     root.querySelector('#cancel-btn').style.display = isEdit ? 'inline-block' : 'none';
 
+    // Toggle shared view/edit elements
+    const viewEls = root.querySelectorAll('.shared-meta .view-mode');
+    const editEls = root.querySelectorAll('.shared-meta .edit-mode');
+
+    viewEls.forEach((el) => (el.style.display = isEdit ? 'none' : ''));
+    editEls.forEach((el) => (el.style.display = isEdit ? 'block' : 'none'));
+
     // Notify the dynamic component
     const dynamicEl = root.querySelector('#dynamic-content').firstElementChild;
     if (dynamicEl && 'mode' in dynamicEl) {
@@ -87,11 +94,22 @@ class DetailsPanel extends HTMLElement {
       statusSelect.status = data.status;
       statusSelect.mode = this._mode;
     }
-    root.querySelector('#detail-submitted').textContent = formatDate(data.submittedDate, "MMM D, YYYY");
-    root.querySelector('#detail-reqType').textContent = data.reqType;
-    root.querySelector('#detail-requester').textContent = `${data.name} (${data.school})`;
-    root.querySelector('#detail-languages').textContent = `${data.originalLanguage} to ${data.targetLanguage}`;
-    root.querySelector('#detail-description').textContent = data.description || 'No description provided.';
+    root.querySelector('#view-reqType').textContent = data.reqType || 'N/A';
+    root.querySelector('#view-submitted').textContent = formatDate(data.submittedDate, 'MMM D, YYYY') || 'N/A';
+
+    // View Mode Shared Fields
+    root.querySelector('#view-requester-name').textContent = data.name || 'N/A';
+    root.querySelector('#view-requester-school').textContent = data.school || 'N/A';
+    root.querySelector('#view-orig-lang').textContent = data.originalLanguage || 'N/A';
+    root.querySelector('#view-target-lang').textContent = data.targetLanguage || 'N/A';
+    root.querySelector('#view-description').textContent = data.description || 'No description provided.';
+
+    // Edit Mode Shared Fields
+    root.querySelector('#edit-requester-name').value = data.name || '';
+    root.querySelector('#edit-requester-school').value = data.school || '';
+    root.querySelector('#edit-orig-lang').value = data.originalLanguage || '';
+    root.querySelector('#edit-target-lang').value = data.targetLanguage || '';
+    root.querySelector('#edit-description').value = data.description || '';
 
     // 2. Hydrate Dynamic Content
     const container = root.querySelector('#dynamic-content');

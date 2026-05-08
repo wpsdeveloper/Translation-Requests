@@ -1,14 +1,19 @@
 import styles from './ContractorSelect.css?inline';
+import sharedStyles from '../shared/DetailsStyles.css?inline';
 import template from './ContractorSelect.htm?raw';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
+const sharedSheet = new CSSStyleSheet();
+sharedSheet.replaceSync(sharedStyles);
+
+
 
 class ContractorSelect extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet];
+    this.shadowRoot.adoptedStyleSheets = [sharedSheet, sheet];
     this._mode = 'view';
     this._data = { contractor: '', name: '' };
   }
@@ -26,7 +31,7 @@ class ContractorSelect extends HTMLElement {
     const select = this.shadowRoot.querySelector('#contractor-dropdown');
     const manualEntry = this.shadowRoot.querySelector('#manual-entry');
     const nameInput = this.shadowRoot.querySelector('#contractor-name');
-    
+
     select.addEventListener('change', (e) => {
       const val = e.target.value;
       if (val === 'Staff Member' || val === 'Private Contractor') {
@@ -35,7 +40,7 @@ class ContractorSelect extends HTMLElement {
         manualEntry.style.display = 'none';
         nameInput.value = ''; // Clear name if not needed
       }
-      
+
       // Dispatch custom event for parent components
       this.dispatchEvent(new CustomEvent('change', {
         detail: {
@@ -71,8 +76,8 @@ class ContractorSelect extends HTMLElement {
     const editEl = root.querySelector('#edit-mode');
 
     if (viewEl && editEl) {
-      viewEl.style.display = value === 'view' ? 'block' : 'none';
-      editEl.style.display = value === 'edit' ? 'block' : 'none';
+      viewEl.style.display = value === 'view' ? '' : 'none';
+      editEl.style.display = value === 'edit' ? '' : 'none';
     }
     this.updateViewValue();
   }

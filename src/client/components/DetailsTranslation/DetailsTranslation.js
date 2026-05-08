@@ -29,7 +29,7 @@ class DetailsTranslation extends HTMLElement {
     const viewEls = root.querySelectorAll('.view-mode');
     const editEls = root.querySelectorAll('.edit-mode');
 
-    viewEls.forEach(el => el.style.display = value === 'view' ? 'block' : 'none');
+    viewEls.forEach(el => el.style.display = value === 'view' ? '' : 'none');
     editEls.forEach(el => el.style.display = value === 'edit' ? 'block' : 'none');
 
     const contractorSelect = root.querySelector('#contractor-select');
