@@ -27,15 +27,38 @@ class DetailsInterpretation extends HTMLElement {
   set mode(value) {
     this._mode = value;
     const root = this.shadowRoot;
-    const viewEls = root.querySelectorAll('.view-mode');
-    const editEls = root.querySelectorAll('.edit-mode');
+    const isEdit = value === 'edit';
+    const isProcess = value === 'process';
 
-    viewEls.forEach(el => el.style.display = value === 'view' ? '' : 'none');
-    editEls.forEach(el => el.style.display = value === 'edit' ? '' : 'none');
+    // Fields above ContractorSelect (Edit mode)
+    const editFields = ['#edit-interpretation-type', '#edit-event-date', '.time-range', '#edit-event-location'];
+    const editViews = ['#view-interpretation-type', '#view-event-date', '#view-event-time', '#view-event-location'];
+
+    editFields.forEach(sel => {
+      const el = root.querySelector(sel);
+      if (el) el.style.display = isEdit ? (sel === '.time-range' ? 'flex' : 'block') : 'none';
+    });
+    editViews.forEach(sel => {
+      const el = root.querySelector(sel);
+      if (el) el.style.display = isEdit ? 'none' : '';
+    });
+
+    // Fields below and including ContractorSelect (Process mode)
+    const processFields = ['#edit-date-scheduled', '#edit-date-guest-confirmed', '#edit-date-tech-confirmed'];
+    const processViews = ['#view-date-scheduled', '#view-date-guest-confirmed', '#view-date-tech-confirmed'];
+
+    processFields.forEach(sel => {
+      const el = root.querySelector(sel);
+      if (el) el.style.display = isProcess ? 'block' : 'none';
+    });
+    processViews.forEach(sel => {
+      const el = root.querySelector(sel);
+      if (el) el.style.display = isProcess ? 'none' : '';
+    });
 
     const contractorSelect = root.querySelector('#contractor-select');
     if (contractorSelect) {
-      contractorSelect.mode = value;
+      contractorSelect.mode = isProcess ? 'edit' : 'view';
     }
   }
 

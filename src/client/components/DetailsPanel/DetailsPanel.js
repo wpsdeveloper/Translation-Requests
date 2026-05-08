@@ -45,7 +45,10 @@ class DetailsPanel extends HTMLElement {
         store.setState({ selectedRow: null });
         this.setMode('view');
       }
-      if (e.target.id === 'edit-btn') this.setMode('edit');
+      if (e.composedPath().some(el => el.id === 'edit-btn')) {
+        this.setMode(this._mode === 'edit' ? 'view' : 'edit');
+      }
+      if (e.target.id === 'process-btn') this.setMode('process');
       if (e.target.id === 'cancel-btn') this.setMode('view');
       if (e.target.id === 'save-btn') {
         // Here you would eventually handle the save logic
@@ -64,17 +67,19 @@ class DetailsPanel extends HTMLElement {
     this._mode = mode;
     const root = this.shadowRoot;
     const isEdit = mode === 'edit';
+    const isProcess = mode === 'process';
+    const isView = mode === 'view';
 
-    root.querySelector('#edit-btn').style.display = isEdit ? 'none' : 'inline-block';
-    root.querySelector('#save-btn').style.display = isEdit ? 'inline-block' : 'none';
-    root.querySelector('#cancel-btn').style.display = isEdit ? 'inline-block' : 'none';
+    root.querySelector('#process-btn').style.display = isView ? 'inline-block' : 'none';
+    root.querySelector('#save-btn').style.display = !isView ? 'inline-block' : 'none';
+    root.querySelector('#cancel-btn').style.display = !isView ? 'inline-block' : 'none';
 
-    // Toggle shared view/edit elements
-    const viewEls = root.querySelectorAll('.view-mode');
-    const editEls = root.querySelectorAll('.edit-mode');
+    // Toggle shared view/edit elements (only in 'edit' mode)
+    const sharedViewEls = root.querySelectorAll('.shared-meta .view-mode, .detail-item .view-mode');
+    const sharedEditEls = root.querySelectorAll('.shared-meta .edit-mode, .detail-item .edit-mode');
 
-    viewEls.forEach((el) => (el.style.display = isEdit ? 'none' : ''));
-    editEls.forEach((el) => (el.style.display = isEdit ? '' : 'none'));
+    sharedViewEls.forEach((el) => (el.style.display = isEdit ? 'none' : ''));
+    sharedEditEls.forEach((el) => (el.style.display = isEdit ? '' : 'none'));
 
     // Notify the dynamic component
     const dynamicEl = root.querySelector('#dynamic-content').firstElementChild;
@@ -84,12 +89,12 @@ class DetailsPanel extends HTMLElement {
 
     const statusSelect = root.querySelector('#detail-status');
     if (statusSelect) {
-      statusSelect.mode = mode;
+      statusSelect.mode = isProcess ? 'edit' : 'view';
     }
 
     const schoolSelect = root.querySelector('#detail-school');
     if (schoolSelect) {
-      schoolSelect.mode = mode;
+      schoolSelect.mode = isEdit ? 'edit' : 'view';
     }
   }
 
