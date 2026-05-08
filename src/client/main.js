@@ -8,16 +8,8 @@ import detailsInterpretationTemplate from './components/detailsInterpretation.ht
 
 import { store } from './services/state.js';
 import { fetchData } from './services/api.js';
-import './components/AppTable/AppTable.js'; // Ensure the main table component is registered
-
-const tableBody = document.getElementById('requests-table-body');
-const schoolFilterWrapper = document.getElementById('school-filter-wrapper');
-const resultsCount = document.getElementById('results-count');
-const detailsCard = document.getElementById('details-card-body');
-const requestDetails = document.getElementById('details-column-1');
-let activeRowId = null;
-let allRequests = [];
-let isDebug = window.location.href.includes('localhost');
+import './components/AppTable/AppTable.js';
+import './components/DetailsPanel/DetailsPanel';
 
 document.addEventListener('DOMContentLoaded', () => {
   init();
@@ -41,67 +33,14 @@ async function init() {
   }
 }
 
-
-
-
-
-function populateCommonDetails(element, request) {
-  element.querySelector('.request-id .content').textContent = request.id;
-  element.querySelector('.languages .content').textContent = request.originalLanguage + ' to ' + request.targetLanguage;
-  element.querySelector('.description .content').textContent = request.description;
-  element.querySelector('.contractor-name input').value = request.contractorName || '';
-
-
- 
-  handleContractorChange(); // Set initial visibility based on current value
-}
-
-function handleContractorChange() {
-  const selectValue = document.querySelector('#details-card .contractor select').value;
-  switch (selectValue) {
-    case 'Lexikeet':
-    case 'MAPA':
-    case 'Google Translate':
-      document.querySelector('#details-card .contractor-name').style.display = 'none';
-      break;
-    case 'Staff member':
-    case 'Contractor':
-    default:
-      document.querySelector('#details-card .contractor-name').style.display = '';
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    store.setState({ selectedRow: null });
   }
-  console.log(document.querySelector('#details-card .contractor-name'));
-}
+});
 
-function handleStatusChange(e, requestId, newStatus, statusElement) {
-  const statusText = e.target.options[e.target.selectedIndex].text;
-  const statusBadge = statusElement.querySelector('.badge');
 
-  // 1. Update the text
-  statusBadge.textContent = statusText;
 
-  // 2. Optional: Update colors based on status
-  statusBadge.className = 'badge'; // Reset to base class
-  statusBadge.classList.add(getBadgeClass(statusText)); // Add new class based on status
-
-  updateStatusBadges(statusText, activeRowId);
-}
-
-function updateStatusBadges(status, requestId) {
-  const statusBadgeDetails = document.getElementById('status-badge');
-  const rowBadge = document.querySelector(`[data-id="${requestId}"] .badge`);
-
-  statusBadgeDetails.textContent = status;
-  rowBadge.textContent = status;
-
-  // Remove existing status classes
-  statusBadgeDetails.className = 'badge';
-  rowBadge.className = 'badge';
-
-  const badgeClass = getBadgeClass(status);
-
-  statusBadgeDetails.classList.add(badgeClass);
-  rowBadge.classList.add(badgeClass);
-}
 
 
 

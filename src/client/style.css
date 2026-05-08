@@ -35,11 +35,7 @@ h1 {
   font-size: 0.98rem;
   max-width: 720px;
 }
-.panel {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: 1.2fr 1fr;
-}
+
 .card {
   background: #ffffff;
   border: 1px solid #e2e8f0;

@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 350px;
+  background: white;
+  border-left: 1px solid #ddd;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  border-left: 1px solid #ddd;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease-in-out;
+  
+  /* Start hidden (pushed off-screen to the right) */
+  transform: translateX(100%);
+}
+
+/* When the 'open' class is added to the host element */
+:host(.open) {
+  transform: translateX(0);
+}
+
+h2 { margin-top: 0; font-size: 1.2rem; }
+h3 { color: #555; font-size: 1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.shared-meta p{ 
+  font-size: 0.9rem; 
+  margin: 5px 0; 
+  color: #666; 
+}
+
+.details-section label {
+  display: block;
+  font-weight: bold;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 10px;
+}
+
+footer {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+button { padding: 8px 16px; cursor: pointer; }
+button.primary { background: #007bff; color: white; border: none; }
