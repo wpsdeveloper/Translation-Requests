@@ -1,5 +1,6 @@
 import styles from './DetailsInterpretation.css?inline';
 import template from './DetailsInterpretation.htm?raw';
+import '../ContractorSelect/ContractorSelect.js';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
@@ -23,6 +24,14 @@ class DetailsInterpretation extends HTMLElement {
     this.shadowRoot.querySelector('.lang').textContent = this._data.language || 'N/A';
     this.shadowRoot.querySelector('.loc').textContent = this._data.location || 'N/A';
     this.shadowRoot.querySelector('.time').textContent = this._data.meetingTime || 'N/A';
+
+    const contractorSelect = this.shadowRoot.querySelector('#contractor-select');
+    if (contractorSelect) {
+      contractorSelect.value = {
+        contractor: this._data.contractor,
+        name: this._data.contractorName
+      };
+    }
   }
 }
 
