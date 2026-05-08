@@ -154,3 +154,25 @@ function makeRequestRow(request) {
 function makeString(value) {
   return value ? value.toString() : '';
 }
+
+function getRequestsFromAppSheet() {
+  const appId = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
+  const accessKey = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
+  const tableName = 'Requests';
+  
+  const url = `https://api.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+  
+  const options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { 'ApplicationAccessKey': accessKey },
+    payload: JSON.stringify({
+      "Action": "Find",
+      "Properties": { "Locale": "en-US" },
+      "Rows": []
+    })
+  };
+  
+  const response = UrlFetchApp.fetch(url, options);
+  return JSON.parse(response.getContentText());
+}

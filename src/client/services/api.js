@@ -1,10 +1,10 @@
 // src/client/services/api.js
-
-const IS_MOCK = window.location.href.includes('localhost'); // Toggle this for local dev vs. production
+const FORCE_SERVER = false;
+const IS_MOCK = !FORCE_SERVER && !window.location.href.includes('google') && !window.location.href.includes('script');
 
 export const fetchData = () => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (IS_MOCK && !FORCE_SERVER) {
       import('./mock-data.js').then((module) => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
