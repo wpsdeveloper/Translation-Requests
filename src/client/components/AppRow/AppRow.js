@@ -29,10 +29,13 @@ class AppRow extends HTMLElement {
     }
 
     this.addEventListener('click', () => {
+      const panel = document.querySelector('details-panel');
+      if (panel && panel.mode === 'edit') return;
+
       // UPDATE STATE: Tell the app which row was selected
-      store.setState({ 
+      store.setState({
         selectedRow: this._data,
-        isPanelOpen: true 
+        isPanelOpen: true,
       });
     });
   }
@@ -42,7 +45,7 @@ class AppRow extends HTMLElement {
     // inside the parent table's styling context easily.
     this.shadowRoot.innerHTML = AppRowTemplate;
     this.populateData();
-    
+
     // Optional: Add a class if this row is the one currently selected
     this.checkSelection();
   }

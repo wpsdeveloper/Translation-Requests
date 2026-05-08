@@ -11,6 +11,7 @@ class DetailsInterpretation extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.adoptedStyleSheets = [sheet];
     this._data = {};
+    this._mode = 'view';
   }
 
   set data(value) {
@@ -18,20 +19,49 @@ class DetailsInterpretation extends HTMLElement {
     this.render();
   }
 
+  get mode() {
+    return this._mode;
+  }
+
+  set mode(value) {
+    this._mode = value;
+    const root = this.shadowRoot;
+    const viewEls = root.querySelectorAll('.view-mode');
+    const editEls = root.querySelectorAll('.edit-mode');
+
+    viewEls.forEach(el => el.style.display = value === 'view' ? 'block' : 'none');
+    editEls.forEach(el => el.style.display = value === 'edit' ? 'block' : 'none');
+
+    const contractorSelect = root.querySelector('#contractor-select');
+    if (contractorSelect) {
+      contractorSelect.mode = value;
+    }
+  }
+
   render() {
     this.shadowRoot.innerHTML = template;
-    // Hydrate
-    this.shadowRoot.querySelector('.lang').textContent = this._data.language || 'N/A';
-    this.shadowRoot.querySelector('.loc').textContent = this._data.location || 'N/A';
-    this.shadowRoot.querySelector('.time').textContent = this._data.meetingTime || 'N/A';
+    const root = this.shadowRoot;
 
-    const contractorSelect = this.shadowRoot.querySelector('#contractor-select');
+    // View Mode Hydration
+    root.querySelector('.lang').textContent = this._data.language || 'N/A';
+    root.querySelector('.loc').textContent = this._data.location || 'N/A';
+    root.querySelector('.time').textContent = this._data.meetingTime || 'N/A';
+
+    // Edit Mode Hydration
+    root.querySelector('.edit-lang').value = this._data.language || '';
+    root.querySelector('.edit-loc').value = this._data.location || '';
+    root.querySelector('.edit-time').value = this._data.meetingTime || '';
+
+    const contractorSelect = root.querySelector('#contractor-select');
     if (contractorSelect) {
       contractorSelect.value = {
         contractor: this._data.contractor,
         name: this._data.contractorName
       };
+      contractorSelect.mode = this._mode;
     }
+
+    this.mode = this._mode; // Apply current mode visibility
   }
 }
 

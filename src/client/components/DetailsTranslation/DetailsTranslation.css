@@ -1,5 +1,23 @@
- p { 
-  font-size: 0.9rem; 
-  margin: 5px 0; 
-  color: #666; 
-}
+ :host {
+   font-size: 0.9rem;
+   margin: 5px 0;
+   color: #666;
+ }
+
+ :host .detail-item label {
+   font-size: 0.85rem;
+   font-weight: 700;
+   margin-bottom: 0;
+   display: block;
+ }
+
+
+ .form-control {
+   width: 100%;
+   background: #f8fafc;
+   border: 1px solid #e2e8f0;
+   border-radius: 12px;
+   padding: 10px 12px;
+   color: #0f172a;
+   font-family: inherit;
+ }

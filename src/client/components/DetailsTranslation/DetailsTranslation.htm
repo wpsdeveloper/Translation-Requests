@@ -1,11 +1,31 @@
-<p>
-  <strong>Document Length:</strong> 
-  <span id="detail-document-length"></span>
-</p>
-<p>
-  <span id="detail-document-link">
-    <a href="#" target="_blank" class="file-link">View Document</a>
-  </span>
-</p>
-<hr />
-<contractor-select id="contractor-select"></contractor-select>
+<div class="details-translation">
+  <div class="detail-item">
+    <label>Page Count</label>
+    <div class="view-mode" id="view-document-length"></div>
+    <input type="text" class="form-control edit-mode" id="edit-document-length" style="display: none;" />
+  </div>
+
+  <div class="detail-item">
+    <label>Document Link</label>
+    <div class="view-mode">
+      <a href="#" target="_blank" id="view-document-link" class="file-link">View Document</a>
+    </div>
+    <input type="text" class="form-control edit-mode" id="edit-document-link" style="display: none;" />
+  </div>
+
+  <hr />
+
+  <contractor-select id="contractor-select"></contractor-select>
+
+  <div class="detail-item">
+    <label>Date Sent to Contractor: </label>
+    <div class="view-mode" id="view-date-sent"></div>
+    <input type="date" class="form-control edit-mode" id="edit-date-sent" style="display: none;" />
+  </div>
+
+  <div class="detail-item">
+    <label>Date Received from Contractor: </label>
+    <div class="view-mode" id="view-date-received"></div>
+    <input type="date" class="form-control edit-mode" id="edit-date-received" style="display: none;" />
+  </div>
+</div>

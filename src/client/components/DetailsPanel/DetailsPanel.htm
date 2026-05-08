@@ -2,7 +2,7 @@
   <header>
     <div class="header-main">
       <h2>Request Details</h2>
-      <status-badge id="detail-status"></status-badge>
+      <status-select id="detail-status"></status-select>
     </div>
     <div class="shared-meta">
       <p><strong>Type:</strong> <span id="detail-reqType"></span></p>
@@ -19,6 +19,8 @@
 
   <footer>
     <button id="close-btn">Close</button>
-    <button id="save-btn" class="primary">Save Changes</button>
+    <button id="edit-btn">Edit</button>
+    <button id="save-btn" class="primary" style="display: none;">Save Changes</button>
+    <button id="cancel-btn" style="display: none;">Cancel</button>
   </footer>
 </div>

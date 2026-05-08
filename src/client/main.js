@@ -33,8 +33,15 @@ async function init() {
   }
 }
 
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
+window.addEventListener('click', (e) => {
+  const panel = document.querySelector('details-panel');
+  if (panel && panel.mode === 'edit') return;
+
+  const path = e.composedPath();
+  const isPanel = path.some((el) => el.tagName === 'DETAILS-PANEL');
+  const isRow = path.some((el) => el.tagName === 'APP-ROW');
+
+  if (!isPanel && !isRow) {
     store.setState({ selectedRow: null });
   }
 });

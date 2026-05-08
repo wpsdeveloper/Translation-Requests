@@ -5,6 +5,7 @@ import panelStyles from './DetailsPanel.css?inline';
 
 import '../DetailsInterpretation/DetailsInterpretation.js';
 import '../DetailsTranslation/DetailsTranslation.js';
+import '../StatusSelect/StatusSelect.js';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(panelStyles);
@@ -14,6 +15,11 @@ class DetailsPanel extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.adoptedStyleSheets = [sheet];
+    this._mode = 'view';
+  }
+
+  get mode() {
+    return this._mode;
   }
 
   connectedCallback() {
@@ -28,10 +34,40 @@ class DetailsPanel extends HTMLElement {
         this.classList.remove('open'); // Hide panel
       }
     });
-    
+
     this.shadowRoot.addEventListener('click', (e) => {
-      if (e.target.id === 'close-btn') store.setState({ selectedRow: null });
+      if (e.target.id === 'close-btn') {
+        store.setState({ selectedRow: null });
+        this.setMode('view');
+      }
+      if (e.target.id === 'edit-btn') this.setMode('edit');
+      if (e.target.id === 'cancel-btn') this.setMode('view');
+      if (e.target.id === 'save-btn') {
+        // Here you would eventually handle the save logic
+        this.setMode('view');
+      }
     });
+  }
+
+  setMode(mode) {
+    this._mode = mode;
+    const root = this.shadowRoot;
+    const isEdit = mode === 'edit';
+
+    root.querySelector('#edit-btn').style.display = isEdit ? 'none' : 'inline-block';
+    root.querySelector('#save-btn').style.display = isEdit ? 'inline-block' : 'none';
+    root.querySelector('#cancel-btn').style.display = isEdit ? 'inline-block' : 'none';
+
+    // Notify the dynamic component
+    const dynamicEl = root.querySelector('#dynamic-content').firstElementChild;
+    if (dynamicEl && 'mode' in dynamicEl) {
+      dynamicEl.mode = mode;
+    }
+
+    const statusSelect = root.querySelector('#detail-status');
+    if (statusSelect) {
+      statusSelect.mode = mode;
+    }
   }
 
   render() {
@@ -42,7 +78,11 @@ class DetailsPanel extends HTMLElement {
     const root = this.shadowRoot;
 
     // 1. Hydrate Shared Fields
-    root.querySelector('#detail-status').setAttribute('status', data.status);
+    const statusSelect = root.querySelector('#detail-status');
+    if (statusSelect) {
+      statusSelect.status = data.status;
+      statusSelect.mode = this._mode;
+    }
     root.querySelector('#detail-submitted').textContent = formatDate(data.submittedDate, "MMM D, YYYY");
     root.querySelector('#detail-reqType').textContent = data.reqType;
     root.querySelector('#detail-requester').textContent = `${data.name} (${data.school})`;
@@ -52,7 +92,7 @@ class DetailsPanel extends HTMLElement {
     // 2. Hydrate Dynamic Content
     const container = root.querySelector('#dynamic-content');
     container.innerHTML = ''; // Clear previous view
-    
+
     let featureEl;
     if (data.reqType === 'Interpretation') {
       featureEl = document.createElement('details-interpretation');
@@ -63,6 +103,7 @@ class DetailsPanel extends HTMLElement {
     if (featureEl) {
       container.appendChild(featureEl);
       featureEl.data = data; // Push data into the new component
+      featureEl.mode = this._mode; // Set initial mode
     }
   }
 }

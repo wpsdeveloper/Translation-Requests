@@ -1,0 +1,72 @@
+:host {
+  display: inline-block;
+}
+
+.badge-select {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+  padding-right: 30px;
+  transition: all 0.2s ease;
+}
+
+.badge-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Status-specific styles for the SELECT itself */
+:host([status="Needs Approval"]) .badge-select {
+  background-color: #fffbeb;
+  color: #92400e;
+}
+
+:host([status="Approved"]) .badge-select {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+:host([status="Completed"]) .badge-select {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+:host([status="Scheduled"]) .badge-select {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+:host([status="Sent for translation"]) .badge-select {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+:host([status="Denied"]) .badge-select {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Fallback */
+.badge-select {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Option styling is limited in many browsers, but we can try some basics */
+option {
+  background-color: white;
+  color: #0f172a;
+  padding: 8px;
+}

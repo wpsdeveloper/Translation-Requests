@@ -1,16 +1,23 @@
 <div class="interpretation-details">
-  <p>
-    <strong>Language:</strong> 
-    <span class="lang"></span>
-  </p>
-  <p>
-    <strong>Location:</strong> 
-    <span class="loc"></span>
-  </p>
-  <p>
-    <strong>Meeting Time:</strong> 
-    <span class="time"></span>
-  </p>
+  <div class="detail-item">
+    <label>Language</label>
+    <div class="view-mode lang"></div>
+    <input type="text" class="form-control edit-mode edit-lang" style="display: none;" />
+  </div>
+
+  <div class="detail-item">
+    <label>Location</label>
+    <div class="view-mode loc"></div>
+    <input type="text" class="form-control edit-mode edit-loc" style="display: none;" />
+  </div>
+
+  <div class="detail-item">
+    <label>Meeting Time</label>
+    <div class="view-mode time"></div>
+    <input type="text" class="form-control edit-mode edit-time" style="display: none;" />
+  </div>
+
   <hr />
+
   <contractor-select id="contractor-select"></contractor-select>
 </div>

@@ -3,13 +3,18 @@
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "node",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "checkJs": false,
-    "ignoreDeprecations": "6.0",
-    "types": ["google-apps-script"]
+    "types": [
+      "google-apps-script"
+    ]
   },
   "include": [
     "src/**/*",
-    "node_modules/@types"
-, "src/test/code.test.js"  ]
+    "node_modules/@types",
+    "src/test/code.test.js"
+  ]
 }
