@@ -48,8 +48,6 @@ class AppRow extends HTMLElement {
   }
 
   populateData() {
-    console.log('Populating row with data:', this._data);
-    // Inside render()
     this.shadowRoot.querySelector('.status-cell').setAttribute('status', this._data.status);
     this.shadowRoot.querySelector('.request-date').textContent = formatDate(this._data.requestDate, 'MMM D, YYYY') || '';
     this.shadowRoot.querySelector('.submitted-date').textContent = formatDate(this._data.submittedDate, 'MMM D, YYYY') || '';
@@ -61,9 +59,13 @@ class AppRow extends HTMLElement {
   checkSelection() {
     const state = store.getState();
     if (state.selectedRow?.id === this._data.id) {
-      this.shadowRoot.querySelector('.td').style.backgroundColor = '#e8f0fe';
+      this.shadowRoot.querySelectorAll('.td').forEach(td => {
+        td.style.backgroundColor = '#e8f0fe';
+      });
     } else {
-      this.shadowRoot.querySelector('.td').style.backgroundColor = 'transparent';
+      this.shadowRoot.querySelectorAll('.td').forEach(td => {
+        td.style.backgroundColor = 'transparent';
+      });
     }
   }
 }
