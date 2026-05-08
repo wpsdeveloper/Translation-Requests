@@ -105,6 +105,23 @@ class DetailsInterpretation extends HTMLElement {
 
     this.mode = this._mode; // Apply current mode visibility
   }
+
+  getSaveData() {
+    const root = this.shadowRoot;
+    const contractorData = root.querySelector('#contractor-select')?.getSaveData() || {};
+
+    return {
+      interpretationType: root.querySelector('#edit-interpretation-type').value,
+      requestDate: root.querySelector('#edit-event-date').value,
+      startTime: root.querySelector('#edit-start-time').value,
+      endTime: root.querySelector('#edit-end-time').value,
+      eventLocation: root.querySelector('#edit-event-location').value,
+      scheduledDate: root.querySelector('#edit-date-scheduled').value,
+      guestConfirmedDate: root.querySelector('#edit-date-guest-confirmed').value,
+      techConfirmedDate: root.querySelector('#edit-date-tech-confirmed').value,
+      ...contractorData
+    };
+  }
 }
 
 customElements.define('details-interpretation', DetailsInterpretation);

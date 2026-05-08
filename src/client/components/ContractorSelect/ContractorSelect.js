@@ -122,6 +122,13 @@ class ContractorSelect extends HTMLElement {
     }
     this.updateViewValue();
   }
+
+  getSaveData() {
+    return {
+      contractor: this.shadowRoot.querySelector('#contractor-dropdown').value,
+      contractorName: this.shadowRoot.querySelector('#contractor-name').value
+    };
+  }
 }
 
 customElements.define('contractor-select', ContractorSelect);

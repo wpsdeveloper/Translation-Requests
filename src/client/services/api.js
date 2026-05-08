@@ -23,6 +23,21 @@ export const fetchData = () => {
   });
 };
 
+export const saveRequest = (updatedData) => {
+  return new Promise((resolve, reject) => {
+    if (IS_MOCK) {
+      console.log('Simulating save to server:', updatedData);
+      // Simulate network delay
+      setTimeout(() => resolve(updatedData), 800);
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(reject)
+      .saveDataToServer(updatedData);
+  });
+};
+
 function hydrate(request) {
   return {
     ...request,

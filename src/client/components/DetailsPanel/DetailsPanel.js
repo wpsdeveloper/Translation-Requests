@@ -1,5 +1,6 @@
 import { store } from '../../services/state.js';
 import { formatDate } from '../../services/utils.js';
+import { saveRequest } from '../../services/api.js';
 import panelTemplate from './DetailsPanel.htm?raw';
 import sharedPanelStyles from '../shared/DetailsStyles.css?inline';
 import panelStyles from './DetailsPanel.css?inline';
@@ -50,10 +51,7 @@ class DetailsPanel extends HTMLElement {
       }
       if (e.target.id === 'process-btn') this.setMode('process');
       if (e.target.id === 'cancel-btn') this.setMode('view');
-      if (e.target.id === 'save-btn') {
-        // Here you would eventually handle the save logic
-        this.setMode('view');
-      }
+      if (e.target.id === 'save-btn') this.onSave();
     });
 
     this.shadowRoot.addEventListener('change', (e) => {
@@ -103,6 +101,7 @@ class DetailsPanel extends HTMLElement {
   }
 
   hydrate(data) {
+    this._data = data;
     const root = this.shadowRoot;
 
     // 1. Hydrate Shared Fields
@@ -162,6 +161,50 @@ class DetailsPanel extends HTMLElement {
     const approvalInfo = this.shadowRoot.querySelector('#approval-info');
     if (approvalInfo) {
       approvalInfo.style.display = status !== 'Needs Approval' ? 'block' : 'none';
+    }
+  }
+
+  async onSave() {
+    if (!this._data) return;
+
+    const root = this.shadowRoot;
+    const dynamicEl = root.querySelector('#dynamic-content').firstElementChild;
+    const childData = dynamicEl?.getSaveData() || {};
+
+    const updatedRequest = {
+      ...this._data,
+      name: root.querySelector('#edit-requester-name').value,
+      school: root.querySelector('#detail-school').value,
+      originalLanguage: root.querySelector('#edit-orig-lang').value,
+      targetLanguage: root.querySelector('#edit-target-lang').value,
+      description: root.querySelector('#edit-description').value,
+      status: root.querySelector('#detail-status').status,
+      ...childData
+    };
+
+    const saveBtn = root.querySelector('#save-btn');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
+
+    try {
+      const savedData = await saveRequest(updatedRequest);
+
+      const state = store.getState();
+      const updatedRows = state.allRows.map((row) => (row.id === savedData.id ? savedData : row));
+
+      store.setState({
+        allRows: updatedRows,
+        selectedRow: savedData,
+      });
+
+      this.setMode('view');
+    } catch (err) {
+      console.error('Failed to save:', err);
+      alert('Failed to save changes. Please try again.');
+    } finally {
+      saveBtn.textContent = originalText;
+      saveBtn.disabled = false;
     }
   }
 }

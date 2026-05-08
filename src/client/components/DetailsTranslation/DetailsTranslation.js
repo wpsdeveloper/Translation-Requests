@@ -97,6 +97,19 @@ class DetailsTranslation extends HTMLElement {
 
     this.mode = this._mode; // Apply current mode visibility
   }
+
+  getSaveData() {
+    const root = this.shadowRoot;
+    const contractorData = root.querySelector('#contractor-select')?.getSaveData() || {};
+    
+    return {
+      docPageCount: root.querySelector('#edit-document-length').value,
+      docLink: root.querySelector('#edit-document-link').value,
+      docSentDate: root.querySelector('#edit-date-sent').value,
+      docReceivedDate: root.querySelector('#edit-date-received').value,
+      ...contractorData
+    };
+  }
 }
 
 customElements.define('details-translation', DetailsTranslation);
