@@ -15,15 +15,16 @@
       <p class="subtitle">Browse submitted requests, filter them by school, and inspect the request details without
         leaving the page.</p>
     </div>
-    <div class="filters">
-      <label for="school-filter">Filter by school</label>
-      <div id="school-filter-wrapper">
-      </div>
-    </div>
   </header>
 
   <div class="panel">
     <section class="card">
+      <div class="filters">
+        <label for="school-filter">Filter by school</label>
+        <div id="school-filter-wrapper">
+          <school-select id="school-filter" mode="edit" include-all></school-select>
+        </div>
+      </div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;">
         <h2>Requests</h2>
         <span id="results-count" class="row-count">0 entries</span>

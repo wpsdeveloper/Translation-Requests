@@ -7,12 +7,19 @@ export const fetchData = () => {
     if (IS_MOCK) {
       import('./mock-data.js').then((module) => {
         console.log('Mock data loaded dynamically');
-        const cleanData = JSON.parse(module.getMockData()).map(hydrate);
-        setTimeout(() => resolve(cleanData), 500);
+        const data = JSON.parse(module.getMockData());
+        const cleanRequests = data.requests.map(hydrate);
+        setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools }), 500);
       });
       return;
     }
-    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getDataFromServer();
+    google.script.run
+      .withSuccessHandler((data) => {
+        const cleanRequests = data.requests.map(hydrate);
+        resolve({ requests: cleanRequests, schools: data.schools });
+      })
+      .withFailureHandler(reject)
+      .getDataFromServer();
   });
 };
 

@@ -7,6 +7,7 @@ import panelStyles from './DetailsPanel.css?inline';
 import '../DetailsInterpretation/DetailsInterpretation.js';
 import '../DetailsTranslation/DetailsTranslation.js';
 import '../StatusSelect/StatusSelect.js';
+import '../SchoolSelect/SchoolSelect.js';
 
 const sharedSheet = new CSSStyleSheet();
 sharedSheet.replaceSync(sharedPanelStyles);
@@ -79,6 +80,11 @@ class DetailsPanel extends HTMLElement {
     if (statusSelect) {
       statusSelect.mode = mode;
     }
+
+    const schoolSelect = root.querySelector('#detail-school');
+    if (schoolSelect) {
+      schoolSelect.mode = mode;
+    }
   }
 
   render() {
@@ -99,14 +105,19 @@ class DetailsPanel extends HTMLElement {
 
     // View Mode Shared Fields
     root.querySelector('#view-requester-name').textContent = data.name || 'N/A';
-    root.querySelector('#view-requester-school').textContent = data.school || 'N/A';
+    
+    const schoolSelect = root.querySelector('#detail-school');
+    if (schoolSelect) {
+      schoolSelect.value = data.school || '';
+      schoolSelect.mode = this._mode;
+    }
+
     root.querySelector('#view-orig-lang').textContent = data.originalLanguage || 'N/A';
     root.querySelector('#view-target-lang').textContent = data.targetLanguage || 'N/A';
     root.querySelector('#view-description').textContent = data.description || 'No description provided.';
 
     // Edit Mode Shared Fields
     root.querySelector('#edit-requester-name').value = data.name || '';
-    root.querySelector('#edit-requester-school').value = data.school || '';
     root.querySelector('#edit-orig-lang').value = data.originalLanguage || '';
     root.querySelector('#edit-target-lang').value = data.targetLanguage || '';
     root.querySelector('#edit-description').value = data.description || '';

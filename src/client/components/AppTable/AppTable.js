@@ -18,7 +18,11 @@ class AppTable extends HTMLElement {
     
     // Subscribe to the store to wait for the sheet data
     store.subscribe((state) => {
-      this.updateRows(state.allRows, state.loading);
+      let rows = state.allRows;
+      if (state.filterSchool) {
+        rows = rows.filter(row => row.school === state.filterSchool);
+      }
+      this.updateRows(rows, state.loading);
     });
   }
 

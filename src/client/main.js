@@ -1,11 +1,5 @@
 /// <reference types="google-apps-script" />
 
-import contactorSelectTemplate from './components/contractorSelect.htm?raw';
-import schoolSelectTemplate from './components/schoolSelect.htm?raw';
-import statusSelectTemplate from './components/statusSelect.htm?raw';
-import detailsTranslationTemplate from './components/detailsTranslation.htm?raw';
-import detailsInterpretationTemplate from './components/detailsInterpretation.htm?raw';
-
 import { store } from './services/state.js';
 import { fetchData } from './services/api.js';
 import './components/AppTable/AppTable.js';
@@ -21,12 +15,24 @@ async function init() {
 
   try {
     // 2. Fetch the data (either mock or GAS)
-    const data = await fetchData();
+    const { requests, schools } = await fetchData();
 
     // 3. Update the store
-    // This triggers the Table component to render the rows automatically
-    store.setState({ allRows: data, loading: false });
+    // This triggers components to update automatically
+    store.setState({
+      allRows: requests,
+      schools: schools,
+      loading: false,
+    });
     console.log(store.getState());
+
+    // 4. Setup filter listener
+    const schoolFilter = document.getElementById('school-filter');
+    if (schoolFilter) {
+      schoolFilter.addEventListener('change', (e) => {
+        store.setState({ filterSchool: e.detail.value });
+      });
+    }
   } catch (err) {
     console.error("Failed to load data:", err);
     store.setState({ loading: false, error: err.message });

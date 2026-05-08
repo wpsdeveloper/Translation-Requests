@@ -3,6 +3,8 @@ class GlobalStore {
     this._state = {
       selectedRow: null,
       allRows: [],
+      schools: [],
+      filterSchool: null,
       isPanelOpen: false
     };
     this._listeners = [];

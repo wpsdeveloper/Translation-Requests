@@ -1,13 +1,13 @@
 export function getMockData() {
-  return JSON.stringify(mockData.requests);
-};
+  return JSON.stringify(mockData);
+}
 
 const mockData = {
   requests: [{
     id: '12345',
     status: 'Needs Approval',
     requestDate: new Date(),
-    submittedDate: new Date(),  
+    submittedDate: new Date(),
     name: 'John Doe',
     reqType: 'Translation',
     eventLocation: '123 Main St, Anytown, USA',
@@ -48,5 +48,17 @@ const mockData = {
     originalLanguage: 'English',
     targetLanguage: 'Portuguese',
   },
-]
+  ],
+  schools: [
+    'Walpole High School',
+    'Walpole Middle School',
+    'Boyden',
+    'Elm Street',
+    'Fisher',
+    'Old Post Road',
+    'Feeney',
+    'Central Administration',
+    'Student Services',
+    'Health Services'
+  ],
 };
