@@ -7,7 +7,7 @@ if (IS_MOCK && typeof window.google === 'undefined') {
       run: {
         withSuccessHandler: function() { return this; },
         withFailureHandler: function() { return this; },
-        getRequestsFromAppSheet: function() { console.warn('google.script.run.getRequestsFromAppSheet called in mock mode'); },
+        getDataFromServer: function() { console.warn('google.script.run.getRequestsFromAppSheet called in mock mode'); },
         saveDataToServer: function() { console.warn('google.script.run.saveDataToServer called in mock mode'); }
       }
     }
@@ -29,15 +29,17 @@ export const fetchData = () => {
       .withSuccessHandler((data) => {
         console.log('Data received from server:', data);
         const requests = data.requests || [];
+        console.log('Requests from server:', requests);
         const schools = data.schools || [];
         const cleanRequests = requests.map(hydrate);
+        console.log('Clean requests from server:', cleanRequests);
         resolve({ requests: cleanRequests, schools: schools });
       })
       .withFailureHandler((err) => {
         console.error('Server error:', err);
         reject(err);
       })
-      .getDataFromAppSheet();
+      .getDataFromServer();
   });
 };
 
@@ -57,6 +59,7 @@ export const saveRequest = (updatedData) => {
 };
 
 function hydrate(request) {
+  console.log('Hydrating request:', request);
   return {
     ...request,
     requestDate: request.requestDate ? new Date(request.requestDate) : null,

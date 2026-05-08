@@ -16,6 +16,7 @@ async function init() {
   try {
     // 2. Fetch the data (either mock or GAS)
     const { requests, schools } = await fetchData();
+    console.log(requests);
 
     // 3. Update the store
     // This triggers components to update automatically

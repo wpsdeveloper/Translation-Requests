@@ -76,27 +76,35 @@ function getSchoolsFromAppSheet() {
  * Maps an AppSheet row object to the application's internal Request object structure.
  */
 function mapAppSheetRequest(row) {
+  Logger.log(row); // Keep this to verify the exact names in your logs!
+  
   return {
-    id: makeString(row.ID || row.id),
-    submittedDate: row.SubmittedDate || row.submitted_date,
-    email: makeString(row.Email || row.email),
-    name: makeString(row.Name || row.name),
-    school: makeString(row.School || row.school),
-    status: makeString(row.Status || row.status),
-    reqType: makeString(row.RequestType || row.request_type),
-    originalLanguage: makeString(row.OriginalLanguage || row.original_language),
-    targetLanguage: makeString(row.TargetLanguage || row.target_language),
-    interpretationType: makeString(row.InterpretationType || row.interpretation_type),
-    requestDate: row.RequestDate || row.request_date,
-    docPageCount: row.DocPageCount || row.doc_page_count,
-    description: makeString(row.Description || row.description),
-    docLink: makeString(row.DocLink || row.doc_link),
-    startTime: row.StartTime || row.start_time,
-    endTime: row.EndTime || row.end_time,
-    eventLocation: makeString(row.EventLocation || row.event_location),
-    contractor: makeString(row.Contractor || row.contractor),
-    contractorName: makeString(row.ContractorName || row.contractor_name),
-    approverName: makeString(row.ApproverName || row.approver_name),
-    approvedDate: row.ApprovedDate || row.approved_date,
+    id: makeString(row["ID"] || row["id"]),
+    // Check for spaces using bracket notation
+    submittedDate: row["Submitted Date"] || row["SubmittedDate"] || row["submitted_date"],
+    email: makeString(row["Requester Email"] || row["RequesterEmail"] || row["requester_email"]),
+    name: makeString(row["Requester Name"] || row["RequesterName"] || row["requester_name"]),
+    school: makeString(row["School"] || row["school"]),
+    status: makeString(row["Status"] || row["status"]),
+    reqType: makeString(row["Request Type"] || row["RequestType"] || row["request_type"]),
+    originalLanguage: makeString(row["Original Language"] || row["OriginalLanguage"] || row["original_language"]),
+    targetLanguage: makeString(row["Target Language"] || row["TargetLanguage"] || row["target_language"]),
+    interpretationType: makeString(row["Interpretation Type"] || row["InterpretationType"] || row["interpretation_type"]),
+    requestDate: row["Date Needed"] || row["DateNeeded"] || row["date_needed"],
+    docPageCount: makeString(row["Doc Page Count"] || row["DocPageCount"] || row["doc_page_count"]),
+    description: makeString(row["Description"] || row["description"]),
+    docLink: makeString(row["Doc Link"] || row["DocLink"] || row["doc_link"]),
+    startTime: row["Start Time"] || row["StartTime"] || row["start_time"],
+    endTime: row["End Time"] || row["EndTime"] || row["end_time"],
+    eventLocation: makeString(row["Event Location"] || row["EventLocation"] || row["event_location"]),
+    contractor: makeString(row["Contractor"] || row["contractor"]),
+    contractorName: makeString(row["Contractor Name"] || row["contractor_name"]),
+    approverName: makeString(row["Approver Name"] || row["approver_name"]),
+    approvedDate: row["Approved Date"] || row["approved_date"],
   };
+}
+
+
+function makeString(value) {
+  return value ? value.toString() : '';
 }
