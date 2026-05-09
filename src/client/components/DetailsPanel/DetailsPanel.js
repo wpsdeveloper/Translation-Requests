@@ -91,8 +91,24 @@ class DetailsPanel extends HTMLElement {
     }
 
     const statusSelect = root.querySelector('#detail-status');
+    const user = store.getState().user;
+    const isUser = user && user.role === 'User';
+    const isNeedsApproval = this._data?.status === 'Needs Approval';
+
     if (statusSelect) {
       statusSelect.mode = isProcess ? 'edit' : 'view';
+      // Disable status change for Users if it's currently Needs Approval
+      if (isUser && isNeedsApproval) {
+        statusSelect.setAttribute('disabled', 'true');
+      } else {
+        statusSelect.removeAttribute('disabled');
+      }
+    }
+
+    // Hide Process button for Users if the record is in Needs Approval status
+    const processBtn = root.querySelector('#process-btn');
+    if (processBtn) {
+      processBtn.style.display = (isView && (!isUser || !isNeedsApproval)) ? 'inline-block' : 'none';
     }
 
     const schoolSelect = root.querySelector('#detail-school');

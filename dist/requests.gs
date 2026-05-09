@@ -1,13 +1,24 @@
+const APPSHEET_APP_ID = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
+const APPSHEET_ACCESS_KEY = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
+
 /**
  * Unified fetcher for AppSheet data.
  * Returns an object with both requests and schools.
  */
-function getDataFromAppSheet() {
+function getDataFromAppSheet(user) {
   try {
-    const requests = getRequestsFromAppSheet();
+    const rawRequests = getRequestsFromAppSheet();
     const schools = getSchoolsFromAppSheet();
+    
+    // Role-based filtering
+    let filteredRequests = rawRequests;
+    if (user.role !== 'Admin') {
+      const userSchools = user.schools || [];
+      filteredRequests = rawRequests.filter(req => userSchools.includes(req.school));
+    }
+
     return {
-      requests: requests,
+      requests: filteredRequests,
       schools: schools
     };
   } catch (e) {
@@ -17,16 +28,14 @@ function getDataFromAppSheet() {
 }
 
 function getRequestsFromAppSheet() {
-  const appId = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
-  const accessKey = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
   const tableName = 'Requests';
 
-  const url = `https://api.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
 
   const options = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': accessKey },
+    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
     payload: JSON.stringify({
       "Action": "Find",
       "Properties": { "Locale": "en-US" },
@@ -45,16 +54,14 @@ function getRequestsFromAppSheet() {
 }
 
 function getSchoolsFromAppSheet() {
-  const appId = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
-  const accessKey = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
   const tableName = 'Locations';
 
-  const url = `https://api.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
 
   const options = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': accessKey },
+    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
     payload: JSON.stringify({
       "Action": "Find",
       "Properties": { "Locale": "en-US" },
@@ -113,11 +120,39 @@ function makeString(value) {
  * Server function to update a request in AppSheet.
  */
 function saveDataToServer(updatedData) {
-  const appId = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
-  const accessKey = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
-  const tableName = 'Requests';
+  const activeUserEmail = Session.getActiveUser().getEmail();
+  const user = getUser(activeUserEmail);
+  
+  if (!user) {
+    throw new Error('Access Denied: User not found in authorized database.');
+  }
 
-  const url = `https://api.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+  // 1. School authorization check (Admins see everything)
+  if (user.role !== 'Admin') {
+    const userSchools = user.schools || [];
+    if (!userSchools.includes(updatedData.school)) {
+      throw new Error(`Permission Denied: You are not authorized to edit records for ${updatedData.school}.`);
+    }
+  }
+
+  // 2. Status restriction check for 'User' role
+  if (user.role === 'User') {
+    // Fetch the existing record to check its current status
+    const rawRequests = getRequestsFromAppSheet();
+    const existingRecord = rawRequests.find(r => r.id === updatedData.id);
+    
+    if (existingRecord) {
+      const oldStatus = existingRecord.status;
+      const newStatus = updatedData.status;
+      
+      if (oldStatus === 'Needs Approval' && newStatus !== 'Needs Approval') {
+        throw new Error('Permission Denied: Users cannot change the status away from "Needs Approval".');
+      }
+    }
+  }
+
+  const tableName = 'Requests';
+  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
 
   // Map the clean JS object back to AppSheet's column names
   const appSheetRow = mapRequestToAppSheet(updatedData);
@@ -125,9 +160,9 @@ function saveDataToServer(updatedData) {
   const options = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': accessKey },
+    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
     payload: JSON.stringify({
-      "Action": "Edit", // Use 'Edit' to update an existing row
+      "Action": "Edit", 
       "Properties": { "Locale": "en-US" },
       "Rows": [appSheetRow]
     }),
@@ -137,19 +172,22 @@ function saveDataToServer(updatedData) {
   const response = UrlFetchApp.fetch(url, options);
   const responseText = response.getContentText();
   const responseCode = response.getResponseCode();
+  
   Logger.log('Response Code: ' + responseCode);
   Logger.log('Response Text: ' + responseText);
+  
   if (!responseText) {
     throw new Error('AppSheet returned an empty response. HTTP Code: ' + responseCode);
   }
+
   try {
     const result = JSON.parse(responseText);
-    Logger.log('Save result: ' + JSON.stringify(result));
     return result;
   } catch (e) {
     throw new Error('AppSheet returned invalid JSON: ' + responseText);
   }
 }
+
 
 /**
  * Maps the internal Request object back to AppSheet's expected column names.
@@ -193,5 +231,39 @@ function mapRequestToAppSheet(data) {
 
   Logger.log('Mapped row for AppSheet: %s', JSON.stringify(row));
   return row;
+}
+
+/**
+ * Fetches users from the AppSheet 'Users' table.
+ */
+function getUsersFromAppSheet() {
+  const tableName = 'Users';
+
+  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+
+  const options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+    payload: JSON.stringify({
+      "Action": "Find",
+      "Properties": { "Locale": "en-US" },
+      "Rows": []
+    }),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(url, options);
+  const data = JSON.parse(response.getContentText());
+
+  if (data && Array.isArray(data)) {
+    return data.map(row => ({
+      email: makeString(row["Email"] || row["email"]).toLowerCase().trim(),
+      name: makeString(row["Name"] || row["name"]),
+      role: makeString(row["Role"] || row["role"]) || 'User',
+      schools: makeString(row["Schools"] || row["schools"]).split(',').map(s => s.trim()).filter(s => s)
+    }));
+  }
+  return [];
 }
 

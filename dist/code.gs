@@ -27,7 +27,23 @@ function doGet() {
 }
 
 function getDataFromServer() {
-  const data = getDataFromAppSheet();
-  Logger.log(data);
-  return data;
-}
+  const activeUserEmail = Session.getActiveUser().getEmail();
+  const user = getUser(activeUserEmail);
+  
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const data = getDataFromAppSheet(user);
+  
+  return {
+    requests: data.requests,
+    schools: data.schools,
+    user: {
+      role: user.role,
+      email: user.email,
+      schools: user.schools,
+      name: user.name
+    }
+  };
+}

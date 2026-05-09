@@ -29,11 +29,10 @@ export const fetchData = () => {
       .withSuccessHandler((data) => {
         console.log('Data received from server:', data);
         const requests = data.requests || [];
-        console.log('Requests from server:', requests);
         const schools = data.schools || [];
+        const user = data.user || null;
         const cleanRequests = requests.map(hydrate);
-        console.log('Clean requests from server:', cleanRequests);
-        resolve({ requests: cleanRequests, schools: schools });
+        resolve({ requests: cleanRequests, schools: schools, user: user });
       })
       .withFailureHandler((err) => {
         console.error('Server error:', err);

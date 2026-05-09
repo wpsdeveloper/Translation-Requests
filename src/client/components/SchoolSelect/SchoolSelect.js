@@ -108,7 +108,19 @@ class SchoolSelect extends HTMLElement {
       select.appendChild(placeholder);
     }
 
-    this._schools.forEach(school => {
+    const state = store.getState();
+    const user = state.user;
+    const isFilter = this.id === 'school-filter';
+    
+    let schoolsToShow = this._schools;
+    
+    // If it's the main filter and not an admin, restrict the schools shown
+    if (isFilter && user && user.role !== 'Admin') {
+      const userSchools = user.schools || [];
+      schoolsToShow = this._schools.filter(school => userSchools.includes(school));
+    }
+
+    schoolsToShow.forEach(school => {
       const opt = document.createElement('option');
       opt.value = school;
       opt.textContent = school;

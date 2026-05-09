@@ -11,7 +11,7 @@ colorSheet.replaceSync(statusColors);
 
 class StatusSelect extends HTMLElement {
   static get observedAttributes() {
-    return ['status', 'mode'];
+    return ['status', 'mode', 'disabled'];
   }
 
   constructor() {
@@ -33,6 +33,8 @@ class StatusSelect extends HTMLElement {
     } else if (name === 'mode') {
       this._mode = newValue;
       this.updateMode();
+    } else if (name === 'disabled') {
+      this.updateDisabled();
     }
   }
 
@@ -57,6 +59,7 @@ class StatusSelect extends HTMLElement {
     this.setupEventListeners();
     this.updateView();
     this.updateMode();
+    this.updateDisabled();
   }
 
   setupEventListeners() {
@@ -86,6 +89,13 @@ class StatusSelect extends HTMLElement {
     if (viewEl && editEl) {
       viewEl.style.display = this._mode === 'view' ? 'block' : 'none';
       editEl.style.display = this._mode === 'edit' ? 'block' : 'none';
+    }
+  }
+
+  updateDisabled() {
+    const select = this.shadowRoot.querySelector('#status-dropdown');
+    if (select) {
+      select.disabled = this.hasAttribute('disabled');
     }
   }
 }

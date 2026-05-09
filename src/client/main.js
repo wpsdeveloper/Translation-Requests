@@ -24,14 +24,14 @@ class App {
 
     try {
       // 2. Fetch the data (either mock or GAS)
-      const { requests, schools } = await fetchData();
-      console.log('App initialized with data:', { requests, schools });
+      const { requests, schools, user } = await fetchData();
 
       // 3. Update the store
       // This triggers components to update automatically
       store.setState({
         allRows: requests,
         schools: schools,
+        user: user,
         loading: false,
       });
     } catch (err) {
