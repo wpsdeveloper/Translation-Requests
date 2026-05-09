@@ -117,6 +117,5 @@ const mockData = {
     'Feeney',
     'Central Administration',
     'Student Services',
-    'Health Services'
   ],
 };
