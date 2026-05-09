@@ -10,8 +10,7 @@
   color: white;
 }
 
-:host([status="Completed"]) .status-indicator,
-:host([status="Complete"]) .status-indicator {
+:host([status="Complete"]) .status-indicator{
   background-color: #28a745;
   color: white;
 }
