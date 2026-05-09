@@ -5,6 +5,7 @@ class GlobalStore {
       allRows: [],
       schools: [],
       filterSchool: null,
+      filterStatuses: [], // Empty array means all statuses are shown
       isPanelOpen: false
     };
     this._listeners = [];

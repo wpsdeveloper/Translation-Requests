@@ -4,6 +4,7 @@ import { store } from './services/state.js';
 import { fetchData } from './services/api.js';
 import './components/AppTable/AppTable.js';
 import './components/DetailsPanel/DetailsPanel';
+import './components/StatusMultiSelect/StatusMultiSelect.js';
 
 /**
  * Main Application Orchestrator

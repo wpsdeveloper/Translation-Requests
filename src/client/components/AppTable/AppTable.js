@@ -27,6 +27,11 @@ class AppTable extends HTMLElement {
           rows = rows.filter(row => row.school === state.filterSchool);
         }
       }
+
+      if (state.filterStatuses && state.filterStatuses.length > 0) {
+        rows = rows.filter(row => state.filterStatuses.includes(row.status));
+      }
+
       this.updateRows(rows, state.loading);
     });
   }
