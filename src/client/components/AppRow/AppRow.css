@@ -26,9 +26,20 @@
   padding: 12px 8px;
   vertical-align: middle;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+/* Specific column adjustments to match AppTable headers */
+:host .td:nth-child(1) { flex: 1.0 0; } /* Status */
+:host .td:nth-child(2) { flex: 0.8; } /* Request Date */
+:host .td:nth-child(3) { flex: 0.8; } /* Submitted */
+:host .td:nth-child(4) { flex: 1.0; } /* Type */
+:host .td:nth-child(5) { flex: 2; }   /* Requested By */
 
 :host .requester-school {
   font-size: 0.85rem;
   color: #555;
+  display: block; /* Ensure it stays under the name if needed, but here it's inside the same cell usually */
 }
