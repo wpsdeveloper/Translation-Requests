@@ -135,6 +135,13 @@ class DetailsPanel extends HTMLElement {
     // Hydrate Approval Info
     root.querySelector('#detail-approved-by').textContent = data.approvedBy || 'N/A';
     root.querySelector('#detail-approved-date').textContent = data.approvedDate ? formatDate(data.approvedDate, 'MMM D, YYYY') : 'N/A';
+    if (data.status === "Denied") {
+      root.querySelector('#approved-by-label').textContent = 'Denied By';
+      root.querySelector('#approved-date-label').textContent = 'Denied Date';
+    } else {
+      root.querySelector('#approved-by-label').textContent = 'Approved By';
+      root.querySelector('#approved-date-label').textContent = 'Approved Date';
+    }
     this.updateApprovalVisibility(data.status);
 
     // 2. Hydrate Dynamic Content
