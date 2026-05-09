@@ -15,19 +15,24 @@ class AppTable extends HTMLElement {
 
   connectedCallback() {
     this.render();
-    
+
     // Subscribe to the store to wait for the sheet data
     store.subscribe((state) => {
       let rows = state.allRows;
       if (state.filterSchool) {
-        rows = rows.filter(row => row.school === state.filterSchool);
+        if (state.filterSchool === 'Other') {
+          // Show rows where the school is not in the official list
+          rows = rows.filter(row => !state.schools.includes(row.school));
+        } else {
+          rows = rows.filter(row => row.school === state.filterSchool);
+        }
       }
       this.updateRows(rows, state.loading);
     });
   }
 
   render() {
-      this.shadowRoot.innerHTML = AppTableTemplate;
+    this.shadowRoot.innerHTML = AppTableTemplate;
   }
 
   updateRows(rows, isLoading) {
@@ -35,15 +40,15 @@ class AppTable extends HTMLElement {
     if (isLoading) return;
 
     container.innerHTML = ''; // Clear the "Loading" message
-    
+
     rows.forEach(rowData => {
       // Create our custom row element
       const rowEl = document.createElement('app-row');
       container.appendChild(rowEl);
-      
+
       // Pass the row data directly to the child component
-      rowEl.data = rowData; 
-      
+      rowEl.data = rowData;
+
     });
   }
 }

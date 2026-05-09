@@ -115,6 +115,12 @@ class SchoolSelect extends HTMLElement {
       select.appendChild(opt);
     });
 
+    // add other option
+    const opt = document.createElement('option');
+    opt.value = "Other";
+    opt.textContent = "Other";
+    select.appendChild(opt);
+
     select.value = currentValue;
   }
 
