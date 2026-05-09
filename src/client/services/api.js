@@ -57,13 +57,12 @@ export const saveRequest = (updatedData) => {
   console.log('Saving request to server (de-hydrated):', dataToSend);
 
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
-      console.log('Simulating save to server:', dataToSend);
-      setTimeout(() => resolve(dataToSend), 800);
-      return;
-    }
     google.script.run
-      .withSuccessHandler(resolve)
+      .withSuccessHandler((serverResult) => {
+        console.log('Server save successful:', serverResult);
+        // Resolve with the original updatedData so the UI keeps its clean properties
+        resolve(updatedData);
+      })
       .withFailureHandler(reject)
       .saveDataToServer(dataToSend);
   });
