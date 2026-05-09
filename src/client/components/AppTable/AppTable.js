@@ -37,9 +37,34 @@ class AppTable extends HTMLElement {
 
   updateRows(rows, isLoading) {
     const container = this.shadowRoot.getElementById('requests-table-body');
-    if (isLoading) return;
+    const resultsCount = document.getElementById('results-count');
 
-    container.innerHTML = ''; // Clear the "Loading" message
+    if (isLoading) {
+      container.innerHTML = `
+        <div class="table-message">
+          <div class="spinner"></div>
+          <div>Loading requests...</div>
+        </div>
+      `;
+      if (resultsCount) resultsCount.textContent = 'Loading...';
+      return;
+    }
+
+    container.innerHTML = ''; 
+
+    if (rows.length === 0) {
+      container.innerHTML = `
+        <div class="table-message">
+          <div>No records found for the selected filter.</div>
+        </div>
+      `;
+      if (resultsCount) resultsCount.textContent = '0 entries';
+      return;
+    }
+
+    if (resultsCount) {
+      resultsCount.textContent = `${rows.length} ${rows.length === 1 ? 'entry' : 'entries'}`;
+    }
 
     rows.forEach(rowData => {
       // Create our custom row element
@@ -48,7 +73,6 @@ class AppTable extends HTMLElement {
 
       // Pass the row data directly to the child component
       rowEl.data = rowData;
-
     });
   }
 }
