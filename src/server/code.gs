@@ -46,4 +46,27 @@ function getDataFromServer() {
       name: user.name
     }
   };
-}
+}
+
+function getUsersData() {
+  const activeUserEmail = Session.getActiveUser().getEmail();
+  const user = getUser(activeUserEmail);
+  
+  if (!user || user.role !== 'Admin') {
+    throw new Error('Unauthorized: Admin access required.');
+  }
+
+  return getUsers();
+}
+
+function saveUser(userData, action) {
+  const activeUserEmail = Session.getActiveUser().getEmail();
+  const user = getUser(activeUserEmail);
+  
+  if (!user || user.role !== 'Admin') {
+    throw new Error('Unauthorized: Admin access required.');
+  }
+
+  return saveUserToAppSheet(userData, action);
+}
+

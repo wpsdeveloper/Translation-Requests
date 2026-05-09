@@ -7,7 +7,9 @@ class GlobalStore {
       filterSchool: null,
       filterStatuses: [], // Empty array means all statuses are shown
       isPanelOpen: false,
-      user: null
+      user: null,
+      activeView: 'dashboard', // 'dashboard' or 'users'
+      allUsers: []
     };
     this._listeners = [];
   }

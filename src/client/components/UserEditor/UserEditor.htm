@@ -1,0 +1,41 @@
+<div id="editor-overlay" class="overlay">
+  <div class="modal card">
+    <div class="modal-header">
+      <h3 id="modal-title">Add New User</h3>
+      <button id="close-modal" class="close-btn">&times;</button>
+    </div>
+    <form id="user-form">
+      <div class="form-group">
+        <label for="user-email">Email Address</label>
+        <input type="email" id="user-email" required placeholder="name@walpole.k12.ma.us">
+      </div>
+      
+      <div class="form-group">
+        <label for="user-name">Full Name</label>
+        <input type="text" id="user-name" required placeholder="John Doe">
+      </div>
+
+      <div class="form-group">
+        <label for="user-role">Role</label>
+        <select id="user-role" required>
+          <option value="User">User</option>
+          <option value="Approver">Approver</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="schools-group">
+        <label>Assigned Schools</label>
+        <p class="help-text">Admins have access to all schools by default.</p>
+        <div id="schools-list" class="schools-grid">
+          <!-- Schools checkboxes will be rendered here -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="cancel-btn" class="btn-secondary">Cancel</button>
+        <button type="submit" id="submit-btn" class="btn-primary">Save User</button>
+      </div>
+    </form>
+  </div>
+</div>

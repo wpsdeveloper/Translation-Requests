@@ -257,13 +257,86 @@ function getUsersFromAppSheet() {
   const data = JSON.parse(response.getContentText());
 
   if (data && Array.isArray(data)) {
-    return data.map(row => ({
-      email: makeString(row["Email"] || row["email"]).toLowerCase().trim(),
-      name: makeString(row["Name"] || row["name"]),
-      role: makeString(row["Role"] || row["role"]) || 'User',
-      schools: makeString(row["Schools"] || row["schools"]).split(',').map(s => s.trim()).filter(s => s)
-    }));
+    return data.map(row => {
+      const user = { ...row }; // Keep all original AppSheet columns
+      user.email = makeString(row["Email"] || row["email"]).trim();
+      user.name = makeString(row["Name"] || row["name"]);
+      user.role = makeString(row["Role"] || row["role"]) || 'User';
+      user.schools = makeString(row["Schools"] || row["schools"]).split(',').map(s => s.trim()).filter(s => s);
+      return user;
+    });
   }
   return [];
 }
 
+/**
+ * Maps internal user object to AppSheet column names.
+ */
+function mapUserToAppSheet(user) {
+  const row = { ...user };
+  
+  // Ensure the standard columns are correctly formatted
+  row["Email"] = makeString(user.email).trim();
+  row["Name"] = makeString(user.name);
+  row["Role"] = makeString(user.role);
+  row["Schools"] = Array.isArray(user.schools) ? user.schools.join(', ') : makeString(user.schools);
+  
+  // Remove the "clean" properties we added for our internal JS use
+  delete row.email;
+  delete row.name;
+  delete row.role;
+  delete row.schools;
+  
+  return row;
+}
+
+/**
+ * Performs Add, Edit, or Delete actions on the 'Users' table in AppSheet.
+ */
+function saveUserToAppSheet(userData, action) {
+  const tableName = 'Users';
+  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+
+  const emailValue = makeString(userData.email || userData.Email).trim();
+  
+  // For Delete, send the full object to ensure we include any hidden keys (like _RowNumber)
+  // but also include explicit Email/email keys just in case.
+  let appSheetRow;
+  if (action === 'Delete') {
+    appSheetRow = mapUserToAppSheet(userData);
+  } else {
+    appSheetRow = mapUserToAppSheet(userData);
+  }
+
+  const options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+    payload: JSON.stringify({
+      "Action": action,
+      "Properties": { "Locale": "en-US" },
+      "Rows": [appSheetRow]
+    }),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(url, options);
+  const responseText = response.getContentText();
+  const responseCode = response.getResponseCode();
+
+  Logger.log(`User ${action} - HTTP ${responseCode}: ${responseText}`);
+  
+  if (responseCode !== 200) {
+    let errorMsg = `AppSheet Error (${responseCode})`;
+    if (responseText) {
+      errorMsg += `: ${responseText}`;
+    }
+    throw new Error(errorMsg);
+  }
+
+  try {
+    return responseText ? JSON.parse(responseText) : { success: true };
+  } catch (e) {
+    return { success: true };
+  }
+}

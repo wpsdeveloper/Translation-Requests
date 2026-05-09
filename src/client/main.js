@@ -5,6 +5,8 @@ import { fetchData } from './services/api.js';
 import './components/AppTable/AppTable.js';
 import './components/DetailsPanel/DetailsPanel';
 import './components/StatusMultiSelect/StatusMultiSelect.js';
+import './components/UserManagement/UserManagement.js';
+import './components/UserEditor/UserEditor.js';
 
 /**
  * Main Application Orchestrator
@@ -52,7 +54,49 @@ class App {
       });
     }
 
-    // 2. Global click listener to handle "outside clicks" for closing panels
+    // 3. User Management Navigation
+    const navUsers = document.getElementById('nav-users');
+    const navDashboard = document.getElementById('nav-dashboard');
+    const mainNav = document.getElementById('main-nav');
+
+    if (navUsers && navDashboard) {
+      navUsers.addEventListener('click', () => {
+        store.setState({ activeView: 'users' });
+      });
+      navDashboard.addEventListener('click', () => {
+        store.setState({ activeView: 'dashboard' });
+      });
+    }
+
+    // 4. Global Store Subscription for View Toggling
+    store.subscribe((state) => {
+      const { activeView, user } = state;
+
+      // Toggle Navigation Visibility
+      if (mainNav) {
+        mainNav.style.display = (user && user.role === 'Admin') ? 'flex' : 'none';
+      }
+
+      // Toggle Views
+      const dashboardView = document.getElementById('dashboard-view');
+      const usersView = document.getElementById('users-view');
+
+      if (dashboardView && usersView) {
+        if (activeView === 'users') {
+          dashboardView.classList.remove('active');
+          usersView.classList.add('active');
+          navUsers.classList.add('active');
+          navDashboard.classList.remove('active');
+        } else {
+          dashboardView.classList.add('active');
+          usersView.classList.remove('active');
+          navDashboard.classList.add('active');
+          navUsers.classList.remove('active');
+        }
+      }
+    });
+
+    // 5. Global click listener to handle "outside clicks" for closing panels
     window.addEventListener('click', (e) => {
       const panel = document.querySelector('details-panel');
       // If the panel is in edit mode, we don't want to close it accidentally

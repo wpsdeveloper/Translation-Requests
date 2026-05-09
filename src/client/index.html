@@ -10,14 +10,20 @@
 
 <body>
   <header>
-    <div>
-      <h1>Translation Requests</h1>
-      <p class="subtitle">Browse submitted requests, filter them by school, and inspect the request details without
-        leaving the page.</p>
+    <div class="header-content">
+      <div>
+        <h1>Translation Requests</h1>
+        <p class="subtitle">District data management portal</p>
+      </div>
+      <nav id="main-nav" style="display: none;">
+        <button id="nav-dashboard" class="nav-btn active">Dashboard</button>
+        <button id="nav-users" class="nav-btn">User Management</button>
+      </nav>
     </div>
   </header>
 
-  <div class="panel">
+  <div id="dashboard-view" class="view active">
+    <div class="panel">
     <section class="card">
       <div class="filters">
         <div class="filter-group">
@@ -44,9 +50,11 @@
       <details-panel class="details-panel"></details-panel>
       <!-- Custom element for the details panel, will render content internally -->
     </section>
-    <div>
+    </div> <!-- Added missing closing div for .panel -->
+  </div> <!-- This closes #dashboard-view -->
 
-    </div>
+  <div id="users-view" class="view">
+    <user-management></user-management>
   </div>
 
   <script type="module" src="main.js"></script>

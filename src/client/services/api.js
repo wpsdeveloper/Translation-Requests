@@ -67,6 +67,42 @@ export const saveRequest = (updatedData) => {
   });
 };
 
+/**
+ * Admin: Fetch all users from the system.
+ */
+export const fetchAllUsers = () => {
+  return new Promise((resolve, reject) => {
+    if (IS_MOCK) {
+      resolve([
+        { email: 'admin@walpole.k12.ma.us', name: 'Admin User', role: 'Admin', schools: [] },
+        { email: 'user@walpole.k12.ma.us', name: 'Standard User', role: 'User', schools: ['Walpole High'] }
+      ]);
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(reject)
+      .getUsersData();
+  });
+};
+
+/**
+ * Admin: Add, Edit, or Delete a user.
+ */
+export const saveUserData = (userData, action) => {
+  return new Promise((resolve, reject) => {
+    if (IS_MOCK) {
+      console.log(`Mock User ${action}:`, userData);
+      setTimeout(() => resolve(userData), 1000);
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(reject)
+      .saveUser(userData, action);
+  });
+};
+
 
 export function hydrate(request) {
   return {

@@ -1,0 +1,39 @@
+<div class="user-management-container">
+  <div class="header">
+    <h2>User Management</h2>
+    <button id="add-user-btn" class="btn-primary">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Add User
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="user-search" placeholder="Search by name or email...">
+  </div>
+
+  <div class="table-container card">
+    <table id="users-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Schools</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="users-body">
+        <!-- Users will be rendered here -->
+      </tbody>
+    </table>
+    <div id="loading-users" class="loading-state">
+      <div class="spinner"></div>
+      <p>Fetching user database...</p>
+    </div>
+    <div id="empty-users" class="empty-state" style="display: none;">
+      <p>No users found matching your search.</p>
+    </div>
+  </div>
+</div>
+
+<user-editor id="user-editor-modal"></user-editor>
