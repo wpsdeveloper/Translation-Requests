@@ -21,7 +21,7 @@
   "scripts": {
     "build": "npm run clean && npm run build:client && npm run build:server",
     "build:client": "vite build",
-    "build:server": "xcopy src\\server\\*.gs dist\\ /Y && xcopy appsscript.json dist\\ /Y",
+    "build:server": "xcopy src\\server\\*.gs dist\\ /Y && xcopy src\\server\\*.html dist\\ /Y && xcopy appsscript.json dist\\ /Y",
     "clean": "shx rm -rf dist && shx mkdir dist",
     "deploy": "npm run build && clasp push",
     "dev": "npx vite",
