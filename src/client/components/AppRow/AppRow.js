@@ -2,7 +2,7 @@ import AppRowStyles from './AppRow.css?inline';
 import AppRowTemplate from './AppRow.htm?raw';
 import '../StatusBadge/StatusBadge';
 import { store } from '../../services/state.js';
-import { formatDate } from '../../services/utils';
+import { formatDate } from '../../services/utils.js';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(AppRowStyles);

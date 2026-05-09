@@ -30,17 +30,11 @@ class DetailsPanel extends HTMLElement {
 
   connectedCallback() {
     this.render();
+    this.setupEventListeners();
+    this.subscribeToStore();
+  }
 
-    // Subscribe to the store to react when a row is clicked
-    store.subscribe((state) => {
-      if (state.selectedRow) {
-        this.hydrate(state.selectedRow);
-        this.classList.add('open'); // Show panel
-      } else {
-        this.classList.remove('open'); // Hide panel
-      }
-    });
-
+  setupEventListeners() {
     this.shadowRoot.addEventListener('click', (e) => {
       if (e.target.id === 'close-btn') {
         store.setState({ selectedRow: null });
@@ -57,6 +51,17 @@ class DetailsPanel extends HTMLElement {
     this.shadowRoot.addEventListener('change', (e) => {
       if (e.target.id === 'detail-status') {
         this.updateApprovalVisibility(e.detail.status);
+      }
+    });
+  }
+
+  subscribeToStore() {
+    store.subscribe((state) => {
+      if (state.selectedRow) {
+        this.hydrate(state.selectedRow);
+        this.classList.add('open'); // Show panel
+      } else {
+        this.classList.remove('open'); // Hide panel
       }
     });
   }

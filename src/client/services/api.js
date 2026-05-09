@@ -21,7 +21,7 @@ export const fetchData = () => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
         const cleanRequests = data.requests.map(hydrate);
-        setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools }), 500);
+        setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools }), 1500);
       });
       return;
     }
