@@ -5,10 +5,10 @@ if (IS_MOCK && typeof window.google === 'undefined') {
   window.google = {
     script: {
       run: {
-        withSuccessHandler: function() { return this; },
-        withFailureHandler: function() { return this; },
-        getDataFromServer: function() { console.warn('google.script.run.getRequestsFromAppSheet called in mock mode'); },
-        saveDataToServer: function() { console.warn('google.script.run.saveDataToServer called in mock mode'); }
+        withSuccessHandler: function () { return this; },
+        withFailureHandler: function () { return this; },
+        getDataFromServer: function () { console.warn('google.script.run.getRequestsFromAppSheet called in mock mode'); },
+        saveDataToServer: function () { console.warn('google.script.run.saveDataToServer called in mock mode'); }
       }
     }
   };
@@ -44,19 +44,31 @@ export const fetchData = () => {
 };
 
 export const saveRequest = (updatedData) => {
+  // Create a copy and convert Dates to ISO strings for the server
+  const dataToSend = {
+    ...updatedData,
+    requestDate: updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate,
+    submittedDate: updatedData.submittedDate instanceof Date ? updatedData.submittedDate.toISOString() : updatedData.submittedDate,
+    approvedDate: updatedData.approvedDate instanceof Date ? updatedData.approvedDate.toISOString() : updatedData.approvedDate,
+    startTime: updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime,
+    endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime,
+  };
+
+  console.log('Saving request to server (de-hydrated):', dataToSend);
+
   return new Promise((resolve, reject) => {
     if (IS_MOCK) {
-      console.log('Simulating save to server:', updatedData);
-      // Simulate network delay
-      setTimeout(() => resolve(updatedData), 800);
+      console.log('Simulating save to server:', dataToSend);
+      setTimeout(() => resolve(dataToSend), 800);
       return;
     }
     google.script.run
       .withSuccessHandler(resolve)
       .withFailureHandler(reject)
-      .saveDataToServer(updatedData);
+      .saveDataToServer(dataToSend);
   });
 };
+
 
 function hydrate(request) {
   return {
