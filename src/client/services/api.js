@@ -69,7 +69,7 @@ export const saveRequest = (updatedData) => {
 };
 
 
-function hydrate(request) {
+export function hydrate(request) {
   return {
     ...request,
     requestDate: request.requestDate ? new Date(request.requestDate) : null,
