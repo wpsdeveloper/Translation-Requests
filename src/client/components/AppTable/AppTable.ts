@@ -9,24 +9,40 @@ import { TranslationRequest } from '../../../shared/types';
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(AppTableStyles);
 
+/**
+ * AppTable: A reactive custom element that displays the list of requests.
+ * It subscribes to the global store and automatically re-renders when
+ * filters or data change.
+ */
 class AppTable extends HTMLElement {
   constructor() {
     super();
+    // Use 'open' mode so we can access the shadowRoot from the outside if needed,
+    // though we primarily manage it internally.
     this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
+      // Use adoptedStyleSheets for better performance and style sharing.
+      // This allows the browser to parse the CSS only once.
       this.shadowRoot.adoptedStyleSheets = [sheet];
     }
   }
 
+  /**
+   * connectedCallback is called when the element is added to the document.
+   * This is where we trigger the initial render and set up subscriptions.
+   */
   connectedCallback() {
     this.render();
 
-    // Subscribe to the store to wait for the sheet data
+    // The component "reacts" to state changes. By subscribing here,
+    // we ensure the table stays in sync with the global data and filters.
     store.subscribe((state) => {
       let rows = state.allRows;
+      
+      // Declarative filtering logic: we filter the data before passing it 
+      // to the updateRows method.
       if (state.filterSchool) {
         if (state.filterSchool === 'Other') {
-          // Show rows where the school is not in the official list
           rows = rows.filter(row => !state.schools.includes(row.school));
         } else {
           rows = rows.filter(row => row.school === state.filterSchool);
@@ -37,7 +53,6 @@ class AppTable extends HTMLElement {
         rows = rows.filter(row => state.filterStatuses.includes(row.status));
       }
 
-      // Handle loading state - loading property might be missing in original class but let's assume it exists or use state.allRows.length === 0 as proxy
       this.updateRows(rows, (state as any).loading);
     });
   }

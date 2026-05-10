@@ -10,7 +10,13 @@ import { TranslationRequest } from '../../../shared/types';
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(AppRowStyles);
 
+/**
+ * AppRow: Represents a single row in the requests table.
+ * Demonstrates the "Data Down, Events Up" pattern by receiving data via a setter
+ * and notifying the store on user interaction.
+ */
 class AppRow extends HTMLElement {
+  // Internal state for the row data.
   private _data: TranslationRequest = {} as TranslationRequest;
 
   constructor() {
@@ -21,9 +27,13 @@ class AppRow extends HTMLElement {
     }
   }
 
-  // Setter called by the parent Table
+  /**
+   * Complex data (like a Request object) should be passed via a property setter
+   * rather than an attribute, to avoid expensive stringification.
+   */
   set data(value: TranslationRequest) {
     this._data = value;
+    // Only render if the element is actually in the DOM.
     if (this.isConnected) {
       this.render();
     }
@@ -33,6 +43,10 @@ class AppRow extends HTMLElement {
     return this._data;
   }
 
+  /**
+   * connectedCallback is called when the element is added to the document.
+   * If data was set before the element was appended, render it now.
+   */
   connectedCallback() {
     if (this._data && Object.keys(this._data).length > 0) {
       this.render();

@@ -22,14 +22,23 @@ panelSheet.replaceSync(panelStyles);
 
 export type PanelMode = 'view' | 'edit' | 'process';
 
+/**
+ * DetailsPanel: A side panel that displays and allows editing of request details.
+ * It uses a "Mode" system ('view', 'edit', 'process') to toggle between 
+ * different UI states and dynamically loads sub-components based on request type.
+ */
 class DetailsPanel extends HTMLElement {
+  // UI state: 'view' (readonly), 'edit' (requester edit), 'process' (admin workflow)
   private _mode: PanelMode = 'view';
+  
+  // The current request data being displayed.
   private _data: TranslationRequest | null = null;
 
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
+      // Use both shared and component-specific stylesheets for consistent UI.
       this.shadowRoot.adoptedStyleSheets = [sharedSheet, panelSheet];
     }
   }
@@ -65,13 +74,17 @@ class DetailsPanel extends HTMLElement {
     });
   }
 
+  /**
+   * Listens for store updates. When a row is selected in the store,
+   * the panel automatically opens and hydrates itself with the data.
+   */
   subscribeToStore() {
     store.subscribe((state) => {
       if (state.selectedRow) {
         this.hydrate(state.selectedRow);
-        this.classList.add('open'); // Show panel
+        this.classList.add('open'); // Slide in the panel via CSS transition
       } else {
-        this.classList.remove('open'); // Hide panel
+        this.classList.remove('open'); // Slide out the panel
       }
     });
   }

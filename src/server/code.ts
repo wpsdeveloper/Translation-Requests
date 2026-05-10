@@ -1,5 +1,14 @@
 
+/**
+ * code.gs: The main entry point for the Google Apps Script Web App.
+ * Contains the 'doGet' hook and the exposed functions for the client.
+ */
 
+/**
+ * doGet: Standard GAS hook that serves the HTML interface.
+ * We perform an early authorization check here to prevent unauthorized 
+ * domain users from even loading the application shell.
+ */
 function doGet() {
   const activeUserEmail = Session.getActiveUser().getEmail();
 

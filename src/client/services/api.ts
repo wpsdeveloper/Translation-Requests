@@ -1,5 +1,7 @@
 import { AppUser, RawRequest, TranslationRequest } from '../../shared/types';
 
+// Determine if we are running in a local environment or inside Google Apps Script.
+// This allows us to use mock data for faster frontend development.
 const IS_MOCK = !window.location.href.includes('google') && !window.location.href.includes('script');
 
 // Safety proxy for local development to prevent 'google is not defined' errors
@@ -22,6 +24,10 @@ export interface FetchDataResult {
   user: AppUser | null;
 }
 
+/**
+ * Main data fetcher. 
+ * Orchestrates either dynamic mock loading or calling the GAS server via google.script.run.
+ */
 export const fetchData = (): Promise<FetchDataResult> => {
   return new Promise((resolve, reject) => {
     if (IS_MOCK) {
@@ -50,6 +56,11 @@ export const fetchData = (): Promise<FetchDataResult> => {
   });
 };
 
+/**
+ * Saves changes to a request.
+ * This function "de-hydrates" the object (converts Dates back to strings) 
+ * to match the AppSheet API's expected format.
+ */
 export const saveRequest = (updatedData: TranslationRequest): Promise<TranslationRequest> => {
   // Create a copy and convert Dates back to ISO strings or formatted strings for the server
   const dataToSend: RawRequest = {
@@ -111,7 +122,11 @@ export const saveUserData = (userData: AppUser, action: string): Promise<AppUser
   });
 };
 
-
+/**
+ * Hydration: Converts a "Raw" data object (from the API) into a "Clean" application 
+ * object. This primarily involves turning ISO date strings into real JS Date objects,
+ * which are much easier to format and manipulate in the UI.
+ */
 export function hydrate(request: RawRequest): TranslationRequest {
   return {
     ...request,
