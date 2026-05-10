@@ -1,7 +1,10 @@
+// @ts-ignore
 import styles from './SchoolSelect.css?inline';
+// @ts-ignore
 import sharedStyles from '../shared/DetailsStyles.css?inline';
+// @ts-ignore
 import template from './SchoolSelect.htm?raw';
-import { store } from '../../services/state.js';
+import { store } from '../../services/state';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
@@ -14,13 +17,16 @@ class SchoolSelect extends HTMLElement {
     return ['mode', 'value', 'include-all'];
   }
 
+  private _value: string = '';
+  private _mode: string = 'view';
+  private _schools: string[] = [];
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sharedSheet, sheet];
-    this._value = '';
-    this._mode = 'view';
-    this._schools = [];
+    if (this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, sheet];
+    }
   }
 
   connectedCallback() {
@@ -39,11 +45,11 @@ class SchoolSelect extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
     if (name === 'mode') {
-      this.mode = newValue;
+      this.mode = newValue || 'view';
     } else if (name === 'value') {
-      this.value = newValue;
+      this.value = newValue || '';
     } else if (name === 'include-all') {
       this.populateOptions();
     }
@@ -53,7 +59,7 @@ class SchoolSelect extends HTMLElement {
     return this._value;
   }
 
-  set value(val) {
+  set value(val: string) {
     this._value = val;
     this.updateUI();
   }
@@ -62,21 +68,23 @@ class SchoolSelect extends HTMLElement {
     return this._mode;
   }
 
-  set mode(val) {
+  set mode(val: string) {
     this._mode = val;
     this.updateModeUI();
   }
 
   render() {
-    this.shadowRoot.innerHTML = template;
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = template;
+    }
     this.setupEventListeners();
     this.updateModeUI();
     this.updateUI();
   }
 
   setupEventListeners() {
-    const select = this.shadowRoot.querySelector('#school-dropdown');
-    select.addEventListener('change', (e) => {
+    const select = this.shadowRoot?.querySelector('#school-dropdown') as HTMLSelectElement;
+    select?.addEventListener('change', (e: any) => {
       this._value = e.target.value;
       this.updateUI();
       this.dispatchEvent(new CustomEvent('change', {
@@ -88,7 +96,7 @@ class SchoolSelect extends HTMLElement {
   }
 
   populateOptions() {
-    const select = this.shadowRoot.querySelector('#school-dropdown');
+    const select = this.shadowRoot?.querySelector('#school-dropdown') as HTMLSelectElement;
     if (!select) return;
 
     const currentValue = this._value;
@@ -138,8 +146,8 @@ class SchoolSelect extends HTMLElement {
 
   updateUI() {
     const root = this.shadowRoot;
-    const viewVal = root.querySelector('#view-value');
-    const select = root.querySelector('#school-dropdown');
+    const viewVal = root?.querySelector('#view-value');
+    const select = root?.querySelector('#school-dropdown') as HTMLSelectElement;
 
     if (viewVal) viewVal.textContent = this._value || 'N/A';
     if (select) select.value = this._value;
@@ -147,8 +155,8 @@ class SchoolSelect extends HTMLElement {
 
   updateModeUI() {
     const root = this.shadowRoot;
-    const viewEl = root.querySelector('#view-mode');
-    const editEl = root.querySelector('#edit-mode');
+    const viewEl = root?.querySelector('#view-mode') as HTMLElement;
+    const editEl = root?.querySelector('#edit-mode') as HTMLElement;
 
     if (viewEl && editEl) {
       viewEl.style.display = this._mode === 'view' ? '' : 'none';
@@ -158,3 +166,9 @@ class SchoolSelect extends HTMLElement {
 }
 
 customElements.define('school-select', SchoolSelect);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'school-select': SchoolSelect;
+  }
+}

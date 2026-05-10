@@ -1,7 +1,10 @@
+// @ts-ignore
 import styles from './StatusSelect.css?inline';
+// @ts-ignore
 import template from './StatusSelect.htm?raw';
+// @ts-ignore
 import statusColors from '../shared/StatusColors.css?inline';
-import '../StatusBadge/StatusBadge.js';
+import '../StatusBadge/StatusBadge';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
@@ -14,24 +17,27 @@ class StatusSelect extends HTMLElement {
     return ['status', 'mode', 'disabled'];
   }
 
+  private _status: string = '';
+  private _mode: string = 'view';
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet, colorSheet];
-    this._status = '';
-    this._mode = 'view';
+    if (this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sheet, colorSheet];
+    }
   }
 
   connectedCallback() {
     this.render();
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
     if (name === 'status') {
-      this._status = newValue;
+      this._status = newValue || '';
       this.updateView();
     } else if (name === 'mode') {
-      this._mode = newValue;
+      this._mode = newValue || 'view';
       this.updateMode();
     } else if (name === 'disabled') {
       this.updateDisabled();
@@ -42,7 +48,7 @@ class StatusSelect extends HTMLElement {
     return this._status;
   }
 
-  set status(val) {
+  set status(val: string) {
     this.setAttribute('status', val);
   }
 
@@ -50,12 +56,14 @@ class StatusSelect extends HTMLElement {
     return this._mode;
   }
 
-  set mode(val) {
+  set mode(val: string) {
     this.setAttribute('mode', val);
   }
 
   render() {
-    this.shadowRoot.innerHTML = template;
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = template;
+    }
     this.setupEventListeners();
     this.updateView();
     this.updateMode();
@@ -63,8 +71,8 @@ class StatusSelect extends HTMLElement {
   }
 
   setupEventListeners() {
-    const select = this.shadowRoot.querySelector('#status-dropdown');
-    select.addEventListener('change', (e) => {
+    const select = this.shadowRoot?.querySelector('#status-dropdown') as HTMLSelectElement;
+    select?.addEventListener('change', (e: any) => {
       this.status = e.target.value;
       this.dispatchEvent(new CustomEvent('change', {
         detail: { status: e.target.value },
@@ -75,16 +83,16 @@ class StatusSelect extends HTMLElement {
   }
 
   updateView() {
-    const badge = this.shadowRoot.querySelector('#status-badge');
-    const select = this.shadowRoot.querySelector('#status-dropdown');
+    const badge = this.shadowRoot?.querySelector('#status-badge');
+    const select = this.shadowRoot?.querySelector('#status-dropdown') as HTMLSelectElement;
     
     if (badge) badge.setAttribute('status', this._status);
     if (select) select.value = this._status;
   }
 
   updateMode() {
-    const viewEl = this.shadowRoot.querySelector('#view-mode');
-    const editEl = this.shadowRoot.querySelector('#edit-mode');
+    const viewEl = this.shadowRoot?.querySelector('#view-mode') as HTMLElement;
+    const editEl = this.shadowRoot?.querySelector('#edit-mode') as HTMLElement;
     
     if (viewEl && editEl) {
       viewEl.style.display = this._mode === 'view' ? 'block' : 'none';
@@ -93,7 +101,7 @@ class StatusSelect extends HTMLElement {
   }
 
   updateDisabled() {
-    const select = this.shadowRoot.querySelector('#status-dropdown');
+    const select = this.shadowRoot?.querySelector('#status-dropdown') as HTMLSelectElement;
     if (select) {
       select.disabled = this.hasAttribute('disabled');
     }
@@ -101,3 +109,9 @@ class StatusSelect extends HTMLElement {
 }
 
 customElements.define('status-select', StatusSelect);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'status-select': StatusSelect;
+  }
+}

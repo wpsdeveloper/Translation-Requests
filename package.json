@@ -9,6 +9,7 @@
     "globals": "^17.5.0",
     "jsdom": "^29.1.1",
     "shx": "^0.4.0",
+    "typescript": "^6.0.3",
     "vite": "^8.0.10",
     "vite-plugin-gas": "^0.5.2",
     "vite-plugin-singlefile": "^2.3.3",
@@ -21,7 +22,7 @@
   "scripts": {
     "build": "npm run clean && npm run build:client && npm run build:server",
     "build:client": "vite build",
-    "build:server": "xcopy src\\server\\*.gs dist\\ /Y && xcopy src\\server\\*.html dist\\ /Y && xcopy appsscript.json dist\\ /Y",
+    "build:server": "tsc --project tsconfig.server.json && xcopy src\\server\\*.html dist\\ /Y && xcopy appsscript.json dist\\ /Y",
     "clean": "shx rm -rf dist && shx mkdir dist",
     "deploy": "npm run build && clasp push",
     "dev": "npx vite",

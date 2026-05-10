@@ -1,4 +1,6 @@
+// @ts-ignore
 import badgeStyles from './StatusBadge.css?inline';
+// @ts-ignore
 import statusColors from '../shared/StatusColors.css?inline';
 
 const sheet = new CSSStyleSheet();
@@ -15,11 +17,13 @@ class StatusBadge extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet, colorSheet];
+    if (this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sheet, colorSheet];
+    }
   }
 
   // This runs whenever you change the "status" attribute
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
     if (name === 'status') {
       this.render();
     }
@@ -31,8 +35,16 @@ class StatusBadge extends HTMLElement {
 
   render() {
     const status = this.getAttribute('status') || 'Unknown';
-    this.shadowRoot.innerHTML = `<span class="badge status-indicator">${status}</span>`;
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = `<span class="badge status-indicator">${status}</span>`;
+    }
   }
 }
 
 customElements.define('status-badge', StatusBadge);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'status-badge': StatusBadge;
+  }
+}

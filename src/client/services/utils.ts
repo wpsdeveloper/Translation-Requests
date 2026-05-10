@@ -1,4 +1,7 @@
-export function formatDate(date, format) {
+export function formatDate(date: any, format?: string): string {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    return '';
+  }
   try {
     switch (format) {
       case 'MM/DD/YYYY':
@@ -14,8 +17,8 @@ export function formatDate(date, format) {
   }
 }
 
-export function formatTime(time, format) {
-  if (!time || !(time instanceof Date) || isNaN(time)) {
+export function formatTime(time: any, format?: string): string {
+  if (!time || !(time instanceof Date) || isNaN(time.getTime())) {
     return '';
   }
 

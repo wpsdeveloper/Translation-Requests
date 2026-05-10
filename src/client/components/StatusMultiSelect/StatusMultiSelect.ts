@@ -1,16 +1,21 @@
+// @ts-ignore
 import styles from './StatusMultiSelect.css?inline';
+// @ts-ignore
 import template from './StatusMultiSelect.htm?raw';
-import { store } from '../../services/state.js';
+import { store } from '../../services/state';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
 
 class StatusMultiSelect extends HTMLElement {
+  private _selectedValues: string[] = [];
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet];
-    this._selectedValues = [];
+    if (this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sheet];
+    }
   }
 
   connectedCallback() {
@@ -26,33 +31,37 @@ class StatusMultiSelect extends HTMLElement {
   }
 
   render() {
-    this.shadowRoot.innerHTML = template;
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = template;
+    }
   }
 
   setupEventListeners() {
     const root = this.shadowRoot;
-    const btn = root.getElementById('dropdown-btn');
-    const container = root.querySelector('.multi-select-container');
-    const checkboxes = root.querySelectorAll('input[type="checkbox"]');
+    if (!root) return;
+
+    const btn = root.getElementById('dropdown-btn') as HTMLElement;
+    const container = root.querySelector('.multi-select-container') as HTMLElement;
+    const checkboxes = root.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
     const menuItems = root.querySelectorAll('.menu-item');
-    const selectAllBtn = root.getElementById('select-all-btn');
-    const clearAllBtn = root.getElementById('clear-all-btn');
+    const selectAllBtn = root.getElementById('select-all-btn') as HTMLElement;
+    const clearAllBtn = root.getElementById('clear-all-btn') as HTMLElement;
 
     // Toggle Dropdown
-    btn.addEventListener('click', (e) => {
+    btn?.addEventListener('click', (e) => {
       e.stopPropagation();
       container.classList.toggle('open');
     });
 
     // Select All
-    selectAllBtn.addEventListener('click', (e) => {
+    selectAllBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
       checkboxes.forEach(cb => cb.checked = true);
       this.updateSelectedValues();
     });
 
     // Clear All
-    clearAllBtn.addEventListener('click', (e) => {
+    clearAllBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
       checkboxes.forEach(cb => cb.checked = false);
       this.updateSelectedValues();
@@ -64,17 +73,19 @@ class StatusMultiSelect extends HTMLElement {
     });
 
     // Stop propagation inside menu to prevent closing
-    root.querySelector('.dropdown-menu').addEventListener('click', (e) => {
+    root.querySelector('.dropdown-menu')?.addEventListener('click', (e) => {
       e.stopPropagation();
     });
 
     // Handle menu item clicks (to toggle checkbox when clicking the row)
     menuItems.forEach(item => {
-      item.addEventListener('click', (e) => {
+      item.addEventListener('click', (e: any) => {
         if (e.target.tagName !== 'INPUT') {
-          const cb = item.querySelector('input');
-          cb.checked = !cb.checked;
-          cb.dispatchEvent(new Event('change'));
+          const cb = item.querySelector('input') as HTMLInputElement;
+          if (cb) {
+            cb.checked = !cb.checked;
+            cb.dispatchEvent(new Event('change'));
+          }
         }
       });
     });
@@ -89,7 +100,9 @@ class StatusMultiSelect extends HTMLElement {
 
   updateSelectedValues() {
     const root = this.shadowRoot;
-    const checkboxes = root.querySelectorAll('input[type="checkbox"]');
+    if (!root) return;
+
+    const checkboxes = root.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
     this._selectedValues = Array.from(checkboxes)
       .filter(cb => cb.checked)
       .map(cb => cb.value);
@@ -109,10 +122,10 @@ class StatusMultiSelect extends HTMLElement {
 
   updateUI() {
     const root = this.shadowRoot;
-    if (!root.getElementById('selected-text')) return; // Guard if called before render
+    if (!root || !root.getElementById('selected-text')) return; // Guard if called before render
 
-    const text = root.getElementById('selected-text');
-    const checkboxes = root.querySelectorAll('input[type="checkbox"]');
+    const text = root.getElementById('selected-text') as HTMLElement;
+    const checkboxes = root.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
 
     // Update checkboxes
     checkboxes.forEach(cb => {
@@ -133,3 +146,9 @@ class StatusMultiSelect extends HTMLElement {
 }
 
 customElements.define('status-multi-select', StatusMultiSelect);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'status-multi-select': StatusMultiSelect;
+  }
+}

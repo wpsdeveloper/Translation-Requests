@@ -1,8 +1,10 @@
-export function getMockData() {
+import { RawRequest } from '../../shared/types';
+
+export function getMockData(): string {
   return JSON.stringify(mockData);
 }
 
-const mockData = {
+const mockData: { requests: RawRequest[], schools: string[] } = {
   requests: [
     {
       approvedDate: "",
@@ -64,16 +66,6 @@ const mockData = {
       id: "Item 3",
       interpretationType: "Two-way conversation",
       name: "Bob Robertson",
-      originalLanguage: "",
-      reqType: "Interpretation",
-      requestDate: "06/17/2026",
-      school: "Student Services",
-      startTime: "11:00:00",
-      status: "Scheduled",
-      submittedDate: "05/02/2026 00:00:00",
-      targetLanguage: "",
-      eventLocation: "",
-      interpretationType: "Two-way conversation",
       originalLanguage: "",
       reqType: "Interpretation",
       requestDate: "06/17/2026",

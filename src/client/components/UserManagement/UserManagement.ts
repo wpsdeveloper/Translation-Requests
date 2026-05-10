@@ -1,18 +1,24 @@
-import { store } from '../../services/state.js';
-import { fetchAllUsers, saveUserData } from '../../services/api.js';
+import { store } from '../../services/state';
+import { fetchAllUsers, saveUserData } from '../../services/api';
+import { AppUser } from '../../../shared/types';
+// @ts-ignore
 import template from './UserManagement.htm?raw';
+// @ts-ignore
 import styles from './UserManagement.css?inline';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
 
 class UserManagement extends HTMLElement {
+  private _users: AppUser[] = [];
+  private _searchTerm: string = '';
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet];
-    this._users = [];
-    this._searchTerm = '';
+    if (this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sheet];
+    }
   }
 
   connectedCallback() {
@@ -28,8 +34,8 @@ class UserManagement extends HTMLElement {
   }
 
   async loadUsers() {
-    const loadingEl = this.shadowRoot.getElementById('loading-users');
-    const tableEl = this.shadowRoot.getElementById('users-table');
+    const loadingEl = this.shadowRoot?.getElementById('loading-users');
+    const tableEl = this.shadowRoot?.getElementById('users-table');
 
     if (loadingEl) loadingEl.style.display = 'block';
     if (tableEl) tableEl.style.opacity = '0.5';
@@ -48,27 +54,27 @@ class UserManagement extends HTMLElement {
   }
 
   setupEventListeners() {
-    const searchInput = this.shadowRoot.getElementById('user-search');
-    searchInput.addEventListener('input', (e) => {
+    const searchInput = this.shadowRoot?.getElementById('user-search') as HTMLInputElement;
+    searchInput?.addEventListener('input', (e: any) => {
       this._searchTerm = e.target.value.toLowerCase();
       this.updateTable();
     });
 
-    const addUserBtn = this.shadowRoot.getElementById('add-user-btn');
-    addUserBtn.addEventListener('click', () => {
-      const editor = this.shadowRoot.getElementById('user-editor-modal');
-      editor.open(null); // Open for new user
+    const addUserBtn = this.shadowRoot?.getElementById('add-user-btn') as HTMLElement;
+    addUserBtn?.addEventListener('click', () => {
+      const editor = this.shadowRoot?.getElementById('user-editor-modal') as any;
+      editor?.open(null); // Open for new user
     });
 
-    this.shadowRoot.addEventListener('click', (e) => {
+    this.shadowRoot?.addEventListener('click', (e: any) => {
       const editBtn = e.target.closest('.edit-btn');
       const deleteBtn = e.target.closest('.delete-btn');
 
       if (editBtn) {
         const email = editBtn.dataset.email;
         const user = this._users.find(u => u.email === email);
-        const editor = this.shadowRoot.getElementById('user-editor-modal');
-        editor.open(user);
+        const editor = this.shadowRoot?.getElementById('user-editor-modal') as any;
+        if (user && editor) editor.open(user);
       }
 
       if (deleteBtn) {
@@ -80,26 +86,27 @@ class UserManagement extends HTMLElement {
     });
 
     // Listen for saved users from the editor
-    this.shadowRoot.addEventListener('user-saved', () => {
+    this.shadowRoot?.addEventListener('user-saved', () => {
       this.loadUsers();
     });
   }
 
-  async deleteUser(email) {
+  async deleteUser(email: string) {
     try {
       const user = this._users.find(u => u.email === email);
+      if (!user) return;
       console.log('Deleting user:', user);
       await saveUserData(user, 'Delete');
       this.loadUsers();
-    } catch (err) {
+    } catch (err: any) {
       alert('Failed to delete user: ' + err.message);
     }
   }
 
   updateTable() {
     console.log('Updating users table with', this._users.length, 'users');
-    const body = this.shadowRoot.getElementById('users-body');
-    const emptyState = this.shadowRoot.getElementById('empty-users');
+    const body = this.shadowRoot?.getElementById('users-body');
+    const emptyState = this.shadowRoot?.getElementById('empty-users');
 
     if (!body) {
       console.error('Could not find users-body element');
@@ -115,11 +122,11 @@ class UserManagement extends HTMLElement {
     body.innerHTML = '';
 
     if (filteredUsers.length === 0) {
-      emptyState.style.display = 'block';
+      if (emptyState) emptyState.style.display = 'block';
       return;
     }
 
-    emptyState.style.display = 'none';
+    if (emptyState) emptyState.style.display = 'none';
 
     filteredUsers.forEach(user => {
       const tr = document.createElement('tr');
@@ -147,11 +154,17 @@ class UserManagement extends HTMLElement {
     console.log('Rendering UserManagement component');
     if (!template) {
       console.error('UserManagement template is missing!');
-      this.shadowRoot.innerHTML = '<h2>Error: Template not found</h2>';
+      if (this.shadowRoot) this.shadowRoot.innerHTML = '<h2>Error: Template not found</h2>';
       return;
     }
-    this.shadowRoot.innerHTML = template;
+    if (this.shadowRoot) this.shadowRoot.innerHTML = template;
   }
 }
 
 customElements.define('user-management', UserManagement);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'user-management': UserManagement;
+  }
+}

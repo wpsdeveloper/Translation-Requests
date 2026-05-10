@@ -1,8 +1,10 @@
+import { AppUser, RawRequest, TranslationRequest } from '../../shared/types';
+
 const IS_MOCK = !window.location.href.includes('google') && !window.location.href.includes('script');
 
 // Safety proxy for local development to prevent 'google is not defined' errors
-if (IS_MOCK && typeof window.google === 'undefined') {
-  window.google = {
+if (IS_MOCK && typeof (window as any).google === 'undefined') {
+  (window as any).google = {
     script: {
       run: {
         withSuccessHandler: function () { return this; },
@@ -14,27 +16,33 @@ if (IS_MOCK && typeof window.google === 'undefined') {
   };
 }
 
-export const fetchData = () => {
+export interface FetchDataResult {
+  requests: TranslationRequest[];
+  schools: string[];
+  user: AppUser | null;
+}
+
+export const fetchData = (): Promise<FetchDataResult> => {
   return new Promise((resolve, reject) => {
     if (IS_MOCK) {
-      import('./mock-data.js').then((module) => {
+      import('./mock-data').then((module) => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
-        const cleanRequests = data.requests.map(hydrate);
-        setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools }), 1500);
+        const cleanRequests = (data.requests as RawRequest[]).map(hydrate);
+        setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools, user: null }), 1500);
       });
       return;
     }
     google.script.run
-      .withSuccessHandler((data) => {
+      .withSuccessHandler((data: any) => {
         console.log('Data received from server:', data);
-        const requests = data.requests || [];
-        const schools = data.schools || [];
-        const user = data.user || null;
+        const requests = (data.requests || []) as RawRequest[];
+        const schools = (data.schools || []) as string[];
+        const user = (data.user || null) as AppUser | null;
         const cleanRequests = requests.map(hydrate);
         resolve({ requests: cleanRequests, schools: schools, user: user });
       })
-      .withFailureHandler((err) => {
+      .withFailureHandler((err: Error) => {
         console.error('Server error:', err);
         reject(err);
       })
@@ -42,22 +50,22 @@ export const fetchData = () => {
   });
 };
 
-export const saveRequest = (updatedData) => {
-  // Create a copy and convert Dates to ISO strings for the server
-  const dataToSend = {
-    ...updatedData,
-    requestDate: updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate,
-    submittedDate: updatedData.submittedDate instanceof Date ? updatedData.submittedDate.toISOString() : updatedData.submittedDate,
-    approvedDate: updatedData.approvedDate instanceof Date ? updatedData.approvedDate.toISOString() : updatedData.approvedDate,
-    startTime: updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime,
-    endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime,
+export const saveRequest = (updatedData: TranslationRequest): Promise<TranslationRequest> => {
+  // Create a copy and convert Dates back to ISO strings or formatted strings for the server
+  const dataToSend: RawRequest = {
+    ...(updatedData as any),
+    requestDate: updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || "",
+    submittedDate: updatedData.submittedDate instanceof Date ? updatedData.submittedDate.toISOString() : updatedData.submittedDate || "",
+    approvedDate: updatedData.approvedDate instanceof Date ? updatedData.approvedDate.toISOString() : updatedData.approvedDate || "",
+    startTime: updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || "",
+    endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || "",
   };
 
   console.log('Saving request to server (de-hydrated):', dataToSend);
 
   return new Promise((resolve, reject) => {
     google.script.run
-      .withSuccessHandler((serverResult) => {
+      .withSuccessHandler((serverResult: any) => {
         console.log('Server save successful:', serverResult);
         // Resolve with the original updatedData so the UI keeps its clean properties
         resolve(updatedData);
@@ -70,7 +78,7 @@ export const saveRequest = (updatedData) => {
 /**
  * Admin: Fetch all users from the system.
  */
-export const fetchAllUsers = () => {
+export const fetchAllUsers = (): Promise<AppUser[]> => {
   return new Promise((resolve, reject) => {
     if (IS_MOCK) {
       resolve([
@@ -80,7 +88,7 @@ export const fetchAllUsers = () => {
       return;
     }
     google.script.run
-      .withSuccessHandler(resolve)
+      .withSuccessHandler((users: any) => resolve(users as AppUser[]))
       .withFailureHandler(reject)
       .getUsersData();
   });
@@ -89,7 +97,7 @@ export const fetchAllUsers = () => {
 /**
  * Admin: Add, Edit, or Delete a user.
  */
-export const saveUserData = (userData, action) => {
+export const saveUserData = (userData: AppUser, action: string): Promise<AppUser> => {
   return new Promise((resolve, reject) => {
     if (IS_MOCK) {
       console.log(`Mock User ${action}:`, userData);
@@ -97,14 +105,14 @@ export const saveUserData = (userData, action) => {
       return;
     }
     google.script.run
-      .withSuccessHandler(resolve)
+      .withSuccessHandler((result: any) => resolve(result as AppUser))
       .withFailureHandler(reject)
       .saveUser(userData, action);
   });
 };
 
 
-export function hydrate(request) {
+export function hydrate(request: RawRequest): TranslationRequest {
   return {
     ...request,
     requestDate: request.requestDate ? new Date(request.requestDate) : null,

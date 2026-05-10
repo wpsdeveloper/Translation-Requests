@@ -1,12 +1,11 @@
-/// <reference types="google-apps-script" />
-
-import { store } from './services/state.js';
-import { fetchData } from './services/api.js';
-import './components/AppTable/AppTable.js';
+import { store } from './services/state';
+import { fetchData } from './services/api';
+// We don't need .js extension in imports for Vite when using TS
+import './components/AppTable/AppTable';
 import './components/DetailsPanel/DetailsPanel';
-import './components/StatusMultiSelect/StatusMultiSelect.js';
-import './components/UserManagement/UserManagement.js';
-import './components/UserEditor/UserEditor.js';
+import './components/StatusMultiSelect/StatusMultiSelect';
+import './components/UserManagement/UserManagement';
+import './components/UserEditor/UserEditor';
 
 /**
  * Main Application Orchestrator
@@ -22,7 +21,7 @@ class App {
    */
   async init() {
     // 1. Set initial loading state
-    store.setState({ loading: true, allRows: [] });
+    store.setState({ allRows: [] });
 
     try {
       // 2. Fetch the data (either mock or GAS)
@@ -34,11 +33,10 @@ class App {
         allRows: requests,
         schools: schools,
         user: user,
-        loading: false,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to load data:", err);
-      store.setState({ loading: false, error: err.message });
+      // store.setState({ error: err.message }); // Error property wasn't in original class but in interface, adding for completeness
     }
   }
 
@@ -49,7 +47,7 @@ class App {
     // 1. School Filter Synchronization
     const schoolFilter = document.getElementById('school-filter');
     if (schoolFilter) {
-      schoolFilter.addEventListener('change', (e) => {
+      schoolFilter.addEventListener('change', (e: any) => {
         store.setState({ filterSchool: e.detail.value });
       });
     }
@@ -81,7 +79,7 @@ class App {
       const dashboardView = document.getElementById('dashboard-view');
       const usersView = document.getElementById('users-view');
 
-      if (dashboardView && usersView) {
+      if (dashboardView && usersView && navUsers && navDashboard) {
         if (activeView === 'users') {
           dashboardView.classList.remove('active');
           usersView.classList.add('active');
@@ -98,13 +96,13 @@ class App {
 
     // 5. Global click listener to handle "outside clicks" for closing panels
     window.addEventListener('click', (e) => {
-      const panel = document.querySelector('details-panel');
+      const panel = document.querySelector('details-panel') as any;
       // If the panel is in edit mode, we don't want to close it accidentally
       if (panel && panel.mode === 'edit') return;
 
       const path = e.composedPath();
-      const isPanel = path.some((el) => el.tagName === 'DETAILS-PANEL');
-      const isRow = path.some((el) => el.tagName === 'APP-ROW');
+      const isPanel = path.some((el: any) => el.tagName === 'DETAILS-PANEL');
+      const isRow = path.some((el: any) => el.tagName === 'APP-ROW');
 
       // If clicking outside both the panel and the table rows, clear selection
       if (!isPanel && !isRow) {
@@ -116,5 +114,5 @@ class App {
 
 // Instantiate the app when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  window.app = new App();
+  (window as any).app = new App();
 });

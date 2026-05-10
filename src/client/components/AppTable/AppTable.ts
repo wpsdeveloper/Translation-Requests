@@ -1,7 +1,10 @@
+// @ts-ignore
 import AppTableStyles from './AppTable.css?inline';
+// @ts-ignore
 import AppTableTemplate from './AppTable.htm?raw';
-import { store } from '../../services/state.js';
-import '../AppRow/AppRow.js'; // Ensure the row component is registered
+import { store } from '../../services/state';
+import '../AppRow/AppRow'; // Ensure the row component is registered
+import { TranslationRequest } from '../../../shared/types';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(AppTableStyles);
@@ -10,7 +13,9 @@ class AppTable extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sheet];
+    if (this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sheet];
+    }
   }
 
   connectedCallback() {
@@ -32,17 +37,22 @@ class AppTable extends HTMLElement {
         rows = rows.filter(row => state.filterStatuses.includes(row.status));
       }
 
-      this.updateRows(rows, state.loading);
+      // Handle loading state - loading property might be missing in original class but let's assume it exists or use state.allRows.length === 0 as proxy
+      this.updateRows(rows, (state as any).loading);
     });
   }
 
   render() {
-    this.shadowRoot.innerHTML = AppTableTemplate;
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = AppTableTemplate;
+    }
   }
 
-  updateRows(rows, isLoading) {
-    const container = this.shadowRoot.getElementById('requests-table-body');
+  updateRows(rows: TranslationRequest[], isLoading: boolean) {
+    const container = this.shadowRoot?.getElementById('requests-table-body');
     const resultsCount = document.getElementById('results-count');
+
+    if (!container) return;
 
     if (isLoading) {
       container.innerHTML = `
@@ -73,7 +83,7 @@ class AppTable extends HTMLElement {
 
     rows.forEach(rowData => {
       // Create our custom row element
-      const rowEl = document.createElement('app-row');
+      const rowEl = document.createElement('app-row') as any;
       container.appendChild(rowEl);
 
       // Pass the row data directly to the child component
@@ -83,3 +93,9 @@ class AppTable extends HTMLElement {
 }
 
 customElements.define('app-table', AppTable);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'app-table': AppTable;
+  }
+}

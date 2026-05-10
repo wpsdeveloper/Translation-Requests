@@ -1,3 +1,4 @@
+
 const APPSHEET_APP_ID = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
 const APPSHEET_ACCESS_KEY = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
 
@@ -5,7 +6,7 @@ const APPSHEET_ACCESS_KEY = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4'
  * Unified fetcher for AppSheet data.
  * Returns an object with both requests and schools.
  */
-function getDataFromAppSheet(user) {
+function getDataFromAppSheet(user: AppUser) {
   try {
     const rawRequests = getRequestsFromAppSheet();
     const schools = getSchoolsFromAppSheet();
@@ -27,12 +28,12 @@ function getDataFromAppSheet(user) {
   }
 }
 
-function getRequestsFromAppSheet() {
+function getRequestsFromAppSheet(): RawRequest[] {
   const tableName = 'Requests';
 
   const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
 
-  const options = {
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
     headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
@@ -53,12 +54,12 @@ function getRequestsFromAppSheet() {
   return [];
 }
 
-function getSchoolsFromAppSheet() {
+function getSchoolsFromAppSheet(): string[] {
   const tableName = 'Locations';
 
   const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
 
-  const options = {
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
     headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
@@ -74,7 +75,7 @@ function getSchoolsFromAppSheet() {
   const data = JSON.parse(response.getContentText());
 
   if (data && Array.isArray(data)) {
-    return data.map(row => row.Name || row.name || ''); // Adjust based on AppSheet column name
+    return data.map((row: any) => row.Name || row.name || ''); 
   }
   return [];
 }
@@ -82,12 +83,9 @@ function getSchoolsFromAppSheet() {
 /**
  * Maps an AppSheet row object to the application's internal Request object structure.
  */
-function mapAppSheetRequest(row) {
-  Logger.log(row); // Keep this to verify the exact names in your logs!
-
+function mapAppSheetRequest(row: any): RawRequest {
   return {
     id: makeString(row["ID"] || row["id"]),
-    // Check for spaces using bracket notation
     email: makeString(row["Requester Email"] || row["RequesterEmail"] || row["requester_email"]),
     name: makeString(row["Requester Name"] || row["RequesterName"] || row["requester_name"]),
     school: makeString(row["School"] || row["school"]),
@@ -112,14 +110,14 @@ function mapAppSheetRequest(row) {
 }
 
 
-function makeString(value) {
+function makeString(value: any): string {
   return value ? value.toString() : '';
 }
 
 /**
  * Server function to update a request in AppSheet.
  */
-function saveDataToServer(updatedData) {
+function saveDataToServer(updatedData: RawRequest) {
   const activeUserEmail = Session.getActiveUser().getEmail();
   const user = getUser(activeUserEmail);
   
@@ -157,7 +155,7 @@ function saveDataToServer(updatedData) {
   // Map the clean JS object back to AppSheet's column names
   const appSheetRow = mapRequestToAppSheet(updatedData);
 
-  const options = {
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
     headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
@@ -192,16 +190,16 @@ function saveDataToServer(updatedData) {
 /**
  * Maps the internal Request object back to AppSheet's expected column names.
  */
-function mapRequestToAppSheet(data) {
+function mapRequestToAppSheet(data: RawRequest) {
   // Helper to format dates for AppSheet (removes T00:00:00.000Z)
-  const formatDate = (val) => {
+  const formatDate = (val: any) => {
     if (!val) return "";
     // If it's an ISO string, just take the date part (YYYY-MM-DD)
     if (typeof val === 'string' && val.includes('T')) return val.split('T')[0];
     return makeString(val);
   };
 
-  const row = {};
+  const row: any = {};
 
   row["ID"] = makeString(data.id);
   row["Requester Email"] = makeString(data.email);
@@ -236,12 +234,12 @@ function mapRequestToAppSheet(data) {
 /**
  * Fetches users from the AppSheet 'Users' table.
  */
-function getUsersFromAppSheet() {
+function getUsersFromAppSheet(): AppUser[] {
   const tableName = 'Users';
 
   const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
 
-  const options = {
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
     headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
@@ -257,13 +255,13 @@ function getUsersFromAppSheet() {
   const data = JSON.parse(response.getContentText());
 
   if (data && Array.isArray(data)) {
-    return data.map(row => {
-      const user = { ...row }; // Keep all original AppSheet columns
+    return data.map((row: any) => {
+      const user: any = { ...row }; // Keep all original AppSheet columns
       user.email = makeString(row["Email"] || row["email"]).trim();
       user.name = makeString(row["Name"] || row["name"]);
       user.role = makeString(row["Role"] || row["role"]) || 'User';
-      user.schools = makeString(row["Schools"] || row["schools"]).split(',').map(s => s.trim()).filter(s => s);
-      return user;
+      user.schools = makeString(row["Schools"] || row["schools"]).split(',').map((s: string) => s.trim()).filter((s: string) => s);
+      return user as AppUser;
     });
   }
   return [];
@@ -272,8 +270,8 @@ function getUsersFromAppSheet() {
 /**
  * Maps internal user object to AppSheet column names.
  */
-function mapUserToAppSheet(user) {
-  const row = { ...user };
+function mapUserToAppSheet(user: AppUser) {
+  const row: any = { ...user };
   
   // Ensure the standard columns are correctly formatted
   row["Email"] = makeString(user.email).trim();
@@ -293,22 +291,14 @@ function mapUserToAppSheet(user) {
 /**
  * Performs Add, Edit, or Delete actions on the 'Users' table in AppSheet.
  */
-function saveUserToAppSheet(userData, action) {
+function saveUserToAppSheet(userData: AppUser, action: string) {
   const tableName = 'Users';
   const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
 
-  const emailValue = makeString(userData.email || userData.Email).trim();
-  
   // For Delete, send the full object to ensure we include any hidden keys (like _RowNumber)
-  // but also include explicit Email/email keys just in case.
-  let appSheetRow;
-  if (action === 'Delete') {
-    appSheetRow = mapUserToAppSheet(userData);
-  } else {
-    appSheetRow = mapUserToAppSheet(userData);
-  }
+  const appSheetRow = mapUserToAppSheet(userData);
 
-  const options = {
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
     headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
