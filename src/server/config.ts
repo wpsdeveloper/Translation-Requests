@@ -24,6 +24,10 @@ const Config = {
     return this.get('FORM_SPREADSHEET_ID');
   },
 
+  get TranslationFolderId(): string {
+    return this.get('TRANSLATION_FOLDER_ID') || '1KCCnq9VxHvsio79q4zte-gdVGQtHW0gRPW4Rihho4JQ6gE5E5wJkV1jCZm1jEAn0rb0GcoEw';
+  },
+
   get NotificationTestEmail(): string {
     return this.get('NOTIFICATION_TEST_EMAIL') || 'wpsdeveloper@walpole.k12.ma.us';
   },

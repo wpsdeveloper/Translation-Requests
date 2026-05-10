@@ -21,25 +21,21 @@ function doGet() {
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 
-  const user = getUser(activeUserEmail);
-  console.log('Active user email:', activeUserEmail);
-  console.log('User object:', user);
-
-  if (!user) {
-    return HtmlService.createHtmlOutputFromFile('forbidden')
-      .setTitle('Access Denied')
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-  }
-
   return HtmlService.createHtmlOutputFromFile('index');
 }
 
 function getDataFromServer() {
   const activeUserEmail = Session.getActiveUser().getEmail();
-  const user = getUser(activeUserEmail);
+  let user = getUser(activeUserEmail);
 
   if (!user) {
-    throw new Error('Unauthorized');
+    // If domain is authorized but user not in DB, treat as Guest
+    user = {
+      email: activeUserEmail,
+      name: activeUserEmail.split('@')[0],
+      role: 'Guest',
+      schools: [],
+    };
   }
 
   const data = getDataFromAppSheet(user);
@@ -54,6 +50,18 @@ function getDataFromServer() {
       name: user.name,
     },
   };
+}
+
+function addRequest(requestData: RawRequest) {
+  return addRequestToServer(requestData);
+}
+
+function saveRequest(requestData: RawRequest) {
+  return saveDataToServer(requestData);
+}
+
+function uploadFile(base64Data: string, fileName: string, mimeType: string) {
+  return uploadFileToDrive(base64Data, fileName, mimeType);
 }
 
 function getUsersData() {

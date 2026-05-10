@@ -7,6 +7,8 @@ declare namespace google {
       saveDataToServer(data: any): void;
       getUsersData(): void;
       saveUser(userData: any, action: string): void;
+      addRequestToServer(requestData: any): void;
+      uploadFile(fileBase64: string, fileName: string, mimeType: string): void;
     }
     const run: Runner;
   }

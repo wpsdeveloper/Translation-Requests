@@ -6,6 +6,7 @@ import './components/DetailsPanel/DetailsPanel';
 import './components/StatusMultiSelect/StatusMultiSelect';
 import './components/UserManagement/UserManagement';
 import './components/UserEditor/UserEditor';
+import './components/RequestEditor/RequestEditor';
 
 /**
  * Main Application Orchestrator
@@ -28,13 +29,15 @@ export class App {
       const { requests, schools, user } = await fetchData();
 
       // 3. Update the store
-      // This triggers components to update automatically
+      const defaultView = user && user.role === 'Guest' ? 'request-entry' : 'dashboard';
       store.setState({
         allRows: requests,
         schools: schools,
         user: user,
         loading: false,
+        activeView: defaultView,
       });
+      console.log('App initialized with user:', user);
     } catch (err: any) {
       console.error('Failed to load data:', err);
       store.setState({ loading: false });
@@ -53,17 +56,20 @@ export class App {
       });
     }
 
-    // 3. User Management Navigation
     const navUsers = document.getElementById('nav-users');
     const navDashboard = document.getElementById('nav-dashboard');
+    const navRequest = document.getElementById('nav-request');
     const mainNav = document.getElementById('main-nav');
 
-    if (navUsers && navDashboard) {
+    if (navUsers && navDashboard && navRequest) {
       navUsers.addEventListener('click', () => {
         store.setState({ activeView: 'users' });
       });
       navDashboard.addEventListener('click', () => {
         store.setState({ activeView: 'dashboard' });
+      });
+      navRequest.addEventListener('click', () => {
+        store.setState({ activeView: 'request-entry' });
       });
     }
 
@@ -73,24 +79,54 @@ export class App {
 
       // Toggle Navigation Visibility
       if (mainNav) {
-        mainNav.style.display = user && user.role === 'Admin' ? 'flex' : 'none';
+        mainNav.style.display = user ? 'flex' : 'none';
+        
+        // Hide Restricted buttons for Guests
+        if (navDashboard && navUsers) {
+          const isGuest = user && user.role === 'Guest';
+          navDashboard.style.display = isGuest ? 'none' : 'inline-block';
+          navUsers.style.display = user && user.role === 'Admin' ? 'inline-block' : 'none';
+        }
       }
 
       // Toggle Views
+      const loadingView = document.getElementById('loading-view');
       const dashboardView = document.getElementById('dashboard-view');
       const usersView = document.getElementById('users-view');
+      const requestEntryView = document.getElementById('request-entry-view');
+      const subtitle = document.getElementById('portal-subtitle');
 
-      if (dashboardView && usersView && navUsers && navDashboard) {
+      if (loadingView && dashboardView && usersView && requestEntryView && navUsers && navDashboard && navRequest) {
+        // Reset all views
+        [loadingView, dashboardView, usersView, requestEntryView].forEach(v => {
+          if (v) {
+            v.style.display = 'none';
+            v.classList.remove('active');
+          }
+        });
+
+        if (state.loading) {
+          loadingView.style.display = 'block';
+          loadingView.classList.add('active');
+          return; // Don't show anything else while loading
+        }
+
+        [navDashboard, navUsers, navRequest].forEach(n => n.classList.remove('active'));
+
         if (activeView === 'users') {
-          dashboardView.classList.remove('active');
+          usersView.style.display = 'block';
           usersView.classList.add('active');
           navUsers.classList.add('active');
-          navDashboard.classList.remove('active');
+        } else if (activeView === 'request-entry') {
+          requestEntryView.style.display = 'block';
+          requestEntryView.classList.add('active');
+          navRequest.classList.add('active');
+          if (subtitle) subtitle.textContent = 'Staff submission portal';
         } else {
+          dashboardView.style.display = 'block';
           dashboardView.classList.add('active');
-          usersView.classList.remove('active');
           navDashboard.classList.add('active');
-          navUsers.classList.remove('active');
+          if (subtitle) subtitle.textContent = 'District data management portal';
         }
       }
     });

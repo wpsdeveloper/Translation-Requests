@@ -1,4 +1,4 @@
-export type UserRole = 'Admin' | 'User';
+export type UserRole = 'Admin' | 'User' | 'Approver' | 'Guest';
 
 export interface AppUser {
   email: string;

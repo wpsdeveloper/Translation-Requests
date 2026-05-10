@@ -18,6 +18,9 @@ if (IS_MOCK && typeof (window as any).google === 'undefined') {
         getDataFromServer: function () {
           console.warn('google.script.run.getRequestsFromAppSheet called in mock mode');
         },
+        addRequestToServer: function () {
+          console.warn('google.script.run.addRequestToServer called in mock mode');
+        },
         saveDataToServer: function () {
           console.warn('google.script.run.saveDataToServer called in mock mode');
         },
@@ -43,7 +46,8 @@ export const fetchData = (): Promise<FetchDataResult> => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
         const cleanRequests = (data.requests as RawRequest[]).map(hydrate);
-        setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools, user: null }), 1500);
+        const user = (data.user || null) as AppUser | null;
+        setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools, user: user }), 1500);
       });
       return;
     }
@@ -99,6 +103,58 @@ export const saveRequest = (updatedData: TranslationRequest): Promise<Translatio
       })
       .withFailureHandler(reject)
       .saveDataToServer(dataToSend);
+  });
+};
+
+/**
+ * Adds a new request to the server.
+ */
+export const addRequest = (newData: TranslationRequest): Promise<TranslationRequest> => {
+  const dataToSend: RawRequest = {
+    ...(newData as any),
+    requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
+    submittedDate:
+      newData.submittedDate instanceof Date ? newData.submittedDate.toISOString() : newData.submittedDate || '',
+    approvedDate:
+      newData.approvedDate instanceof Date ? newData.approvedDate.toISOString() : newData.approvedDate || '',
+    startTime: newData.startTime instanceof Date ? newData.startTime.toISOString() : newData.startTime || '',
+    endTime: newData.endTime instanceof Date ? newData.endTime.toISOString() : newData.endTime || '',
+  };
+
+  console.log('Adding new request to server:', dataToSend);
+
+  return new Promise((resolve, reject) => {
+    if (IS_MOCK) {
+      setTimeout(() => {
+        const mockCreated = { ...newData, id: 'MOCK-' + Date.now() };
+        resolve(mockCreated);
+      }, 1000);
+      return;
+    }
+    google.script.run
+      .withSuccessHandler((serverResult: any) => {
+        console.log('Server add successful:', serverResult);
+        resolve(hydrate(serverResult));
+      })
+      .withFailureHandler(reject)
+      .addRequestToServer(dataToSend);
+  });
+};
+
+/**
+ * Uploads a file to Google Drive.
+ */
+export const uploadFile = (base64Data: string, fileName: string, mimeType: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (IS_MOCK) {
+      console.log('Mock uploading file:', fileName);
+      setTimeout(() => resolve('https://drive.google.com/mock-file-url'), 1500);
+      return;
+    }
+    google.script.run
+      .withSuccessHandler((url: string) => resolve(url))
+      .withFailureHandler(reject)
+      .uploadFile(base64Data, fileName, mimeType);
   });
 };
 

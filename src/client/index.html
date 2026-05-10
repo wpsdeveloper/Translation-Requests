@@ -13,16 +13,28 @@
     <div class="header-content">
       <div>
         <h1>Translation Requests</h1>
-        <p class="subtitle">District data management portal</p>
+        <p class="subtitle" id="portal-subtitle">District data management portal</p>
       </div>
       <nav id="main-nav" style="display: none;">
+        <button id="nav-request" class="nav-btn">New Request</button>
         <button id="nav-dashboard" class="nav-btn active">Dashboard</button>
         <button id="nav-users" class="nav-btn">User Management</button>
       </nav>
     </div>
   </header>
 
-  <div id="dashboard-view" class="view active">
+  <div id="loading-view" class="view active" style="text-align: center; padding-top: 100px;">
+    <div class="spinner"></div>
+    <p style="margin-top: 20px; color: #64748b; font-weight: 500;">Loading application data...</p>
+  </div>
+
+  <div id="request-entry-view" class="view" style="display: none; padding: 20px;">
+    <div style="max-width: 800px; margin: 0 auto;">
+      <request-editor id="request-editor-view" embedded="true"></request-editor>
+    </div>
+  </div>
+
+  <div id="dashboard-view" class="view">
     <div class="panel">
     <section class="card">
       <div class="filters">
@@ -56,6 +68,8 @@
   <div id="users-view" class="view">
     <user-management></user-management>
   </div>
+
+  <request-editor id="request-editor-modal"></request-editor>
 
   <script type="module" src="main.ts"></script>
 </body>

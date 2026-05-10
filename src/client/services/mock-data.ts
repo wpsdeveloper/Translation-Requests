@@ -4,7 +4,7 @@ export function getMockData(): string {
   return JSON.stringify(mockData);
 }
 
-const mockData: { requests: RawRequest[]; schools: string[] } = {
+const mockData: { requests: RawRequest[]; schools: string[]; user: AppUser } = {
   requests: [
     {
       approvedDate: '',
@@ -110,4 +110,10 @@ const mockData: { requests: RawRequest[]; schools: string[] } = {
     'Central Administration',
     'Student Services',
   ],
+  user: {
+    email: 'wpsdeveloper@walpole.k12.m.aus',
+    name: 'App Developer',
+    role: 'Guest',
+    schools: ['Walpole High School', 'Walpole Middle School'],
+  },
 };

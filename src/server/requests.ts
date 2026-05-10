@@ -173,6 +173,7 @@ function saveDataToServer(updatedData: RawRequest) {
       Action: 'Edit',
       Properties: { Locale: 'en-US' },
       Rows: [appSheetRow],
+      triggerAutomation: true,
     }),
     muteHttpExceptions: true,
   };
@@ -193,6 +194,86 @@ function saveDataToServer(updatedData: RawRequest) {
     return result;
   } catch (e) {
     throw new Error('AppSheet returned invalid JSON: ' + responseText);
+  }
+}
+
+/**
+ * Server function to add a new request to AppSheet.
+ */
+function addRequestToServer(data: RawRequest) {
+  const activeUserEmail = Session.getActiveUser().getEmail();
+  let user = getUser(activeUserEmail);
+
+  // If user is not in DB, we treat them as a virtual 'Guest' user
+  // but we still allow them to submit if they are from the domain.
+  if (!activeUserEmail.toLowerCase().endsWith('@walpole.k12.ma.us')) {
+    throw new Error('Access Denied: Unauthorized domain.');
+  }
+
+  // Set defaults for new requests
+  data.status = 'Needs Approval';
+  data.submittedDate = new Date().toISOString();
+  data.id = Utilities.getUuid(); // Generate a unique ID if not provided
+
+  const tableName = 'Requests';
+  const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
+
+  const appSheetRow = mapRequestToAppSheet(data);
+
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { ApplicationAccessKey: Config.AppSheetAccessKey },
+    payload: JSON.stringify({
+      Action: 'Add',
+      Properties: { Locale: 'en-US' },
+      Rows: [appSheetRow],
+      triggerAutomation: true,
+    }),
+    muteHttpExceptions: true,
+  };
+
+  const response = UrlFetchApp.fetch(url, options);
+  const responseText = response.getContentText();
+  const responseCode = response.getResponseCode();
+
+  if (responseCode !== 200) {
+    throw new Error(`AppSheet Error (${responseCode}): ${responseText}`);
+  }
+
+  try {
+    const result = JSON.parse(responseText);
+    // AppSheet 'Add' returns the created row(s) in the Rows property of the response
+    if (result && result.Rows && result.Rows.length > 0) {
+      return mapAppSheetRequest(result.Rows[0]);
+    }
+    return data; // Fallback to what we sent if parsing fails
+  } catch (e) {
+    return data;
+  }
+}
+
+/**
+ * Uploads a file to a specific Drive folder and returns the view URL.
+ */
+function uploadFileToDrive(base64Data: string, fileName: string, mimeType: string) {
+  try {
+    const folderId = Config.TranslationFolderId;
+    const folder = DriveApp.getFolderById(folderId);
+
+    // Extract base64 content
+    const splitData = base64Data.split(',');
+    const content = splitData.length > 1 ? splitData[1] : splitData[0];
+    const decoded = Utilities.base64Decode(content);
+    const blob = Utilities.newBlob(decoded, mimeType, fileName);
+
+    const file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    return file.getUrl();
+  } catch (e: any) {
+    console.error('File upload failed:', e);
+    throw new Error('Failed to upload file to Google Drive: ' + (e?.toString() || 'Unknown error'));
   }
 }
 

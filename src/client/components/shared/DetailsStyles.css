@@ -66,3 +66,10 @@ button.primary {
 .detail-item .view-mode {
   display: inline-block;
 }
+
+.help-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 4px;
+  display: block;
+}

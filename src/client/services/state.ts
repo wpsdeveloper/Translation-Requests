@@ -8,7 +8,7 @@ interface State {
   filterStatuses: string[];
   isPanelOpen: boolean;
   user: AppUser | null;
-  activeView: 'dashboard' | 'users';
+  activeView: 'dashboard' | 'users' | 'request-entry';
   allUsers: AppUser[];
   loading: boolean;
 }
