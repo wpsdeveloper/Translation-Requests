@@ -59,26 +59,30 @@ class ContractorSelect extends HTMLElement {
       }
 
       // Dispatch custom event for parent components
-      this.dispatchEvent(new CustomEvent('change', {
-        detail: {
-          contractor: val,
-          name: nameInput?.value || ''
-        },
-        bubbles: true,
-        composed: true
-      }));
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {
+            contractor: val,
+            name: nameInput?.value || '',
+          },
+          bubbles: true,
+          composed: true,
+        })
+      );
     });
 
     nameInput?.addEventListener('input', (e: any) => {
       this._data.name = e.target.value;
-      this.dispatchEvent(new CustomEvent('change', {
-        detail: {
-          contractor: select?.value || '',
-          name: e.target.value
-        },
-        bubbles: true,
-        composed: true
-      }));
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {
+            contractor: select?.value || '',
+            name: e.target.value,
+          },
+          bubbles: true,
+          composed: true,
+        })
+      );
     });
   }
 
@@ -118,7 +122,7 @@ class ContractorSelect extends HTMLElement {
     const nameInput = this.shadowRoot?.querySelector('#contractor-name') as HTMLInputElement;
     return {
       contractor: select?.value || '',
-      name: nameInput?.value || ''
+      name: nameInput?.value || '',
     };
   }
 
@@ -145,7 +149,7 @@ class ContractorSelect extends HTMLElement {
   getSaveData() {
     return {
       contractor: (this.shadowRoot?.querySelector('#contractor-dropdown') as HTMLSelectElement)?.value || '',
-      contractorName: (this.shadowRoot?.querySelector('#contractor-name') as HTMLInputElement)?.value || ''
+      contractorName: (this.shadowRoot?.querySelector('#contractor-name') as HTMLInputElement)?.value || '',
     };
   }
 }

@@ -74,18 +74,20 @@ class StatusSelect extends HTMLElement {
     const select = this.shadowRoot?.querySelector('#status-dropdown') as HTMLSelectElement;
     select?.addEventListener('change', (e: any) => {
       this.status = e.target.value;
-      this.dispatchEvent(new CustomEvent('change', {
-        detail: { status: e.target.value },
-        bubbles: true,
-        composed: true
-      }));
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { status: e.target.value },
+          bubbles: true,
+          composed: true,
+        })
+      );
     });
   }
 
   updateView() {
     const badge = this.shadowRoot?.querySelector('#status-badge');
     const select = this.shadowRoot?.querySelector('#status-dropdown') as HTMLSelectElement;
-    
+
     if (badge) badge.setAttribute('status', this._status);
     if (select) select.value = this._status;
   }
@@ -93,7 +95,7 @@ class StatusSelect extends HTMLElement {
   updateMode() {
     const viewEl = this.shadowRoot?.querySelector('#view-mode') as HTMLElement;
     const editEl = this.shadowRoot?.querySelector('#edit-mode') as HTMLElement;
-    
+
     if (viewEl && editEl) {
       viewEl.style.display = this._mode === 'view' ? 'block' : 'none';
       editEl.style.display = this._mode === 'edit' ? 'block' : 'none';

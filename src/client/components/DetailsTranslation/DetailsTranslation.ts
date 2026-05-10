@@ -42,11 +42,11 @@ class DetailsTranslation extends HTMLElement {
     const editFields = ['#edit-document-length', '#edit-document-link'];
     const editViews = ['#view-document-length', '#view-document-link', '.file-link'];
 
-    editFields.forEach(sel => {
+    editFields.forEach((sel) => {
       const el = root.querySelector(sel) as HTMLElement;
       if (el) el.style.display = isEdit ? 'block' : 'none';
     });
-    editViews.forEach(sel => {
+    editViews.forEach((sel) => {
       const el = root.querySelector(sel) as HTMLElement;
       if (el) el.style.display = isEdit ? 'none' : '';
     });
@@ -55,11 +55,11 @@ class DetailsTranslation extends HTMLElement {
     const processFields = ['#edit-date-sent', '#edit-date-received'];
     const processViews = ['#view-date-sent', '#view-date-received'];
 
-    processFields.forEach(sel => {
+    processFields.forEach((sel) => {
       const el = root.querySelector(sel) as HTMLElement;
       if (el) el.style.display = isProcess ? 'block' : 'none';
     });
-    processViews.forEach(sel => {
+    processViews.forEach((sel) => {
       const el = root.querySelector(sel) as HTMLElement;
       if (el) el.style.display = isProcess ? 'none' : '';
     });
@@ -80,7 +80,7 @@ class DetailsTranslation extends HTMLElement {
     // View Mode Hydration
     const viewLen = root.querySelector('#view-document-length');
     if (viewLen) viewLen.textContent = this._data.docPageCount || 'N/A';
-    
+
     const viewLink = root.querySelector('#view-document-link') as HTMLAnchorElement;
     if (viewLink) {
       viewLink.href = this._data.docLink || '#';
@@ -88,27 +88,31 @@ class DetailsTranslation extends HTMLElement {
     }
 
     // Formatting dates for view mode
-    const sentDate = (this._data as any).docSentDate ? new Date((this._data as any).docSentDate).toLocaleDateString() : 'N/A';
-    const receivedDate = (this._data as any).docReceivedDate ? new Date((this._data as any).docReceivedDate).toLocaleDateString() : 'N/A';
-    
+    const sentDate = (this._data as any).docSentDate
+      ? new Date((this._data as any).docSentDate).toLocaleDateString()
+      : 'N/A';
+    const receivedDate = (this._data as any).docReceivedDate
+      ? new Date((this._data as any).docReceivedDate).toLocaleDateString()
+      : 'N/A';
+
     const viewSent = root.querySelector('#view-date-sent');
     if (viewSent) viewSent.textContent = sentDate;
-    
+
     const viewReceived = root.querySelector('#view-date-received');
     if (viewReceived) viewReceived.textContent = receivedDate;
 
     // Edit Mode Hydration
     const editLen = root.querySelector('#edit-document-length') as HTMLInputElement;
     if (editLen) editLen.value = this._data.docPageCount || '';
-    
+
     const editLink = root.querySelector('#edit-document-link') as HTMLInputElement;
     if (editLink) editLink.value = this._data.docLink || '';
 
     // Date inputs expect YYYY-MM-DD
-    const formatDateForInput = (date: any) => date ? new Date(date).toISOString().split('T')[0] : '';
+    const formatDateForInput = (date: any) => (date ? new Date(date).toISOString().split('T')[0] : '');
     const editSent = root.querySelector('#edit-date-sent') as HTMLInputElement;
     if (editSent) editSent.value = formatDateForInput((this._data as any).docSentDate);
-    
+
     const editReceived = root.querySelector('#edit-date-received') as HTMLInputElement;
     if (editReceived) editReceived.value = formatDateForInput((this._data as any).docReceivedDate);
 
@@ -116,7 +120,7 @@ class DetailsTranslation extends HTMLElement {
     if (contractorSelect) {
       contractorSelect.value = {
         contractor: this._data.contractor,
-        name: this._data.contractorName
+        name: this._data.contractorName,
       };
       contractorSelect.mode = this._mode;
     }
@@ -127,15 +131,15 @@ class DetailsTranslation extends HTMLElement {
   getSaveData() {
     const root = this.shadowRoot;
     if (!root) return {};
-    
+
     const contractorData = (root.querySelector('#contractor-select') as any)?.getSaveData() || {};
-    
+
     return {
       docPageCount: (root.querySelector('#edit-document-length') as HTMLInputElement).value,
       docLink: (root.querySelector('#edit-document-link') as HTMLInputElement).value,
       docSentDate: (root.querySelector('#edit-date-sent') as HTMLInputElement).value,
       docReceivedDate: (root.querySelector('#edit-date-received') as HTMLInputElement).value,
-      ...contractorData
+      ...contractorData,
     };
   }
 }

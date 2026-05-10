@@ -22,7 +22,7 @@ describe('main.ts (App Integration)', () => {
     vi.spyOn(api, 'fetchData').mockResolvedValue({
       requests: [],
       schools: ['School A'],
-      user: { email: 'test@test.com', name: 'Test', role: 'Admin', schools: [] }
+      user: { email: 'test@test.com', name: 'Test', role: 'Admin', schools: [] },
     });
 
     // Manually instantiate the app for testing
@@ -31,7 +31,7 @@ describe('main.ts (App Integration)', () => {
 
   it('should initialize data on startup', async () => {
     // Wait for any async init to finish
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(api.fetchData).toHaveBeenCalled();
     expect(store.getState().schools).toContain('School A');
@@ -51,7 +51,7 @@ describe('main.ts (App Integration)', () => {
 
   it('should close the details panel when clicking outside', () => {
     store.setState({ selectedRow: { id: '1' } as any });
-    
+
     // Simulate clicking outside (on the body)
     // Note: main.ts uses window.addEventListener, which we've attached via setupEventListeners() in constructor
     window.dispatchEvent(new MouseEvent('click', { bubbles: true }));

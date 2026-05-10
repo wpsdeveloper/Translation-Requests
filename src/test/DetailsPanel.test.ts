@@ -26,7 +26,7 @@ describe('DetailsPanel', () => {
     approverName: '',
     startTime: null,
     endTime: null,
-    approvedDate: null
+    approvedDate: null,
   };
 
   beforeEach(() => {
@@ -55,7 +55,7 @@ describe('DetailsPanel', () => {
     editBtn.click();
 
     expect(panel.mode).toBe('edit');
-    
+
     const saveBtn = panel.shadowRoot.querySelector('#save-btn');
     expect(saveBtn.style.display).not.toBe('none');
   });

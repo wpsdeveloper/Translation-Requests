@@ -17,10 +17,10 @@ describe('state.ts', () => {
   it('should notify listeners when state changes', () => {
     const callback = vi.fn();
     store.subscribe(callback);
-    
+
     const newState = { isPanelOpen: true };
     store.setState(newState);
-    
+
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith(expect.objectContaining(newState));
   });
@@ -28,7 +28,7 @@ describe('state.ts', () => {
   it('should merge new state with old state', () => {
     store.setState({ filterSchool: 'School A' });
     store.setState({ isPanelOpen: false });
-    
+
     const state = store.getState();
     expect(state.filterSchool).toBe('School A');
     expect(state.isPanelOpen).toBe(false);

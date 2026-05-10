@@ -72,7 +72,7 @@ class UserManagement extends HTMLElement {
 
       if (editBtn) {
         const email = editBtn.dataset.email;
-        const user = this._users.find(u => u.email === email);
+        const user = this._users.find((u) => u.email === email);
         const editor = this.shadowRoot?.getElementById('user-editor-modal') as any;
         if (user && editor) editor.open(user);
       }
@@ -93,7 +93,7 @@ class UserManagement extends HTMLElement {
 
   async deleteUser(email: string) {
     try {
-      const user = this._users.find(u => u.email === email);
+      const user = this._users.find((u) => u.email === email);
       if (!user) return;
       console.log('Deleting user:', user);
       await saveUserData(user, 'Delete');
@@ -113,7 +113,7 @@ class UserManagement extends HTMLElement {
       return;
     }
 
-    const filteredUsers = this._users.filter(u => {
+    const filteredUsers = this._users.filter((u) => {
       const name = (u.name || '').toLowerCase();
       const email = (u.email || '').toLowerCase();
       return name.includes(this._searchTerm) || email.includes(this._searchTerm);
@@ -128,7 +128,7 @@ class UserManagement extends HTMLElement {
 
     if (emptyState) emptyState.style.display = 'none';
 
-    filteredUsers.forEach(user => {
+    filteredUsers.forEach((user) => {
       const tr = document.createElement('tr');
       const schoolsList = Array.isArray(user.schools) ? user.schools.join(', ') : '';
 

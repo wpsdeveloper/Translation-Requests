@@ -14,7 +14,7 @@ describe('ContractorSelect', () => {
     el.value = { contractor: 'Lexikeet', name: 'Lexikeet' };
     el.mode = 'view';
     container.appendChild(el);
-    
+
     expect(el.shadowRoot.querySelector('#view-value').textContent).toBe('Lexikeet');
   });
 
@@ -22,7 +22,7 @@ describe('ContractorSelect', () => {
     const el = document.createElement('contractor-select') as any;
     el.mode = 'edit'; // ContractorSelect uses 'edit' for interactivity
     container.appendChild(el);
-    
+
     const changeSpy = vi.fn();
     el.addEventListener('change', changeSpy);
 

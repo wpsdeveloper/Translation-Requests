@@ -15,7 +15,7 @@ describe('DetailsTranslation', () => {
     el.data = { docPageCount: '15', contractor: '', contractorName: '' };
     el.mode = 'view';
     container.appendChild(el);
-    
+
     const root = el.shadowRoot;
     const viewSpan = root.querySelector('#view-document-length');
     expect(viewSpan).toBeTruthy();
@@ -27,7 +27,7 @@ describe('DetailsTranslation', () => {
     el.data = { docPageCount: '15' };
     el.mode = 'edit';
     container.appendChild(el);
-    
+
     const root = el.shadowRoot;
     const input = root.querySelector('#edit-document-length');
     expect(input).toBeTruthy();

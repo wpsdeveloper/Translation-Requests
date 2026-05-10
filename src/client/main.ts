@@ -33,10 +33,10 @@ export class App {
         allRows: requests,
         schools: schools,
         user: user,
-        loading: false
+        loading: false,
       });
     } catch (err: any) {
-      console.error("Failed to load data:", err);
+      console.error('Failed to load data:', err);
       store.setState({ loading: false });
     }
   }
@@ -73,7 +73,7 @@ export class App {
 
       // Toggle Navigation Visibility
       if (mainNav) {
-        mainNav.style.display = (user && user.role === 'Admin') ? 'flex' : 'none';
+        mainNav.style.display = user && user.role === 'Admin' ? 'flex' : 'none';
       }
 
       // Toggle Views

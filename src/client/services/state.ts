@@ -34,7 +34,7 @@ class GlobalStore {
       user: null,
       activeView: 'dashboard',
       allUsers: [],
-      loading: false
+      loading: false,
     };
     this._listeners = [];
   }
@@ -48,12 +48,12 @@ class GlobalStore {
 
   /**
    * Updates a subset of the state and notifies all subscribers.
-   * This uses an immutable-style update pattern to ensure listeners 
+   * This uses an immutable-style update pattern to ensure listeners
    * always get a fresh snapshot.
    */
   setState(newState: Partial<State>) {
     this._state = { ...this._state, ...newState };
-    this._listeners.forEach(callback => callback(this._state));
+    this._listeners.forEach((callback) => callback(this._state));
   }
 
   getState(): State {

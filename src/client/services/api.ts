@@ -9,12 +9,20 @@ if (IS_MOCK && typeof (window as any).google === 'undefined') {
   (window as any).google = {
     script: {
       run: {
-        withSuccessHandler: function () { return this; },
-        withFailureHandler: function () { return this; },
-        getDataFromServer: function () { console.warn('google.script.run.getRequestsFromAppSheet called in mock mode'); },
-        saveDataToServer: function () { console.warn('google.script.run.saveDataToServer called in mock mode'); }
-      }
-    }
+        withSuccessHandler: function () {
+          return this;
+        },
+        withFailureHandler: function () {
+          return this;
+        },
+        getDataFromServer: function () {
+          console.warn('google.script.run.getRequestsFromAppSheet called in mock mode');
+        },
+        saveDataToServer: function () {
+          console.warn('google.script.run.saveDataToServer called in mock mode');
+        },
+      },
+    },
   };
 }
 
@@ -25,7 +33,7 @@ export interface FetchDataResult {
 }
 
 /**
- * Main data fetcher. 
+ * Main data fetcher.
  * Orchestrates either dynamic mock loading or calling the GAS server via google.script.run.
  */
 export const fetchData = (): Promise<FetchDataResult> => {
@@ -58,18 +66,26 @@ export const fetchData = (): Promise<FetchDataResult> => {
 
 /**
  * Saves changes to a request.
- * This function "de-hydrates" the object (converts Dates back to strings) 
+ * This function "de-hydrates" the object (converts Dates back to strings)
  * to match the AppSheet API's expected format.
  */
 export const saveRequest = (updatedData: TranslationRequest): Promise<TranslationRequest> => {
   // Create a copy and convert Dates back to ISO strings or formatted strings for the server
   const dataToSend: RawRequest = {
     ...(updatedData as any),
-    requestDate: updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || "",
-    submittedDate: updatedData.submittedDate instanceof Date ? updatedData.submittedDate.toISOString() : updatedData.submittedDate || "",
-    approvedDate: updatedData.approvedDate instanceof Date ? updatedData.approvedDate.toISOString() : updatedData.approvedDate || "",
-    startTime: updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || "",
-    endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || "",
+    requestDate:
+      updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || '',
+    submittedDate:
+      updatedData.submittedDate instanceof Date
+        ? updatedData.submittedDate.toISOString()
+        : updatedData.submittedDate || '',
+    approvedDate:
+      updatedData.approvedDate instanceof Date
+        ? updatedData.approvedDate.toISOString()
+        : updatedData.approvedDate || '',
+    startTime:
+      updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || '',
+    endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || '',
   };
 
   console.log('Saving request to server (de-hydrated):', dataToSend);
@@ -94,7 +110,7 @@ export const fetchAllUsers = (): Promise<AppUser[]> => {
     if (IS_MOCK) {
       resolve([
         { email: 'admin@walpole.k12.ma.us', name: 'Admin User', role: 'Admin', schools: [] },
-        { email: 'user@walpole.k12.ma.us', name: 'Standard User', role: 'User', schools: ['Walpole High'] }
+        { email: 'user@walpole.k12.ma.us', name: 'Standard User', role: 'User', schools: ['Walpole High'] },
       ]);
       return;
     }
@@ -123,7 +139,7 @@ export const saveUserData = (userData: AppUser, action: string): Promise<AppUser
 };
 
 /**
- * Hydration: Converts a "Raw" data object (from the API) into a "Clean" application 
+ * Hydration: Converts a "Raw" data object (from the API) into a "Clean" application
  * object. This primarily involves turning ISO date strings into real JS Date objects,
  * which are much easier to format and manipulate in the UI.
  */

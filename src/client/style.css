@@ -22,7 +22,8 @@ body {
   background: #f5f7fb;
 }
 
-header, .panel {
+header,
+.panel {
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;

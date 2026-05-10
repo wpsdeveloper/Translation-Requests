@@ -24,7 +24,7 @@ class UserEditor extends HTMLElement {
   connectedCallback() {
     this.render();
     this.setupEventListeners();
-    
+
     // Subscribe to store updates to populate schools when they are loaded
     let lastSchoolsCount = 0;
     store.subscribe((state) => {
@@ -47,12 +47,12 @@ class UserEditor extends HTMLElement {
     const list = this.shadowRoot?.getElementById('schools-list');
     const state = store.getState();
     const schools = state.schools || [];
-    const userSchools = this._user ? (this._user.schools || []) : [];
+    const userSchools = this._user ? this._user.schools || [] : [];
 
     if (!list) return;
 
     list.innerHTML = '';
-    schools.forEach(school => {
+    schools.forEach((school) => {
       const isChecked = userSchools.includes(school);
       const label = document.createElement('label');
       label.className = 'school-checkbox';
@@ -106,7 +106,7 @@ class UserEditor extends HTMLElement {
   open(user: AppUser | null = null) {
     this._user = user;
     this._isEdit = !!user;
-    
+
     const overlay = this.shadowRoot?.getElementById('editor-overlay') as HTMLElement;
     const title = this.shadowRoot?.getElementById('modal-title') as HTMLElement;
     const emailInput = this.shadowRoot?.getElementById('user-email') as HTMLInputElement;
@@ -121,9 +121,9 @@ class UserEditor extends HTMLElement {
       if (emailInput) emailInput.value = user.email;
       if (nameInput) nameInput.value = user.name;
       if (roleSelect) roleSelect.value = user.role;
-      
+
       const userSchools = user.schools || [];
-      checkboxes.forEach(cb => {
+      checkboxes.forEach((cb) => {
         cb.checked = userSchools.includes(cb.value);
       });
       this.toggleSchoolsVisibility(user.role);
@@ -131,7 +131,7 @@ class UserEditor extends HTMLElement {
       if (emailInput) emailInput.value = '';
       if (nameInput) nameInput.value = '';
       if (roleSelect) roleSelect.value = 'User';
-      checkboxes.forEach(cb => cb.checked = false);
+      checkboxes.forEach((cb) => (cb.checked = false));
       this.toggleSchoolsVisibility('User');
     }
 
@@ -141,19 +141,20 @@ class UserEditor extends HTMLElement {
   async saveUser() {
     const form = this.shadowRoot?.getElementById('user-form') as HTMLFormElement;
     const submitBtn = this.shadowRoot?.getElementById('submit-btn') as HTMLButtonElement;
-    
+
     const email = (this.shadowRoot?.getElementById('user-email') as HTMLInputElement).value;
     const name = (this.shadowRoot?.getElementById('user-name') as HTMLInputElement).value;
     const role = (this.shadowRoot?.getElementById('user-role') as HTMLSelectElement).value;
-    const selectedSchools = Array.from(this.shadowRoot?.querySelectorAll('input[name="school"]:checked') as NodeListOf<HTMLInputElement>)
-      .map(cb => cb.value);
+    const selectedSchools = Array.from(
+      this.shadowRoot?.querySelectorAll('input[name="school"]:checked') as NodeListOf<HTMLInputElement>
+    ).map((cb) => cb.value);
 
     const userData: AppUser = {
-      ...(this._user || {} as AppUser), // Preserve original keys (Row ID, etc.)
+      ...(this._user || ({} as AppUser)), // Preserve original keys (Row ID, etc.)
       email,
       name,
       role: role as any,
-      schools: role === 'Admin' ? [] : selectedSchools
+      schools: role === 'Admin' ? [] : selectedSchools,
     };
 
     if (submitBtn) {
@@ -164,12 +165,14 @@ class UserEditor extends HTMLElement {
     try {
       const action = this._isEdit ? 'Edit' : 'Add';
       await saveUserData(userData, action);
-      
-      this.dispatchEvent(new CustomEvent('user-saved', {
-        bubbles: true,
-        composed: true
-      }));
-      
+
+      this.dispatchEvent(
+        new CustomEvent('user-saved', {
+          bubbles: true,
+          composed: true,
+        })
+      );
+
       this.shadowRoot?.getElementById('editor-overlay')?.classList.remove('open');
       form.reset();
     } catch (err: any) {

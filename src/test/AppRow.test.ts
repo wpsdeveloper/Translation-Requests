@@ -26,7 +26,7 @@ describe('AppRow', () => {
     approverName: '',
     startTime: null,
     endTime: null,
-    approvedDate: null
+    approvedDate: null,
   };
 
   beforeEach(() => {
@@ -53,7 +53,7 @@ describe('AppRow', () => {
     container.appendChild(row);
 
     store.setState({ selectedRow: mockRequest });
-    
+
     // Check if at least one cell has the background color
     const cells = row.shadowRoot.querySelectorAll('.td');
     const hasHighlight = Array.from(cells).some((td: any) => td.style.backgroundColor === 'rgb(232, 240, 254)'); // #e8f0fe

@@ -14,11 +14,11 @@ describe('DetailsInterpretation', () => {
     el.data = {
       eventLocation: 'Main Hall',
       startTime: new Date('2023-10-25T09:00:00'),
-      endTime: new Date('2023-10-25T11:00:00')
+      endTime: new Date('2023-10-25T11:00:00'),
     };
     el.mode = 'view';
     container.appendChild(el);
-    
+
     const root = el.shadowRoot;
     expect(root.querySelector('#view-event-location').textContent).toBe('Main Hall');
     expect(root.querySelector('#view-event-time').textContent).toContain('9:00');
@@ -30,7 +30,7 @@ describe('DetailsInterpretation', () => {
     el.data = { id: 'test' };
     el.mode = 'process';
     container.appendChild(el);
-    
+
     const root = el.shadowRoot;
     const editScheduled = root.querySelector('#edit-date-scheduled');
     expect(editScheduled).toBeTruthy();

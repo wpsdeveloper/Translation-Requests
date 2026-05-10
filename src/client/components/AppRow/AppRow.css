@@ -32,11 +32,21 @@
 }
 
 /* Specific column adjustments to match AppTable headers */
-:host .td:nth-child(1) { flex: 1.0 0; } /* Status */
-:host .td:nth-child(2) { flex: 0.8; } /* Request Date */
-:host .td:nth-child(3) { flex: 0.8; } /* Submitted */
-:host .td:nth-child(4) { flex: 1.0; } /* Type */
-:host .td:nth-child(5) { flex: 2; }   /* Requested By */
+:host .td:nth-child(1) {
+  flex: 1 0;
+} /* Status */
+:host .td:nth-child(2) {
+  flex: 0.8;
+} /* Request Date */
+:host .td:nth-child(3) {
+  flex: 0.8;
+} /* Submitted */
+:host .td:nth-child(4) {
+  flex: 1;
+} /* Type */
+:host .td:nth-child(5) {
+  flex: 2;
+} /* Requested By */
 
 :host .requester-school {
   font-size: 0.85rem;

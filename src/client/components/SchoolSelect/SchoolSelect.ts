@@ -87,11 +87,13 @@ class SchoolSelect extends HTMLElement {
     select?.addEventListener('change', (e: any) => {
       this._value = e.target.value;
       this.updateUI();
-      this.dispatchEvent(new CustomEvent('change', {
-        detail: { value: this._value },
-        bubbles: true,
-        composed: true
-      }));
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { value: this._value },
+          bubbles: true,
+          composed: true,
+        })
+      );
     });
   }
 
@@ -119,16 +121,16 @@ class SchoolSelect extends HTMLElement {
     const state = store.getState();
     const user = state.user;
     const isFilter = this.id === 'school-filter';
-    
+
     let schoolsToShow = this._schools;
-    
+
     // If it's the main filter and not an admin, restrict the schools shown
     if (isFilter && user && user.role !== 'Admin') {
       const userSchools = user.schools || [];
-      schoolsToShow = this._schools.filter(school => userSchools.includes(school));
+      schoolsToShow = this._schools.filter((school) => userSchools.includes(school));
     }
 
-    schoolsToShow.forEach(school => {
+    schoolsToShow.forEach((school) => {
       const opt = document.createElement('option');
       opt.value = school;
       opt.textContent = school;
@@ -137,8 +139,8 @@ class SchoolSelect extends HTMLElement {
 
     // add other option
     const opt = document.createElement('option');
-    opt.value = "Other";
-    opt.textContent = "Other";
+    opt.value = 'Other';
+    opt.textContent = 'Other';
     select.appendChild(opt);
 
     select.value = currentValue;

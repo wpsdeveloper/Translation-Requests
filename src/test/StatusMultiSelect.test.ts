@@ -33,13 +33,13 @@ describe('StatusMultiSelect', () => {
 
   it('should reflect initial state from store', () => {
     store.setState({ filterStatuses: ['Denied', 'Complete'] });
-    
+
     const multi = document.createElement('status-multi-select');
     container.appendChild(multi);
 
     const checkedBoxes = multi.shadowRoot?.querySelectorAll('input:checked');
     expect(checkedBoxes?.length).toBe(2);
-    
+
     const selectedText = multi.shadowRoot?.querySelector('#selected-text');
     expect(selectedText?.textContent).toBe('2 Statuses');
   });

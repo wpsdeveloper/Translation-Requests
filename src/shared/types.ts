@@ -39,7 +39,10 @@ export interface RawRequest {
  * The hydrated request object used throughout the frontend.
  * String dates are converted to real Date objects for easier manipulation.
  */
-export interface TranslationRequest extends Omit<RawRequest, 'requestDate' | 'approvedDate' | 'submittedDate' | 'startTime' | 'endTime'> {
+export interface TranslationRequest extends Omit<
+  RawRequest,
+  'requestDate' | 'approvedDate' | 'submittedDate' | 'startTime' | 'endTime'
+> {
   requestDate: Date | null;
   approvedDate: Date | null;
   submittedDate: Date | null;

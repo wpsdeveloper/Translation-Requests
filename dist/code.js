@@ -42,8 +42,8 @@ function getDataFromServer() {
             role: user.role,
             email: user.email,
             schools: user.schools,
-            name: user.name
-        }
+            name: user.name,
+        },
     };
 }
 function getUsersData() {

@@ -38,19 +38,19 @@ class AppTable extends HTMLElement {
     // we ensure the table stays in sync with the global data and filters.
     store.subscribe((state) => {
       let rows = state.allRows;
-      
-      // Declarative filtering logic: we filter the data before passing it 
+
+      // Declarative filtering logic: we filter the data before passing it
       // to the updateRows method.
       if (state.filterSchool) {
         if (state.filterSchool === 'Other') {
-          rows = rows.filter(row => !state.schools.includes(row.school));
+          rows = rows.filter((row) => !state.schools.includes(row.school));
         } else {
-          rows = rows.filter(row => row.school === state.filterSchool);
+          rows = rows.filter((row) => row.school === state.filterSchool);
         }
       }
 
       if (state.filterStatuses && state.filterStatuses.length > 0) {
-        rows = rows.filter(row => state.filterStatuses.includes(row.status));
+        rows = rows.filter((row) => state.filterStatuses.includes(row.status));
       }
 
       this.updateRows(rows, state.loading);
@@ -80,7 +80,7 @@ class AppTable extends HTMLElement {
       return;
     }
 
-    container.innerHTML = ''; 
+    container.innerHTML = '';
 
     if (rows.length === 0) {
       container.innerHTML = `
@@ -96,7 +96,7 @@ class AppTable extends HTMLElement {
       resultsCount.textContent = `${rows.length} ${rows.length === 1 ? 'entry' : 'entries'}`;
     }
 
-    rows.forEach(rowData => {
+    rows.forEach((rowData) => {
       // Create our custom row element
       const rowEl = document.createElement('app-row') as any;
       container.appendChild(rowEl);

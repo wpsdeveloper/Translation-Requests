@@ -24,13 +24,13 @@ export type PanelMode = 'view' | 'edit' | 'process';
 
 /**
  * DetailsPanel: A side panel that displays and allows editing of request details.
- * It uses a "Mode" system ('view', 'edit', 'process') to toggle between 
+ * It uses a "Mode" system ('view', 'edit', 'process') to toggle between
  * different UI states and dynamically loads sub-components based on request type.
  */
 class DetailsPanel extends HTMLElement {
   // UI state: 'view' (readonly), 'edit' (requester edit), 'process' (admin workflow)
   private _mode: PanelMode = 'view';
-  
+
   // The current request data being displayed.
   private _data: TranslationRequest | null = null;
 
@@ -136,7 +136,7 @@ class DetailsPanel extends HTMLElement {
 
     // Hide Process button for Users if the record is in Needs Approval status
     if (processBtn) {
-      processBtn.style.display = (isView && (!isUser || !isNeedsApproval)) ? 'inline-block' : 'none';
+      processBtn.style.display = isView && (!isUser || !isNeedsApproval) ? 'inline-block' : 'none';
     }
 
     const schoolSelect = root.querySelector('#detail-school') as any;
@@ -164,7 +164,7 @@ class DetailsPanel extends HTMLElement {
     }
     const viewReqType = root.querySelector('#view-reqType');
     if (viewReqType) viewReqType.textContent = data.reqType || 'N/A';
-    
+
     const viewSubmitted = root.querySelector('#view-submitted');
     if (viewSubmitted) viewSubmitted.textContent = formatDate(data.submittedDate, 'MMM D, YYYY') || 'N/A';
 
@@ -172,7 +172,7 @@ class DetailsPanel extends HTMLElement {
     const languages = [data.originalLanguage, data.targetLanguage].filter(Boolean).join(' to ');
     const viewLanguages = root.querySelector('#view-languages');
     if (viewLanguages) viewLanguages.textContent = languages || 'N/A';
-    
+
     const viewRequesterName = root.querySelector('#view-requester-name');
     if (viewRequesterName) viewRequesterName.textContent = data.name || 'N/A';
 
@@ -188,27 +188,28 @@ class DetailsPanel extends HTMLElement {
     // Edit Mode Shared Fields
     const editName = root.querySelector('#edit-requester-name') as HTMLInputElement;
     if (editName) editName.value = data.name || '';
-    
+
     const editOrigLang = root.querySelector('#edit-orig-lang') as HTMLInputElement;
     if (editOrigLang) editOrigLang.value = data.originalLanguage || '';
-    
+
     const editTargetLang = root.querySelector('#edit-target-lang') as HTMLInputElement;
     if (editTargetLang) editTargetLang.value = data.targetLanguage || '';
-    
+
     const editDescription = root.querySelector('#edit-description') as HTMLTextAreaElement;
     if (editDescription) editDescription.value = data.description || '';
 
     // Hydrate Approval Info
     const approvedBy = root.querySelector('#detail-approved-by');
     if (approvedBy) approvedBy.textContent = (data as any).approvedBy || 'N/A';
-    
+
     const approvedDate = root.querySelector('#detail-approved-date');
-    if (approvedDate) approvedDate.textContent = data.approvedDate ? formatDate(data.approvedDate, 'MMM D, YYYY') : 'N/A';
-    
+    if (approvedDate)
+      approvedDate.textContent = data.approvedDate ? formatDate(data.approvedDate, 'MMM D, YYYY') : 'N/A';
+
     const approvedByLabel = root.querySelector('#approved-by-label');
     const approvedDateLabel = root.querySelector('#approved-date-label');
-    
-    if (data.status === "Denied") {
+
+    if (data.status === 'Denied') {
       if (approvedByLabel) approvedByLabel.textContent = 'Denied By';
       if (approvedDateLabel) approvedDateLabel.textContent = 'Denied Date';
     } else {
@@ -263,12 +264,12 @@ class DetailsPanel extends HTMLElement {
       targetLanguage: (root.querySelector('#edit-target-lang') as HTMLInputElement).value,
       description: (root.querySelector('#edit-description') as HTMLTextAreaElement).value,
       status: (root.querySelector('#detail-status') as any).status,
-      ...childData
+      ...childData,
     };
 
     const saveBtn = root.querySelector('#save-btn') as HTMLButtonElement;
     if (!saveBtn) return;
-    
+
     const originalText = saveBtn.textContent;
     saveBtn.textContent = 'Saving...';
     saveBtn.disabled = true;

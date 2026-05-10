@@ -12,7 +12,7 @@ describe('StatusSelect', () => {
   it('should render the current status in a badge in view mode', () => {
     container.innerHTML = '<status-select status="Approved" mode="view"></status-select>';
     const select = container.querySelector('status-select') as any;
-    
+
     const badge = select.shadowRoot.querySelector('#status-badge');
     expect(badge.getAttribute('status')).toBe('Approved');
   });
@@ -20,7 +20,7 @@ describe('StatusSelect', () => {
   it('should dispatch a "change" event when the dropdown is updated in edit mode', () => {
     container.innerHTML = '<status-select status="Approved" mode="edit"></status-select>';
     const select = container.querySelector('status-select') as any;
-    
+
     const changeSpy = vi.fn();
     select.addEventListener('change', changeSpy);
 
@@ -35,10 +35,10 @@ describe('StatusSelect', () => {
   it('should show the dropdown only in edit mode', () => {
     container.innerHTML = '<status-select status="Approved" mode="view"></status-select>';
     const select = container.querySelector('status-select') as any;
-    
+
     const editModeDiv = select.shadowRoot.querySelector('#edit-mode');
     expect(editModeDiv.style.display).toBe('none');
-    
+
     select.setAttribute('mode', 'edit');
     expect(editModeDiv.style.display).toBe('block');
   });

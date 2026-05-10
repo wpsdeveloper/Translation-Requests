@@ -21,7 +21,7 @@ class StatusMultiSelect extends HTMLElement {
   connectedCallback() {
     this.render();
     this.setupEventListeners();
-    
+
     // Sync with store if needed
     const state = store.getState();
     if (state.filterStatuses) {
@@ -56,14 +56,14 @@ class StatusMultiSelect extends HTMLElement {
     // Select All
     selectAllBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
-      checkboxes.forEach(cb => cb.checked = true);
+      checkboxes.forEach((cb) => (cb.checked = true));
       this.updateSelectedValues();
     });
 
     // Clear All
     clearAllBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
-      checkboxes.forEach(cb => cb.checked = false);
+      checkboxes.forEach((cb) => (cb.checked = false));
       this.updateSelectedValues();
     });
 
@@ -78,7 +78,7 @@ class StatusMultiSelect extends HTMLElement {
     });
 
     // Handle menu item clicks (to toggle checkbox when clicking the row)
-    menuItems.forEach(item => {
+    menuItems.forEach((item) => {
       item.addEventListener('click', (e: any) => {
         if (e.target.tagName !== 'INPUT') {
           const cb = item.querySelector('input') as HTMLInputElement;
@@ -91,7 +91,7 @@ class StatusMultiSelect extends HTMLElement {
     });
 
     // Handle checkbox changes
-    checkboxes.forEach(cb => {
+    checkboxes.forEach((cb) => {
       cb.addEventListener('change', () => {
         this.updateSelectedValues();
       });
@@ -104,20 +104,22 @@ class StatusMultiSelect extends HTMLElement {
 
     const checkboxes = root.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
     this._selectedValues = Array.from(checkboxes)
-      .filter(cb => cb.checked)
-      .map(cb => cb.value);
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value);
 
     this.updateUI();
-    
+
     // Update Global Store
     store.setState({ filterStatuses: this._selectedValues });
-    
+
     // Dispatch local event
-    this.dispatchEvent(new CustomEvent('change', {
-      detail: { values: this._selectedValues },
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { values: this._selectedValues },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   updateUI() {
@@ -128,7 +130,7 @@ class StatusMultiSelect extends HTMLElement {
     const checkboxes = root.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
 
     // Update checkboxes
-    checkboxes.forEach(cb => {
+    checkboxes.forEach((cb) => {
       cb.checked = this._selectedValues.includes(cb.value);
     });
 

@@ -7,15 +7,51 @@ describe('AppTable', () => {
   let container: HTMLElement;
   const mockRequests: TranslationRequest[] = [
     {
-      id: '1', name: 'Req 1', school: 'School A', status: 'Approved',
-      requestDate: new Date(), submittedDate: new Date(), approvedDate: null, startTime: null, endTime: null,
-      email: '', reqType: 'Translation', originalLanguage: '', targetLanguage: '', interpretationType: '', docPageCount: '', description: '', docLink: '', eventLocation: '', contractor: '', contractorName: '', approverName: ''
+      id: '1',
+      name: 'Req 1',
+      school: 'School A',
+      status: 'Approved',
+      requestDate: new Date(),
+      submittedDate: new Date(),
+      approvedDate: null,
+      startTime: null,
+      endTime: null,
+      email: '',
+      reqType: 'Translation',
+      originalLanguage: '',
+      targetLanguage: '',
+      interpretationType: '',
+      docPageCount: '',
+      description: '',
+      docLink: '',
+      eventLocation: '',
+      contractor: '',
+      contractorName: '',
+      approverName: '',
     },
     {
-      id: '2', name: 'Req 2', school: 'School B', status: 'Denied',
-      requestDate: new Date(), submittedDate: new Date(), approvedDate: null, startTime: null, endTime: null,
-      email: '', reqType: 'Translation', originalLanguage: '', targetLanguage: '', interpretationType: '', docPageCount: '', description: '', docLink: '', eventLocation: '', contractor: '', contractorName: '', approverName: ''
-    }
+      id: '2',
+      name: 'Req 2',
+      school: 'School B',
+      status: 'Denied',
+      requestDate: new Date(),
+      submittedDate: new Date(),
+      approvedDate: null,
+      startTime: null,
+      endTime: null,
+      email: '',
+      reqType: 'Translation',
+      originalLanguage: '',
+      targetLanguage: '',
+      interpretationType: '',
+      docPageCount: '',
+      description: '',
+      docLink: '',
+      eventLocation: '',
+      contractor: '',
+      contractorName: '',
+      approverName: '',
+    },
   ];
 
   beforeEach(() => {

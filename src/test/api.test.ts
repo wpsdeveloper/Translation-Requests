@@ -26,7 +26,7 @@ describe('api.ts', () => {
         status: 'Approved',
         name: 'John',
         school: 'High School',
-        reqType: 'Translation'
+        reqType: 'Translation',
       } as any;
 
       const hydrated = hydrate(raw);
@@ -56,11 +56,11 @@ describe('api.ts', () => {
         id: '1',
         requestDate: new Date('2023-10-25T12:00:00Z'),
         status: 'Approved',
-        name: 'John'
+        name: 'John',
       } as any;
 
       const savePromise = saveRequest(rich);
-      
+
       // Get the mock call to saveDataToServer
       const mockRun = (globalThis as any).google.script.run;
       const sentData = mockRun.saveDataToServer.mock.calls[0][0];

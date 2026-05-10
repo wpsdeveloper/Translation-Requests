@@ -7,7 +7,7 @@ describe('UserManagement', () => {
   let container: HTMLElement;
   const mockUsers: AppUser[] = [
     { email: 'admin@test.com', name: 'Admin User', role: 'Admin', schools: [] },
-    { email: 'user@test.com', name: 'Standard User', role: 'User', schools: ['School A'] }
+    { email: 'user@test.com', name: 'Standard User', role: 'User', schools: ['School A'] },
   ];
 
   beforeEach(() => {
@@ -36,11 +36,11 @@ describe('UserManagement', () => {
 
     const addBtn = mgmt.shadowRoot.querySelector('#add-user-btn');
     expect(addBtn).toBeTruthy();
-    
+
     // Mock the editor's open method
     const editor = mgmt.shadowRoot.querySelector('#user-editor-modal');
     editor.open = vi.fn();
-    
+
     addBtn.click();
 
     expect(editor.open).toHaveBeenCalledWith(null);

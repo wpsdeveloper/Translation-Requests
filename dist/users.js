@@ -3,7 +3,7 @@ function getUser(email) {
     if (!email)
         return null;
     const users = getUsers();
-    const user = users.find(user => user.email.toLowerCase() === email.toLowerCase().trim());
+    const user = users.find((user) => user.email.toLowerCase() === email.toLowerCase().trim());
     return user || null;
 }
 function getUsers() {

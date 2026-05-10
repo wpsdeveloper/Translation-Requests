@@ -20,7 +20,7 @@ describe('UserEditor', () => {
       email: 'edit@test.com',
       name: 'Edit User',
       role: 'Admin',
-      schools: ['School A']
+      schools: ['School A'],
     };
 
     editor.open(mockUser);

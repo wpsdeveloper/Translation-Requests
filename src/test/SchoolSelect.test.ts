@@ -15,10 +15,10 @@ describe('SchoolSelect', () => {
     const select = document.createElement('school-select') as any;
     select.mode = 'edit';
     container.appendChild(select);
-    
+
     const dropdown = select.shadowRoot.querySelector('#school-dropdown');
     const options = dropdown.querySelectorAll('option');
-    
+
     // Default empty option + 3 schools + 'Other'
     expect(options.length).toBe(5);
     expect(options[1].textContent).toBe('School A');
@@ -29,7 +29,7 @@ describe('SchoolSelect', () => {
     select.value = 'School C';
     select.mode = 'view';
     container.appendChild(select);
-    
+
     const viewEl = select.shadowRoot.querySelector('#view-value');
     expect(viewEl.textContent).toBe('School C');
   });

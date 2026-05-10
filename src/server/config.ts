@@ -22,5 +22,5 @@ const Config = {
 
   get FormSpreadsheetId(): string {
     return this.get('FORM_SPREADSHEET_ID');
-  }
+  },
 };
