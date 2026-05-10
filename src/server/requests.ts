@@ -173,7 +173,6 @@ function saveDataToServer(updatedData: RawRequest) {
       Action: 'Edit',
       Properties: {
         Locale: 'en-US',
-        triggerAutomation: 'true',
       },
       Rows: [appSheetRow],
     }),
@@ -230,7 +229,6 @@ function addRequestToServer(data: RawRequest) {
       Action: 'Add',
       Properties: {
         Locale: 'en-US',
-        triggerAutomation: 'true',
       },
       Rows: [appSheetRow],
     }),
@@ -246,6 +244,9 @@ function addRequestToServer(data: RawRequest) {
   }
 
   try {
+    // send email notification to approver
+    sendNewRequestNotification(data);
+
     const result = JSON.parse(responseText);
     // AppSheet 'Add' returns the created row(s) in the Rows property of the response
     if (result && result.Rows && result.Rows.length > 0) {
