@@ -171,9 +171,11 @@ function saveDataToServer(updatedData: RawRequest) {
     headers: { ApplicationAccessKey: Config.AppSheetAccessKey },
     payload: JSON.stringify({
       Action: 'Edit',
-      Properties: { Locale: 'en-US' },
+      Properties: {
+        Locale: 'en-US',
+        triggerAutomation: 'true',
+      },
       Rows: [appSheetRow],
-      triggerAutomation: true,
     }),
     muteHttpExceptions: true,
   };
@@ -226,9 +228,11 @@ function addRequestToServer(data: RawRequest) {
     headers: { ApplicationAccessKey: Config.AppSheetAccessKey },
     payload: JSON.stringify({
       Action: 'Add',
-      Properties: { Locale: 'en-US' },
+      Properties: {
+        Locale: 'en-US',
+        triggerAutomation: 'true',
+      },
       Rows: [appSheetRow],
-      triggerAutomation: true,
     }),
     muteHttpExceptions: true,
   };
