@@ -1,4 +1,4 @@
-type UserRole = 'Admin' | 'User';
+type UserRole = 'Admin' | 'User' | 'Approver';
 
 interface AppUser {
   email: string;

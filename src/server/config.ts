@@ -23,4 +23,14 @@ const Config = {
   get FormSpreadsheetId(): string {
     return this.get('FORM_SPREADSHEET_ID');
   },
+
+  get NotificationTestEmail(): string {
+    return this.get('NOTIFICATION_TEST_EMAIL') || 'wpsdeveloper@walpole.k12.ma.us';
+  },
+
+  get DevMode(): boolean {
+    const val = this.get('DEV_MODE');
+    // If the property is missing or not explicitly set to 'false', default to true for safety
+    return val !== 'false';
+  },
 };
