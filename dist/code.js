@@ -1,5 +1,4 @@
 "use strict";
-const FORM_SPREADSHEET_ID = '1aA8fmn-GEcXQzT7HyB77taIaIO8pfRDu8UW1WQIXdDc';
 function doGet() {
     const activeUserEmail = Session.getActiveUser().getEmail();
     // Check domain restriction

@@ -1,11 +1,4 @@
 
-const APPSHEET_APP_ID = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
-const APPSHEET_ACCESS_KEY = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
-
-/**
- * Unified fetcher for AppSheet data.
- * Returns an object with both requests and schools.
- */
 function getDataFromAppSheet(user: AppUser) {
   try {
     const rawRequests = getRequestsFromAppSheet();
@@ -31,12 +24,12 @@ function getDataFromAppSheet(user: AppUser) {
 function getRequestsFromAppSheet(): RawRequest[] {
   const tableName = 'Requests';
 
-  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+  const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
 
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+    headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
     payload: JSON.stringify({
       "Action": "Find",
       "Properties": { "Locale": "en-US" },
@@ -57,12 +50,12 @@ function getRequestsFromAppSheet(): RawRequest[] {
 function getSchoolsFromAppSheet(): string[] {
   const tableName = 'Locations';
 
-  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+  const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
 
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+    headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
     payload: JSON.stringify({
       "Action": "Find",
       "Properties": { "Locale": "en-US" },
@@ -150,7 +143,7 @@ function saveDataToServer(updatedData: RawRequest) {
   }
 
   const tableName = 'Requests';
-  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+  const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
 
   // Map the clean JS object back to AppSheet's column names
   const appSheetRow = mapRequestToAppSheet(updatedData);
@@ -158,7 +151,7 @@ function saveDataToServer(updatedData: RawRequest) {
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+    headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
     payload: JSON.stringify({
       "Action": "Edit", 
       "Properties": { "Locale": "en-US" },
@@ -237,12 +230,12 @@ function mapRequestToAppSheet(data: RawRequest) {
 function getUsersFromAppSheet(): AppUser[] {
   const tableName = 'Users';
 
-  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+  const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
 
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+    headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
     payload: JSON.stringify({
       "Action": "Find",
       "Properties": { "Locale": "en-US" },
@@ -293,7 +286,7 @@ function mapUserToAppSheet(user: AppUser) {
  */
 function saveUserToAppSheet(userData: AppUser, action: string) {
   const tableName = 'Users';
-  const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+  const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
 
   // For Delete, send the full object to ensure we include any hidden keys (like _RowNumber)
   const appSheetRow = mapUserToAppSheet(userData);
@@ -301,7 +294,7 @@ function saveUserToAppSheet(userData: AppUser, action: string) {
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
-    headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+    headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
     payload: JSON.stringify({
       "Action": action,
       "Properties": { "Locale": "en-US" },

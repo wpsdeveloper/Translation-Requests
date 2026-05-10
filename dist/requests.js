@@ -1,10 +1,4 @@
 "use strict";
-const APPSHEET_APP_ID = '91a940b5-eb26-40ad-bb32-0b17fde4fd39';
-const APPSHEET_ACCESS_KEY = 'V2-ioFEK-BVXmK-tg94D-i0iT8-uK2FM-xvsSM-PPVt4-PIMF4';
-/**
- * Unified fetcher for AppSheet data.
- * Returns an object with both requests and schools.
- */
 function getDataFromAppSheet(user) {
     try {
         const rawRequests = getRequestsFromAppSheet();
@@ -27,11 +21,11 @@ function getDataFromAppSheet(user) {
 }
 function getRequestsFromAppSheet() {
     const tableName = 'Requests';
-    const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+    const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
     const options = {
         method: 'post',
         contentType: 'application/json',
-        headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+        headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
         payload: JSON.stringify({
             "Action": "Find",
             "Properties": { "Locale": "en-US" },
@@ -48,11 +42,11 @@ function getRequestsFromAppSheet() {
 }
 function getSchoolsFromAppSheet() {
     const tableName = 'Locations';
-    const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+    const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
     const options = {
         method: 'post',
         contentType: 'application/json',
-        headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+        headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
         payload: JSON.stringify({
             "Action": "Find",
             "Properties": { "Locale": "en-US" },
@@ -128,13 +122,13 @@ function saveDataToServer(updatedData) {
         }
     }
     const tableName = 'Requests';
-    const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+    const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
     // Map the clean JS object back to AppSheet's column names
     const appSheetRow = mapRequestToAppSheet(updatedData);
     const options = {
         method: 'post',
         contentType: 'application/json',
-        headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+        headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
         payload: JSON.stringify({
             "Action": "Edit",
             "Properties": { "Locale": "en-US" },
@@ -203,11 +197,11 @@ function mapRequestToAppSheet(data) {
  */
 function getUsersFromAppSheet() {
     const tableName = 'Users';
-    const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+    const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
     const options = {
         method: 'post',
         contentType: 'application/json',
-        headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+        headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
         payload: JSON.stringify({
             "Action": "Find",
             "Properties": { "Locale": "en-US" },
@@ -251,13 +245,13 @@ function mapUserToAppSheet(user) {
  */
 function saveUserToAppSheet(userData, action) {
     const tableName = 'Users';
-    const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/${tableName}/Action`;
+    const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
     // For Delete, send the full object to ensure we include any hidden keys (like _RowNumber)
     const appSheetRow = mapUserToAppSheet(userData);
     const options = {
         method: 'post',
         contentType: 'application/json',
-        headers: { 'ApplicationAccessKey': APPSHEET_ACCESS_KEY },
+        headers: { 'ApplicationAccessKey': Config.AppSheetAccessKey },
         payload: JSON.stringify({
             "Action": action,
             "Properties": { "Locale": "en-US" },
