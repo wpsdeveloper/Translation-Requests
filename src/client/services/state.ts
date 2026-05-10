@@ -10,6 +10,7 @@ interface State {
   user: AppUser | null;
   activeView: 'dashboard' | 'users';
   allUsers: AppUser[];
+  loading: boolean;
 }
 
 /**
@@ -32,7 +33,8 @@ class GlobalStore {
       isPanelOpen: false,
       user: null,
       activeView: 'dashboard',
-      allUsers: []
+      allUsers: [],
+      loading: false
     };
     this._listeners = [];
   }

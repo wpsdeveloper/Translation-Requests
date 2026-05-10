@@ -53,7 +53,7 @@ class AppTable extends HTMLElement {
         rows = rows.filter(row => state.filterStatuses.includes(row.status));
       }
 
-      this.updateRows(rows, (state as any).loading);
+      this.updateRows(rows, state.loading);
     });
   }
 

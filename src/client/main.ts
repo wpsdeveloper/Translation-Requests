@@ -21,7 +21,7 @@ export class App {
    */
   async init() {
     // 1. Set initial loading state
-    store.setState({ allRows: [] });
+    store.setState({ allRows: [], loading: true });
 
     try {
       // 2. Fetch the data (either mock or GAS)
@@ -33,10 +33,11 @@ export class App {
         allRows: requests,
         schools: schools,
         user: user,
+        loading: false
       });
     } catch (err: any) {
       console.error("Failed to load data:", err);
-      // store.setState({ error: err.message }); // Error property wasn't in original class but in interface, adding for completeness
+      store.setState({ loading: false });
     }
   }
 
