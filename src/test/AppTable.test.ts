@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import '../client/components/AppTable/AppTable';
+import '../client/components/RequestsTable/RequestsTable';
 import { store } from '../client/services/state';
 import { TranslationRequest } from '../shared/types';
 

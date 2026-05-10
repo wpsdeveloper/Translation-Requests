@@ -1,135 +1,135 @@
-<div id="editor-overlay" class="overlay">
-  <div class="modal card">
-    <div class="modal-header">
-      <div class="header-titles">
-        <h3>Submit New Request</h3>
-        <div id="step-indicator" class="step-indicator">
-          <span class="step active" data-step="1">1</span>
-          <span class="step-line"></span>
-          <span class="step" data-step="2">2</span>
-        </div>
-      </div>
-      <button id="close-modal" class="close-btn">&times;</button>
-    </div>
-
-    <form id="request-form">
-      <!-- Step 1: General Information -->
-      <div id="step-1" class="form-step active">
-        <div class="form-group">
-          <label>I am requesting <span class="required">*</span></label>
-          <div class="radio-group" id="req-type-radios">
-            <label class="radio-label">
-              <input type="radio" name="req-type" value="Translation" required />
-              <span>Document translation (written)</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="req-type" value="Interpretation" required />
-              <span>Interpreter services (oral)</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>My location <span class="required">*</span></label>
-          <school-select id="req-school" mode="edit" required></school-select>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="req-name">My name <span class="required">*</span></label>
-            <input type="text" id="req-name" required placeholder="Full Name" />
-          </div>
-          <div class="form-group">
-            <label for="req-email">My email</label>
-            <input type="email" id="req-email" readonly />
+<div style="max-width: 800px; margin: 0 auto">
+  <div class="card">
+      <div class="card-header">
+        <div class="header-titles">
+          <h3>Submit New Request</h3>
+          <div id="step-indicator" class="step-indicator">
+            <span class="step active" data-step="1">1</span>
+            <span class="step-line"></span>
+            <span class="step" data-step="2">2</span>
           </div>
         </div>
       </div>
 
-      <!-- Step 2: Specific Details -->
-      <div id="step-2" class="form-step">
-        <div class="form-row">
+      <form id="request-form">
+        <!-- Step 1: General Information -->
+        <div id="step-1" class="form-step active">
           <div class="form-group">
-            <label for="req-orig-lang">Original Language <span class="required">*</span></label>
-            <input type="text" id="req-orig-lang" placeholder="e.g. English" value="English" required />
+            <label>I am requesting <span class="required">*</span></label>
+            <div class="radio-group" id="req-type-radios">
+              <label class="radio-label">
+                <input type="radio" name="req-type" value="Translation" required />
+                <span>Document translation (written)</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="req-type" value="Interpretation" required />
+                <span>Interpreter services (oral)</span>
+              </label>
+            </div>
           </div>
+
           <div class="form-group">
-            <label for="req-target-lang">Target Language <span class="required">*</span></label>
-            <input type="text" id="req-target-lang" placeholder="e.g. Spanish" required />
+            <label>My location <span class="required">*</span></label>
+            <school-select id="req-school" mode="edit" required></school-select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="req-name">My name <span class="required">*</span></label>
+              <input type="text" id="req-name" required placeholder="Full Name" />
+            </div>
+            <div class="form-group">
+              <label for="req-email">My email</label>
+              <input type="email" id="req-email" readonly />
+            </div>
           </div>
         </div>
 
-        <!-- Translation Specific -->
-        <div class="type-section translation-only">
+        <!-- Step 2: Specific Details -->
+        <div id="step-2" class="form-step">
           <div class="form-row">
             <div class="form-group">
-              <label for="req-date-needed">Date Needed <span class="required">*</span></label>
-              <input type="date" id="req-date-needed" />
+              <label for="req-orig-lang">Original Language <span class="required">*</span></label>
+              <input type="text" id="req-orig-lang" placeholder="e.g. English" value="English" required />
             </div>
             <div class="form-group">
-              <label for="req-pages">Total Number of Pages</label>
-              <input type="number" id="req-pages" placeholder="e.g. 5" />
+              <label for="req-target-lang">Target Language <span class="required">*</span></label>
+              <input type="text" id="req-target-lang" placeholder="e.g. Spanish" required />
             </div>
           </div>
-          <div class="form-group">
-            <label>Document Link</label>
-            <input type="text" id="req-doc-link" placeholder="https://..." />
-            <div style="margin-top: 8px">
-              <label class="help-text">Or upload a new file:</label>
-              <input type="file" id="file-upload" class="form-control" style="font-size: 0.8rem; padding: 4px" />
-              <div id="upload-status" class="help-text" style="color: #2563eb; font-weight: 500"></div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Interpretation Specific -->
-        <div class="type-section interpretation-only">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Interpretation Type <span class="required">*</span></label>
-              <div class="radio-group" id="req-interp-type-radios">
-                <label class="radio-label">
-                  <input type="radio" name="req-interp-type" value="One-Way Presentation" />
-                  <span>One-Way Presentation</span>
-                </label>
-                <label class="radio-label">
-                  <input type="radio" name="req-interp-type" value="Two-Way Conversation" />
-                  <span>Two-Way Conversation</span>
-                </label>
+          <!-- Translation Specific -->
+          <div class="type-section translation-only">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="req-date-needed">Date Needed <span class="required">*</span></label>
+                <input type="date" id="req-date-needed" />
+              </div>
+              <div class="form-group">
+                <label for="req-pages">Total Number of Pages</label>
+                <input type="number" id="req-pages" placeholder="e.g. 5" />
               </div>
             </div>
             <div class="form-group">
-              <label for="req-date-event">Event Date <span class="required">*</span></label>
-              <input type="date" id="req-date-event" />
+              <label>Document Link</label>
+              <input type="text" id="req-doc-link" placeholder="https://..." />
+              <div style="margin-top: 8px">
+                <label class="help-text">Or upload a new file:</label>
+                <input type="file" id="file-upload" class="form-control" style="font-size: 0.8rem; padding: 4px" />
+                <div id="upload-status" class="help-text" style="color: #2563eb; font-weight: 500"></div>
+              </div>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="req-start-time">Start Time <span class="required">*</span></label>
-              <input type="time" id="req-start-time" />
+
+          <!-- Interpretation Specific -->
+          <div class="type-section interpretation-only">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Interpretation Type <span class="required">*</span></label>
+                <div class="radio-group" id="req-interp-type-radios">
+                  <label class="radio-label">
+                    <input type="radio" name="req-interp-type" value="One-Way Presentation" />
+                    <span>One-Way Presentation</span>
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="req-interp-type" value="Two-Way Conversation" />
+                    <span>Two-Way Conversation</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="req-date-event">Event Date <span class="required">*</span></label>
+                <input type="date" id="req-date-event" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="req-start-time">Start Time <span class="required">*</span></label>
+                <input type="time" id="req-start-time" />
+              </div>
+              <div class="form-group">
+                <label for="req-end-time">End Time <span class="required">*</span></label>
+                <input type="time" id="req-end-time" />
+              </div>
             </div>
             <div class="form-group">
-              <label for="req-end-time">End Time <span class="required">*</span></label>
-              <input type="time" id="req-end-time" />
+              <label for="req-location">Event Location <span class="required">*</span></label>
+              <input type="text" id="req-location" placeholder="e.g. Room 101, Main Office" />
             </div>
           </div>
+
           <div class="form-group">
-            <label for="req-location">Event Location <span class="required">*</span></label>
-            <input type="text" id="req-location" placeholder="e.g. Room 101, Main Office" />
+            <label for="req-description">Additional Details / Notes</label>
+            <textarea id="req-description" placeholder="Provide any additional context or instructions..."></textarea>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="req-description">Additional Details / Notes</label>
-          <textarea id="req-description" placeholder="Provide any additional context or instructions..."></textarea>
+        <div class="card-footer">
+          <button type="button" id="prev-btn" class="btn-secondary" style="display: none">Back</button>
+          <button type="button" id="next-btn" class="btn-primary" disabled>Next</button>
+          <button type="submit" id="submit-btn" class="btn-primary" style="display: none">Submit Request</button>
         </div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" id="prev-btn" class="btn-secondary" style="display: none">Back</button>
-        <button type="button" id="next-btn" class="btn-primary" disabled>Next</button>
-        <button type="submit" id="submit-btn" class="btn-primary" style="display: none">Submit Request</button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>

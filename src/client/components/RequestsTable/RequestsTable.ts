@@ -1,20 +1,20 @@
 // @ts-ignore
-import AppTableStyles from './AppTable.css?inline';
+import RequestsTableStyles from './RequestsTable.css?inline';
 // @ts-ignore
-import AppTableTemplate from './AppTable.htm?raw';
+import RequestsTableTemplate from './RequestsTable.htm?raw';
 import { store } from '../../services/state';
-import '../AppRow/AppRow'; // Ensure the row component is registered
+import '../RequestsRow/RequestsRow'; // Ensure the row component is registered
 import { TranslationRequest } from '../../../shared/types';
 
 const sheet = new CSSStyleSheet();
-sheet.replaceSync(AppTableStyles);
+sheet.replaceSync(RequestsTableStyles);
 
 /**
- * AppTable: A reactive custom element that displays the list of requests.
+ * RequestsTable: A reactive custom element that displays the list of requests.
  * It subscribes to the global store and automatically re-renders when
  * filters or data change.
  */
-class AppTable extends HTMLElement {
+class RequestsTable extends HTMLElement {
   constructor() {
     super();
     // Use 'open' mode so we can access the shadowRoot from the outside if needed,
@@ -59,7 +59,7 @@ class AppTable extends HTMLElement {
 
   render() {
     if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = AppTableTemplate;
+      this.shadowRoot.innerHTML = RequestsTableTemplate;
     }
   }
 
@@ -107,10 +107,10 @@ class AppTable extends HTMLElement {
   }
 }
 
-customElements.define('app-table', AppTable);
+customElements.define('app-table', RequestsTable);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'app-table': AppTable;
+    'app-table': RequestsTable;
   }
 }

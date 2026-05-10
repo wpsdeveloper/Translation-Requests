@@ -1,21 +1,21 @@
 // @ts-ignore
-import AppRowStyles from './AppRow.css?inline';
+import RequestsRowStyles from './RequestsRow.css?inline';
 // @ts-ignore
-import AppRowTemplate from './AppRow.htm?raw';
+import RequestsRowTemplate from './RequestsRow.htm?raw';
 import '../StatusBadge/StatusBadge';
 import { store } from '../../services/state';
 import { formatDate } from '../../services/utils';
 import { TranslationRequest } from '../../../shared/types';
 
 const sheet = new CSSStyleSheet();
-sheet.replaceSync(AppRowStyles);
+sheet.replaceSync(RequestsRowStyles);
 
 /**
- * AppRow: Represents a single row in the requests table.
+ * RequestsRow: Represents a single row in the requests table.
  * Demonstrates the "Data Down, Events Up" pattern by receiving data via a setter
  * and notifying the store on user interaction.
  */
-class AppRow extends HTMLElement {
+class RequestsRow extends HTMLElement {
   // Internal state for the row data.
   private _data: TranslationRequest = {} as TranslationRequest;
 
@@ -71,7 +71,7 @@ class AppRow extends HTMLElement {
 
   render() {
     if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = AppRowTemplate;
+      this.shadowRoot.innerHTML = RequestsRowTemplate;
     }
     this.populateData();
     this.checkSelection();
@@ -106,10 +106,10 @@ class AppRow extends HTMLElement {
   }
 }
 
-customElements.define('app-row', AppRow);
+customElements.define('app-row', RequestsRow);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'app-row': AppRow;
+    'app-row': RequestsRow;
   }
 }

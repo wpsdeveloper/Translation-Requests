@@ -72,7 +72,7 @@ class RequestEditor extends HTMLElement {
     });
 
     // Handle Type Change (Radios)
-    root.querySelectorAll('input[name="req-type"]').forEach(radio => {
+    root.querySelectorAll('input[name="req-type"]').forEach((radio) => {
       radio.addEventListener('change', () => {
         this.handleTypeChange();
         this.validateStep1();
@@ -177,7 +177,7 @@ class RequestEditor extends HTMLElement {
     if (!root) return;
 
     const type = this.getRadioValue('req-type');
-    
+
     root.querySelectorAll('.type-section').forEach((el: any) => {
       el.style.display = 'none';
     });
@@ -195,7 +195,7 @@ class RequestEditor extends HTMLElement {
     const form = root.getElementById('request-form') as HTMLFormElement;
     form.reset();
     this.goToStep(1);
-    
+
     root.querySelectorAll('.type-section').forEach((el: any) => {
       el.style.display = 'none';
     });
@@ -253,10 +253,11 @@ class RequestEditor extends HTMLElement {
       store.setState({
         allRows: [savedRequest, ...state.allRows],
         selectedRow: savedRequest,
+        activeView: 'dashboard',
       });
 
-      this.open = false;
-      alert('Request submitted successfully!');
+      //Emit event for RequestEntry to know it's done
+      this.dispatchEvent(new CustomEvent('request-submitted', { bubbles: true }));
     } catch (err) {
       alert('Failed to submit request.');
     } finally {

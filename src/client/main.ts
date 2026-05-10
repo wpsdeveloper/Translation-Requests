@@ -1,12 +1,13 @@
 import { store } from './services/state';
 import { fetchData } from './services/api';
 // We don't need .js extension in imports for Vite when using TS
-import './components/AppTable/AppTable';
+import './components/RequestsTable/RequestsTable';
 import './components/DetailsPanel/DetailsPanel';
 import './components/StatusMultiSelect/StatusMultiSelect';
 import './components/UserManagement/UserManagement';
 import './components/UserEditor/UserEditor';
 import './components/RequestEditor/RequestEditor';
+import './components/RequestsDashboard/RequestsDashboard';
 
 /**
  * Main Application Orchestrator
@@ -28,8 +29,28 @@ export class App {
       // 2. Fetch the data (either mock or GAS)
       const { requests, schools, user } = await fetchData();
 
-      // 3. Update the store
+      // Add views based on user role
+      const viewContainer = document.getElementById('view-container');
+
+      if (user && ['Admin'].includes(user.role) && viewContainer) {
+        const userManagement = document.createElement('user-management');
+        userManagement.style.display = 'none';
+        viewContainer.appendChild(userManagement);
+      }
+      if (user && ['Admin', 'User'].includes(user.role) && viewContainer) {
+        const dashboard = document.createElement('requests-dashboard');
+        dashboard.style.display = 'none';
+        viewContainer.appendChild(dashboard);
+      }
+      if (user && ['Admin', 'User', 'Guest'].includes(user.role) && viewContainer) {
+        const requestEditor = document.createElement('request-editor');
+        requestEditor.style.display = 'none';
+        viewContainer.appendChild(requestEditor);
+      }
+
       const defaultView = user && user.role === 'Guest' ? 'request-entry' : 'dashboard';
+
+      // 3. Update the store
       store.setState({
         allRows: requests,
         schools: schools,
@@ -80,7 +101,7 @@ export class App {
       // Toggle Navigation Visibility
       if (mainNav) {
         mainNav.style.display = user ? 'flex' : 'none';
-        
+
         // Hide Restricted buttons for Guests
         if (navDashboard && navUsers) {
           const isGuest = user && user.role === 'Guest';
@@ -91,44 +112,44 @@ export class App {
 
       // Toggle Views
       const loadingView = document.getElementById('loading-view');
-      const dashboardView = document.getElementById('dashboard-view');
-      const usersView = document.getElementById('users-view');
-      const requestEntryView = document.getElementById('request-entry-view');
+      const dashboardView = document.querySelector('requests-dashboard');
+      const usersView = document.querySelector('user-management');
+      const requestEntryView = document.querySelector('request-editor');
       const subtitle = document.getElementById('portal-subtitle');
 
-      if (loadingView && dashboardView && usersView && requestEntryView && navUsers && navDashboard && navRequest) {
-        // Reset all views
-        [loadingView, dashboardView, usersView, requestEntryView].forEach(v => {
-          if (v) {
-            v.style.display = 'none';
-            v.classList.remove('active');
-          }
-        });
-
+      if (loadingView) {
         if (state.loading) {
           loadingView.style.display = 'block';
           loadingView.classList.add('active');
           return; // Don't show anything else while loading
         }
-
-        [navDashboard, navUsers, navRequest].forEach(n => n.classList.remove('active'));
-
-        if (activeView === 'users') {
-          usersView.style.display = 'block';
-          usersView.classList.add('active');
-          navUsers.classList.add('active');
-        } else if (activeView === 'request-entry') {
-          requestEntryView.style.display = 'block';
-          requestEntryView.classList.add('active');
-          navRequest.classList.add('active');
-          if (subtitle) subtitle.textContent = 'Staff submission portal';
-        } else {
-          dashboardView.style.display = 'block';
-          dashboardView.classList.add('active');
-          navDashboard.classList.add('active');
-          if (subtitle) subtitle.textContent = 'District data management portal';
-        }
+        loadingView.style.display = 'none';
+        loadingView.classList.remove('active');
       }
+
+      [navDashboard, navUsers, navRequest].forEach((n) => n?.classList.remove('active'));
+      [dashboardView, usersView, requestEntryView].forEach((v) => {
+        if (v) {
+          v.classList.remove('active');
+          v.style.display = 'none';
+        }
+      });
+
+      if (activeView === 'users' && usersView) {
+        usersView.style.display = 'block';
+        usersView.classList.add('active');
+        navUsers?.classList.add('active');
+      } else if (activeView === 'request-entry' && requestEntryView) {
+        requestEntryView.style.display = 'block';
+        requestEntryView.classList.add('active');
+        navRequest?.classList.add('active');
+        if (subtitle) subtitle.textContent = 'Staff submission portal';
+      } else if (dashboardView) {
+        dashboardView.style.display = 'block';
+        dashboardView.classList.add('active');
+        navDashboard?.classList.add('active');
+      }
+      if (subtitle) subtitle.textContent = 'District data management portal';
     });
 
     // 5. Global click listener to handle "outside clicks" for closing panels
