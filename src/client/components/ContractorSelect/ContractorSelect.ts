@@ -37,6 +37,9 @@ class ContractorSelect extends HTMLElement {
     if (this.shadowRoot) {
       this.shadowRoot.innerHTML = template;
     }
+    // Re-apply internal data to the newly rendered DOM
+    this.value = this._data;
+    this.mode = this._mode;
   }
 
   setupEventListeners() {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { store } from '../client/services/state.js';
+import { store } from '../client/services/state';
 
-describe('state.js', () => {
+describe('state.ts', () => {
   it('should have initial state', () => {
     const state = store.getState();
     expect(state).toHaveProperty('allRows', []);

@@ -10,7 +10,7 @@ import './components/UserEditor/UserEditor';
 /**
  * Main Application Orchestrator
  */
-class App {
+export class App {
   constructor() {
     this.init();
     this.setupEventListeners();

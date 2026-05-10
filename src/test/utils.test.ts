@@ -1,12 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { formatDate, formatTime } from '../client/services/utils.js';
+import { formatDate, formatTime } from '../client/services/utils';
 
-describe('utils.js', () => {
+describe('utils.ts', () => {
   describe('formatDate', () => {
     it('should format date as MM/DD/YYYY', () => {
       const date = new Date('2023-10-25T12:00:00');
-      // toLocaleDateString depends on system locale in some environments, 
-      // but 'en-US' should be consistent.
       expect(formatDate(date, 'MM/DD/YYYY')).toBe('10/25/2023');
     });
 
@@ -18,7 +16,7 @@ describe('utils.js', () => {
     it('should return empty string on error', () => {
       expect(formatDate(null)).toBe('');
       expect(formatDate(undefined)).toBe('');
-      expect(formatDate('not a date')).toBe('');
+      expect(formatDate('not a date' as any)).toBe('');
     });
   });
 
@@ -37,7 +35,7 @@ describe('utils.js', () => {
 
     it('should return empty string for invalid inputs', () => {
       expect(formatTime(null)).toBe('');
-      expect(formatTime('12:00')).toBe('');
+      expect(formatTime('12:00' as any)).toBe('');
       expect(formatTime(new Date('invalid'))).toBe('');
     });
   });

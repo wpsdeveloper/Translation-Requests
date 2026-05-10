@@ -1,4 +1,15 @@
 "use strict";
+/**
+ * requests.gs: Handles all communication with the AppSheet REST API.
+ *
+ * Note: In Google Apps Script, all top-level functions are in the global scope.
+ * We avoid 'import/export' here to ensure compatibility with the GAS runtime.
+ */
+/**
+ * Unified fetcher for AppSheet data.
+ * Orchestrates the retrieval of both requests and locations in parallel (conceptual),
+ * and applies role-based filtering before sending data to the client.
+ */
 function getDataFromAppSheet(user) {
     try {
         const rawRequests = getRequestsFromAppSheet();
@@ -63,6 +74,11 @@ function getSchoolsFromAppSheet() {
 }
 /**
  * Maps an AppSheet row object to the application's internal Request object structure.
+ */
+/**
+ * mapAppSheetRequest: Translates AppSheet's internal row format into our application's
+ * typed RawRequest interface. This layer is critical because AppSheet column names
+ * often contain spaces or vary between tables.
  */
 function mapAppSheetRequest(row) {
     return {
