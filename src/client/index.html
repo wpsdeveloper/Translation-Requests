@@ -1,34 +1,49 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Translation Requests</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
 
-  <body>
-    <header>
-      <div class="header-content">
-        <div>
-          <h1>Translation Requests</h1>
-          <p class="subtitle" id="portal-subtitle">District data management portal</p>
-        </div>
-        <nav id="main-nav" style="display: none">
-          <button id="nav-request" class="nav-btn">New Request</button>
-          <button id="nav-dashboard" class="nav-btn active">Dashboard</button>
-          <button id="nav-users" class="nav-btn">User Management</button>
-        </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Translation Requests</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header>
+    <div class="header-content">
+      <div>
+        <h1>Translation Requests</h1>
+        <p class="subtitle" id="portal-subtitle">District data management portal</p>
       </div>
-    </header>
-
-    <div id="loading-view" class="view active" style="text-align: center; padding-top: 100px">
-      <div class="spinner"></div>
-      <p style="margin-top: 20px; color: #64748b; font-weight: 500">Loading application data...</p>
+      <nav id="main-nav" style="display: none">
+        <button id="nav-request" class="nav-btn">New Request</button>
+        <button id="nav-dashboard" class="nav-btn active">Dashboard</button>
+        <button id="nav-users" class="nav-btn">User Management</button>
+      </nav>
     </div>
+  </header>
 
-    <div id="view-container"></div>
+  <div id="loading-view" class="view active" style="text-align: center; padding-top: 100px">
+    <div class="spinner"></div>
+    <p style="margin-top: 20px; color: #64748b; font-weight: 500">Loading application data...</p>
+  </div>
 
-    <script type="module" src="main.ts"></script>
-  </body>
+  <div id="view-container"></div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <dialog id="app-modal" class="modal">
+    <div class="modal-content">
+      <h2 id="modal-title"></h2>
+      <p id="modal-body"></p>
+      <div class="modal-actions">
+        <button id="modal-close" class="btn btn-secondary">Close</button>
+        <button id="modal-confirm" class="btn btn-primary" style="display: none;">Confirm</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="main.ts"></script>
+</body>
+
 </html>

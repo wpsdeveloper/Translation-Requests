@@ -2,11 +2,10 @@ import { store } from '../../services/state';
 import { formatDate } from '../../services/utils';
 import { saveRequest, deleteRequest } from '../../services/api';
 import { TranslationRequest } from '../../../shared/types';
-// @ts-ignore
+import { showToast, showModal } from '../../services/ui';
+
 import panelTemplate from './DetailsPanel.htm?raw';
-// @ts-ignore
 import sharedPanelStyles from '../shared/DetailsStyles.css?inline';
-// @ts-ignore
 import panelStyles from './DetailsPanel.css?inline';
 
 import '../DetailsInterpretation/DetailsInterpretation';
@@ -105,17 +104,14 @@ class DetailsPanel extends HTMLElement {
     const root = this.shadowRoot;
     if (!root) return;
 
+    this.toggleButtons(root, mode);
+    this.populateContent(root, mode);
+  }
+
+  private populateContent(root: ShadowRoot, mode: string) {
     const isEdit = mode === 'edit';
     const isProcess = mode === 'process';
     const isView = mode === 'view';
-
-    const processBtn = root.querySelector('#process-btn') as HTMLElement;
-    const saveBtn = root.querySelector('#save-btn') as HTMLElement;
-    const cancelBtn = root.querySelector('#cancel-btn') as HTMLElement;
-
-    if (processBtn) processBtn.style.display = isView ? 'inline-block' : 'none';
-    if (saveBtn) saveBtn.style.display = !isView ? 'inline-block' : 'none';
-    if (cancelBtn) cancelBtn.style.display = !isView ? 'inline-block' : 'none';
 
     // Toggle shared view/edit elements (only in 'edit' mode)
     const sharedViewEls = root.querySelectorAll('.shared-meta .view-mode, .detail-item .view-mode');
@@ -130,29 +126,58 @@ class DetailsPanel extends HTMLElement {
       dynamicEl.mode = mode;
     }
 
+    this.updateStatusSelect(root, isProcess);
+    this.updateSchoolSelect(root, isEdit);
+  }
+
+  private updateSchoolSelect(root: ShadowRoot, isEdit: boolean) {
+    const schoolSelect = root.querySelector('#detail-school') as any;
+    if (schoolSelect) {
+      schoolSelect.mode = isEdit ? 'edit' : 'view';
+    }
+  }
+
+  private updateStatusSelect(root: ShadowRoot, isProcess: boolean) {
     const statusSelect = root.querySelector('#detail-status') as any;
     const user = store.getState().user;
-    const isUser = user && user.role === 'User';
-    const isNeedsApproval = this._data?.status === 'Needs Approval';
 
     if (statusSelect) {
       statusSelect.mode = isProcess ? 'edit' : 'view';
       // Disable status change for Users if it's currently Needs Approval
-      if (isUser && isNeedsApproval) {
+      const canApprove = user && ['Approver', 'Admin'].includes(user.role);
+      const isNeedsApproval = this._data?.status === 'Needs Approval';
+      if (!canApprove && isNeedsApproval) {
         statusSelect.setAttribute('disabled', 'true');
       } else {
         statusSelect.removeAttribute('disabled');
       }
     }
+  }
+
+  private toggleButtons(root: ShadowRoot, mode: string) {
+    const isEdit = mode === 'edit';
+    const isProcess = mode === 'process';
+    const isView = mode === 'view';
+
+    const processBtn = root.querySelector('#process-btn') as HTMLElement;
+    const saveBtn = root.querySelector('#save-btn') as HTMLElement;
+    const cancelBtn = root.querySelector('#cancel-btn') as HTMLElement;
+    const deleteBtn = root.querySelector('#delete-btn') as HTMLElement;
+    const editBtn = root.querySelector('#edit-btn') as HTMLElement;
+
+    if (saveBtn) saveBtn.style.display = !isView ? '' : 'none';
+    if (cancelBtn) cancelBtn.style.display = !isView ? '' : 'none';
+    if (deleteBtn) deleteBtn.style.display = isEdit ? '' : 'none';
+    if (editBtn) editBtn.style.display = !isEdit ? '' : 'none';
+
+    const user = store.getState().user;
+    const processingRoles = ['User', 'Approver', 'Admin'];
+    const canProcess = user && processingRoles.includes(user.role);
+    const isNeedsApproval = this._data?.status === 'Needs Approval';
 
     // Hide Process button for Users if the record is in Needs Approval status
     if (processBtn) {
-      processBtn.style.display = isView && (!isUser || !isNeedsApproval) ? 'inline-block' : 'none';
-    }
-
-    const schoolSelect = root.querySelector('#detail-school') as any;
-    if (schoolSelect) {
-      schoolSelect.mode = isEdit ? 'edit' : 'view';
+      processBtn.style.display = isView && canProcess && !isNeedsApproval ? '' : 'none';
     }
   }
 
@@ -308,31 +333,47 @@ class DetailsPanel extends HTMLElement {
 
   async onDelete() {
     const data = this._data;
-    if (!data) return;
+    if (!data || !this.shadowRoot) return;
 
-    const root = this.shadowRoot;
-    if (!root) return;
+    // 1. Use the custom Modal for confirmation
+    showModal(
+      "Confirm Deletion",
+      `Are you sure you want to delete this ${data.reqType} request?`,
+      async () => {
+        // Capture the original state in case we need to roll back
+        const previousRows = [...store.getState().allRows];
 
-    const c = confirm(`Are you sure you want to delete this ${data.reqType} request?`);
-    if (!c) return;
+        // 2. OPTIMISTIC UPDATE: Update UI immediately
+        const updatedRows = previousRows.filter((row) => row.id !== data.id);
 
-    try {
-      await deleteRequest(data);
+        store.setState({
+          allRows: updatedRows,
+          selectedRow: null,
+        });
 
-      const state = store.getState();
-      const updatedRows = state.allRows.filter((row) => row.id !== data.id);
-      console.log('updatedRows', updatedRows);
+        this.setMode('view');
+        showToast("Deleting request..."); // Provide immediate feedback
 
-      store.setState({
-        allRows: updatedRows,
-        selectedRow: null,
-      });
+        try {
+          // 3. Perform the actual network call
+          await deleteRequest(data);
+          showToast("Request deleted successfully.");
+        } catch (err) {
+          // 4. ROLLBACK: Something went wrong on the server
+          console.error('Failed to delete:', err);
 
-      this.setMode('view');
-    } catch (err) {
-      console.error('Failed to delete:', err);
-      alert('Failed to delete request. Please try again.');
-    }
+          store.setState({
+            allRows: previousRows,
+            selectedRow: data, // Put the user back where they were
+          });
+
+          this.setMode('edit'); // Return to the view they were on
+
+          // Use toast or modal to inform them of the failure
+          showToast("Error: Could not delete. Restoring data...", 5000);
+        }
+      }
+    );
   }
 }
 
