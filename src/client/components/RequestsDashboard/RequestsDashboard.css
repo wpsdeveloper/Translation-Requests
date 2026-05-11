@@ -28,9 +28,35 @@ header,
 }
 
 .panel {
-  display: grid;
-  grid-template-columns: 2.5fr 1fr;
+.panel {
+  display: flex;
   gap: 24px;
+}
+
+/* Center the left panel when details panel is empty */
+.panel:has(#details-card:empty) {
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Align left when details panel has content */
+.panel:has(#details-card:not(:empty)) {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* Hide empty details card to avoid extra space */
+#details-card:empty {
+  display: none;
+}
+}
+
+/* Flex children sizing */
+.panel > section:first-child {
+  flex: 2.5;
+}
+.panel > section:last-child {
+  flex: 1;
 }
 
 .card {

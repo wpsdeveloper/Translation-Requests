@@ -20,13 +20,6 @@
   background-color: #e8f0fe !important;
 }
 
-.badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
 /* Add any specific styling for your cells here */
 .th {
   padding: 12px 8px;
@@ -40,19 +33,29 @@
 /* Specific column adjustments */
 .th:nth-child(1) {
   flex: 1;
-} /* Status */
+}
+
+/* Status */
 .th:nth-child(2) {
   flex: 0.8;
-} /* Request Date */
+}
+
+/* Request Date */
 .th:nth-child(3) {
   flex: 0.8;
-} /* Submitted */
+}
+
+/* Submitted */
 .th:nth-child(4) {
   flex: 1;
-} /* Type */
+}
+
+/* Type */
 .th:nth-child(5) {
   flex: 2;
-} /* Requested By */
+}
+
+/* Requested By */
 
 .table-message {
   padding: 60px 20px;
