@@ -1,68 +1,75 @@
- :host {
-     font-size: 0.9rem;
- }
+:host {
+  font-size: 0.9rem;
+}
 
- h2 {
-     font-size: 1.2rem;
- }
+h2 {
+  font-size: 1.2rem;
+}
 
- h3 {
-     font-size: 1rem;
-     border-bottom: 1px solid #eee;
-     padding-bottom: 5px;
- }
+h3 {
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
 
- .header-main {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-bottom: 15px;
-     margin-top: 30px;
- }
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-top: 30px;
+}
 
- .form-control {
-     width: 100%;
-     background: #f8fafc;
-     border: 1px solid #e2e8f0;
-     border-radius: 12px;
-     padding: 10px 12px;
-     font-family: inherit;
- }
+.form-control {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: inherit;
+}
 
- .shared-meta p {
-     font-size: 0.9rem;
-     margin: 5px 0;
- }
+.shared-meta p {
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
 
- .details-section label {
-     display: block;
-     font-weight: bold;
-     font-size: 0.8rem;
-     margin-top: 10px;
- }
+.details-section label {
+  display: block;
+  font-weight: bold;
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
 
- footer {
-     margin-top: 30px;
-     display: flex;
-     gap: 10px;
- }
+footer {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
 
- button {
-     padding: 8px 16px;
-     cursor: pointer;
- }
+button {
+  padding: 8px 16px;
+  cursor: pointer;
+}
 
- button.primary {
-     background: #007bff;
-     color: white;
-     border: none;
- }
+button.primary {
+  background: #007bff;
+  color: white;
+  border: none;
+}
 
- .detail-item label {
-     display: inline-block;
-     font-weight: bold;
- }
+.detail-item label {
+  display: inline-block;
+  font-weight: bold;
+}
 
- .detail-item .view-mode {
-     display: inline-block;
- }
+.detail-item .view-mode {
+  display: inline-block;
+}
+
+.help-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 4px;
+  display: block;
+}

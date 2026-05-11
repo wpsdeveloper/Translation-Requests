@@ -1,0 +1,30 @@
+<div class="panel">
+  <section class="card">
+    <div class="filters">
+      <div class="filter-group">
+        <label for="school-filter">Filter by school</label>
+        <div id="school-filter-wrapper">
+          <school-select id="school-filter" mode="edit" include-all></school-select>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>Filter by status</label>
+        <div id="status-filter-wrapper">
+          <status-multi-select id="status-filter"></status-multi-select>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+      <h2>Requests</h2>
+      <span id="results-count" class="row-count">0 entries</span>
+    </div>
+    <app-table></app-table>
+    <!-- Custom element for the table, will render rows internally -->
+  </section>
+
+  <section id="details-card">
+    <details-panel class="details-panel"></details-panel>
+    <!-- Custom element for the details panel, will render content internally -->
+  </section>
+</div>
+<!-- Added missing closing div for .panel -->
