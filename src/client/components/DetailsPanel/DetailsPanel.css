@@ -36,7 +36,9 @@
   cursor: pointer;
   line-height: 1;
   padding: 4px 8px;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
   z-index: 10;
 }
 
@@ -55,7 +57,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .edit-icon-btn:hover {

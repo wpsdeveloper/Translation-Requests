@@ -6,8 +6,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header {
@@ -138,11 +144,21 @@ tr:hover {
   font-weight: 600;
 }
 
-.role-Admin { background: #fee2e2; color: #991b1b; }
-.role-Approver { background: #dbeafe; color: #1e40af; }
-.role-User { background: #f1f5f9; color: #475569; }
+.role-Admin {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.role-Approver {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.role-User {
+  background: #f1f5f9;
+  color: #475569;
+}
 
-.loading-state, .empty-state {
+.loading-state,
+.empty-state {
   padding: 60px;
   text-align: center;
   color: #64748b;
@@ -159,5 +175,7 @@ tr:hover {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

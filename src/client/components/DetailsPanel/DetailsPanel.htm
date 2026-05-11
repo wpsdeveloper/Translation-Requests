@@ -2,11 +2,19 @@
   <button id="close-btn" class="close-icon" aria-label="Close panel">&times;</button>
   <header>
     <div class="header-main">
-      <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="display: flex; align-items: center; gap: 8px">
         <h2>Request Details</h2>
         <button id="edit-btn" class="edit-icon-btn" title="Edit request">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
           </svg>
@@ -15,7 +23,7 @@
       <status-select id="detail-status"></status-select>
     </div>
 
-    <div id="approval-info" class="shared-meta" style="display: none;">
+    <div id="approval-info" class="shared-meta" style="display: none">
       <div class="detail-item">
         <label id="approved-by-label">Approved By</label>
         <span id="detail-approved-by"></span>
@@ -24,7 +32,7 @@
         <label id="approved-date-label">Approved Date</label>
         <span id="detail-approved-date"></span>
       </div>
-      <hr>
+      <hr />
     </div>
     <div class="shared-meta">
       <div class="detail-item">
@@ -34,17 +42,16 @@
       <div class="detail-item">
         <label>Requester Name</label>
         <span id="view-requester-name" class="view-mode"></span>
-        <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none;" />
+        <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none" />
       </div>
 
       <div class="detail-item">
         <school-select id="detail-school"></school-select>
       </div>
-
     </div>
   </header>
 
-  <hr>
+  <hr />
   <div class="detail-item">
     <label>Type</label>
     <span id="view-reqType"></span>
@@ -54,19 +61,19 @@
     <span id="view-languages" class="view-mode"></span>
   </div>
   <div class="detail-item">
-    <label class="edit-mode" style="display: none;">Original Language</label>
-    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none;" />
+    <label class="edit-mode" style="display: none">Original Language</label>
+    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none" />
   </div>
 
   <div class="detail-item">
-    <label class="edit-mode" style="display: none;">Target Language</label>
-    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none;" />
+    <label class="edit-mode" style="display: none">Target Language</label>
+    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none" />
   </div>
 
   <div class="detail-item">
     <label>Description</label>
     <div id="view-description" class="view-mode"></div>
-    <textarea id="edit-description" class="form-control edit-mode" style="display: none;"></textarea>
+    <textarea id="edit-description" class="form-control edit-mode" style="display: none"></textarea>
   </div>
 
   <div id="dynamic-content"></div>
@@ -74,8 +81,8 @@
   <div class="detail-item">
     <footer>
       <button id="process-btn" class="primary">Process</button>
-      <button id="save-btn" class="primary" style="display: none;">Save Changes</button>
-      <button id="cancel-btn" class="secondary" style="display: none;">Cancel</button>
+      <button id="save-btn" class="primary" style="display: none">Save Changes</button>
+      <button id="cancel-btn" class="secondary" style="display: none">Cancel</button>
     </footer>
   </div>
 </div>
