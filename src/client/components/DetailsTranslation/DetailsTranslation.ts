@@ -1,40 +1,15 @@
 // @ts-ignore
-import styles from '../shared/DetailsStyles.css?inline';
-// @ts-ignore
 import template from './DetailsTranslation.htm?raw';
 import '../ContractorSelect/ContractorSelect';
-import { TranslationRequest } from '../../../shared/types';
 import { PanelMode } from '../DetailsPanel/DetailsPanel';
+import { DetailsBase } from '../shared/DetailsBase';
 
-const sheet = new CSSStyleSheet();
-sheet.replaceSync(styles);
-
-class DetailsTranslation extends HTMLElement {
-  private _data: TranslationRequest = {} as TranslationRequest;
-  private _mode: PanelMode = 'view';
-
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    if (this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet];
-    }
+class DetailsTranslation extends DetailsBase {
+  protected get template() {
+    return template;
   }
 
-  set data(value: TranslationRequest) {
-    this._data = value;
-    this.render();
-  }
-
-  get mode(): PanelMode {
-    return this._mode;
-  }
-
-  set mode(value: PanelMode) {
-    this._mode = value;
-    const root = this.shadowRoot;
-    if (!root) return;
-
+  protected applyMode(root: ShadowRoot, value: PanelMode) {
     const isEdit = value === 'edit';
     const isProcess = value === 'process';
 
@@ -70,13 +45,7 @@ class DetailsTranslation extends HTMLElement {
     }
   }
 
-  render() {
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = template;
-    }
-    const root = this.shadowRoot;
-    if (!root) return;
-
+  protected hydrate(root: ShadowRoot) {
     // View Mode Hydration
     const viewLen = root.querySelector('#view-document-length');
     if (viewLen) viewLen.textContent = this._data.docPageCount || 'N/A';
@@ -124,8 +93,6 @@ class DetailsTranslation extends HTMLElement {
       };
       contractorSelect.mode = this._mode;
     }
-
-    this.mode = this._mode; // Apply current mode visibility
   }
 
   getSaveData() {

@@ -1,41 +1,16 @@
 // @ts-ignore
-import styles from '../shared/DetailsStyles.css?inline';
-// @ts-ignore
 import template from './DetailsInterpretation.htm?raw';
 import '../ContractorSelect/ContractorSelect';
 import { formatDate, formatTime } from '../../services/utils';
-import { TranslationRequest } from '../../../shared/types';
 import { PanelMode } from '../DetailsPanel/DetailsPanel';
+import { DetailsBase } from '../shared/DetailsBase';
 
-const sheet = new CSSStyleSheet();
-sheet.replaceSync(styles);
-
-class DetailsInterpretation extends HTMLElement {
-  private _data: TranslationRequest = {} as TranslationRequest;
-  private _mode: PanelMode = 'view';
-
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    if (this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet];
-    }
+class DetailsInterpretation extends DetailsBase {
+  protected get template() {
+    return template;
   }
 
-  set data(value: TranslationRequest) {
-    this._data = value;
-    this.render();
-  }
-
-  get mode(): PanelMode {
-    return this._mode;
-  }
-
-  set mode(value: PanelMode) {
-    this._mode = value;
-    const root = this.shadowRoot;
-    if (!root) return;
-
+  protected applyMode(root: ShadowRoot, value: PanelMode) {
     const isEdit = value === 'edit';
     const isProcess = value === 'process';
 
@@ -71,17 +46,9 @@ class DetailsInterpretation extends HTMLElement {
     }
   }
 
-  render() {
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = template;
-    }
-    const root = this.shadowRoot;
-    if (!root) return;
-
+  protected hydrate(root: ShadowRoot) {
     this.viewModeHydration(root);
     this.editModeHydration(root);
-
-    this.mode = this._mode;
   }
 
   private viewModeHydration(root: ShadowRoot) {
