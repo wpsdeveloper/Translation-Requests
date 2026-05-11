@@ -17,7 +17,6 @@ class RequestEditor extends BasePanel {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
       this.shadowRoot.adoptedStyleSheets = [sheet];
     }

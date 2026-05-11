@@ -53,13 +53,9 @@ class RequestsRow extends HTMLElement {
     }
 
     this.addEventListener('click', () => {
-      const panel = document.querySelector('details-panel') as any;
-      if (panel && panel.mode === 'edit') return;
-
-      // UPDATE STATE: Tell the app which row was selected
+      // UPDATE STATE: Tell the app which row was selected.
       store.setState({
-        selectedRow: this._data,
-        isPanelOpen: true,
+        selectedRow: this._data
       });
     });
 

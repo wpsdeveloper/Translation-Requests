@@ -27,6 +27,8 @@ class RequestsTable extends HTMLElement {
     }
   }
 
+  private _lastRowsJson = '';
+
   /**
    * connectedCallback is called when the element is added to the document.
    * This is where we trigger the initial render and set up subscriptions.
@@ -34,13 +36,9 @@ class RequestsTable extends HTMLElement {
   connectedCallback() {
     this.render();
 
-    // The component "reacts" to state changes. By subscribing here,
-    // we ensure the table stays in sync with the global data and filters.
     store.subscribe((state) => {
       let rows = state.allRows;
 
-      // Declarative filtering logic: we filter the data before passing it
-      // to the updateRows method.
       if (state.filterSchool) {
         if (state.filterSchool === 'Other') {
           rows = rows.filter((row) => !state.schools.includes(row.school));
@@ -53,7 +51,13 @@ class RequestsTable extends HTMLElement {
         rows = rows.filter((row) => state.filterStatuses.includes(row.status));
       }
 
-      this.updateRows(rows, state.loading);
+      // ONLY re-render if the actual content or loading state changed.
+      // This prevents the table from flickering/rebuilding when a row is selected.
+      const rowsJson = JSON.stringify(rows) + state.loading;
+      if (rowsJson !== this._lastRowsJson) {
+        this._lastRowsJson = rowsJson;
+        this.updateRows(rows, state.loading);
+      }
     });
   }
 

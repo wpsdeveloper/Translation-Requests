@@ -60,6 +60,7 @@ class DetailsPanel extends DetailsBase {
       if (target.id === 'process-btn') this.setMode('process');
       if (target.id === 'cancel-btn') this.cancelEdit();
       if (target.id === 'save-btn') this.onSave();
+      if (target.id === 'close-btn') this.onClose();
 
       if (path.some((el: any) => el.id === 'edit-btn')) this.handleEditToggle();
       if (path.some((el: any) => el.id === 'delete-btn')) this.onDelete();
@@ -204,12 +205,6 @@ class DetailsPanel extends DetailsBase {
     this._data?.status === 'Needs Approval' ?
       processBtn.setAttribute('disabled', 'true') :
       processBtn.removeAttribute('disabled');
-  }
-
-  render() {
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = panelTemplate;
-    }
   }
 
   hydrate(root: ShadowRoot) {

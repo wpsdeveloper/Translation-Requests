@@ -7,6 +7,7 @@ export abstract class BasePanel extends HTMLElement {
 
   constructor() {
     super();
+    this.attachShadow({ mode: 'open' });
   }
 
   /**
