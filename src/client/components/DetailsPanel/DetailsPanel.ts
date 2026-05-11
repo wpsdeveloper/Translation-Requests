@@ -1,5 +1,5 @@
 import { store } from '../../services/state';
-import { formatDate } from '../../services/utils';
+import { formatDate, formatTime } from '../../services/utils';
 import { saveRequest, deleteRequest } from '../../services/api';
 import { TranslationRequest } from '../../../shared/types';
 import { showToast, showModal } from '../../services/ui';
@@ -54,27 +54,16 @@ class DetailsPanel extends HTMLElement {
 
   setupEventListeners() {
     this.shadowRoot?.addEventListener('click', (e: any) => {
-      if (e.target.id === 'close-btn') {
-        store.setState({ selectedRow: null });
-        this.setMode('view');
-      }
+      const target = e.target as HTMLElement;
+      const path = e.composedPath() as HTMLElement[];
 
-      if (e.composedPath().some((el: any) => el.id === 'edit-btn')) {
-        this.setMode(this._mode === 'edit' ? 'view' : 'edit');
-      }
-      if (e.composedPath().some((el: any) => el.id === 'delete-btn')) this.onDelete();
-      if (e.target.id === 'process-btn') this.setMode('process');
-      if (e.target.id === 'cancel-btn') this.setMode('view');
-      if (e.target.id === 'save-btn') this.onSave();
+      if (target.id === 'process-btn') this.setMode('process');
+      if (target.id === 'cancel-btn') this.cancelEdit();
+      if (target.id === 'close-btn') this.handleClose();
+      if (target.id === 'save-btn') this.onSave();
 
-      if (this.shadowRoot) {
-        const editBtn = this.shadowRoot.getElementById('edit-btn') as HTMLElement;
-        const deleteBtn = this.shadowRoot.getElementById('delete-btn') as HTMLElement;
-
-        editBtn.style.display = this._mode === 'edit' ? 'none' : '';
-        deleteBtn.style.display = this._mode === 'edit' ? '' : 'none';
-      }
-
+      if (path.some((el: any) => el.id === 'edit-btn')) this.handleEditToggle();
+      if (path.some((el: any) => el.id === 'delete-btn')) this.onDelete();
     });
 
     this.shadowRoot?.addEventListener('change', (e: any) => {
@@ -82,6 +71,21 @@ class DetailsPanel extends HTMLElement {
         this.updateApprovalVisibility(e.detail.status);
       }
     });
+  }
+
+  private handleEditToggle() {
+    const newMode = this._mode === 'edit' ? 'view' : 'edit';
+    this.setMode(newMode);
+    this.toggleButtons(this.shadowRoot!, newMode);
+  }
+
+  private handleClose() {
+    store.setState({ selectedRow: null });
+    this.setMode('view');
+  }
+
+  private cancelEdit() {
+    this.setMode('view');
   }
 
   /**
@@ -107,28 +111,34 @@ class DetailsPanel extends HTMLElement {
 
     this.toggleButtons(root, mode);
     this.populateContent(root, mode);
+
+    if (this._data) this.hydrate(this._data);
   }
 
   private populateContent(root: ShadowRoot, mode: string) {
     const isEdit = mode === 'edit';
     const isProcess = mode === 'process';
-    const isView = mode === 'view';
 
-    // Toggle shared view/edit elements (only in 'edit' mode)
-    const sharedViewEls = root.querySelectorAll('.shared-meta .view-mode, .detail-item .view-mode');
-    const sharedEditEls = root.querySelectorAll('.shared-meta .edit-mode, .detail-item .edit-mode');
+    this.toggleModeClasses(root, isEdit);
+    this.syncDynamicComponent(root, mode);
 
-    sharedViewEls.forEach((el: any) => (el.style.display = isEdit ? 'none' : ''));
-    sharedEditEls.forEach((el: any) => (el.style.display = isEdit ? '' : 'none'));
+    this.updateStatusSelect(root, isProcess);
+    this.updateSchoolSelect(root, isEdit);
+  }
 
-    // Notify the dynamic component
+  private toggleModeClasses(root: ShadowRoot, isEdit: boolean) {
+    const viewEls = root.querySelectorAll('.view-mode');
+    const editEls = root.querySelectorAll('.edit-mode');
+
+    viewEls.forEach((el: any) => el.style.display = isEdit ? 'none' : '');
+    editEls.forEach((el: any) => el.style.display = isEdit ? '' : 'none');
+  }
+
+  private syncDynamicComponent(root: ShadowRoot, mode: string) {
     const dynamicEl = root.querySelector('#dynamic-content')?.firstElementChild as any;
     if (dynamicEl && 'mode' in dynamicEl) {
       dynamicEl.mode = mode;
     }
-
-    this.updateStatusSelect(root, isProcess);
-    this.updateSchoolSelect(root, isEdit);
   }
 
   private updateSchoolSelect(root: ShadowRoot, isEdit: boolean) {
@@ -156,39 +166,42 @@ class DetailsPanel extends HTMLElement {
   }
 
   private toggleButtons(root: ShadowRoot, mode: string) {
-    const isEdit = mode === 'edit';
-    const isProcess = mode === 'process';
     const isView = mode === 'view';
+    const isEdit = mode === 'edit';
+    const canApprove = this.canUserApprove();
 
-    const processBtn = root.querySelector('#process-btn') as HTMLElement;
-    const saveBtn = root.querySelector('#save-btn') as HTMLElement;
-    const cancelBtn = root.querySelector('#cancel-btn') as HTMLElement;
-    const deleteBtn = root.querySelector('#delete-btn') as HTMLElement;
-    const editBtn = root.querySelector('#edit-btn') as HTMLElement;
-    const approveBtn = root.querySelector('#approve-btn') as HTMLElement;
-    const denyBtn = root.querySelector('#deny-btn') as HTMLElement;
+    this.setVisibility(root, '#save-btn', !isView);
+    this.setVisibility(root, '#cancel-btn', !isView);
+    this.setVisibility(root, '#edit-btn', !isEdit);
+    this.setVisibility(root, '#delete-btn', isEdit);
 
-    if (saveBtn) saveBtn.style.display = !isView ? '' : 'none';
-    if (cancelBtn) cancelBtn.style.display = !isView ? '' : 'none';
-    if (deleteBtn) deleteBtn.style.display = isEdit ? '' : 'none';
-    if (editBtn) editBtn.style.display = !isEdit ? '' : 'none';
+    this.setVisibility(root, '#approve-btn', !isEdit && canApprove);
+    this.setVisibility(root, '#deny-btn', !isEdit && canApprove);
 
+    this.updateProcessButton(root, isView);
+  }
+
+  private setVisibility(root: ShadowRoot, selector: string, visible: boolean) {
+    const element = root.querySelector(selector) as HTMLElement;
+    if (element) element.style.display = visible ? '' : 'none';
+  }
+
+  private canUserApprove() {
     const user = store.getState().user;
     const approvingRoles = ['Approver', 'Admin'];
 
-    const canApprove = user && approvingRoles.includes(user.role);
-    const isNeedsApproval = this._data?.status === 'Needs Approval';
+    return Boolean(user && approvingRoles.includes(user.role));
+  }
 
-    if (approveBtn) approveBtn.style.display = !isEdit && isNeedsApproval && canApprove ? '' : 'none';
-    if (denyBtn) denyBtn.style.display = !isEdit && isNeedsApproval && canApprove ? '' : 'none';
-    if (processBtn) {
-      processBtn.style.display = isView ? '' : 'none';
-      if (isNeedsApproval) {
-        processBtn.setAttribute('disabled', 'true');
-      } else {
-        processBtn.removeAttribute('disabled');
-      }
-    }
+  private updateProcessButton(root: ShadowRoot, isView: boolean) {
+    const processBtn = root.querySelector('#process-btn') as HTMLElement;
+    if (!processBtn) return;
+
+    processBtn.style.display = isView ? '' : 'none';
+
+    this._data?.status === 'Needs Approval' ?
+      processBtn.setAttribute('disabled', 'true') :
+      processBtn.removeAttribute('disabled');
   }
 
   render() {
@@ -202,48 +215,53 @@ class DetailsPanel extends HTMLElement {
     const root = this.shadowRoot;
     if (!root) return;
 
-    // 1. Hydrate Shared Fields
+    this.hydrateViewFields(root, data);
+    this.hydrateEditFields(root, data);
+    this.hydrateApprovalSection(root, data);
+    this.hydrateSpecializedSection(root, data);
+
+    this.hydrateStatusSelect(root, data);
+    this.hydrateSchoolSelect(root, data);
+
+    this.injectDynamicContent(root, data);
+  }
+
+  private hydrateStatusSelect(root: ShadowRoot, data: TranslationRequest) {
     const statusSelect = root.querySelector('#detail-status') as any;
     if (statusSelect) {
       statusSelect.status = data.status;
       statusSelect.mode = this._mode;
     }
-    const viewReqType = root.querySelector('#view-reqType');
-    if (viewReqType) viewReqType.textContent = data.reqType || 'N/A';
+  }
 
-    const viewSubmitted = root.querySelector('#view-submitted');
-    if (viewSubmitted) viewSubmitted.textContent = formatDate(data.submittedDate, 'MMM D, YYYY') || 'N/A';
-
-    // View Mode Shared Fields
-    const languages = [data.originalLanguage, data.targetLanguage].filter(Boolean).join(' to ');
-    const viewLanguages = root.querySelector('#view-languages');
-    if (viewLanguages) viewLanguages.textContent = languages || 'N/A';
-
-    const viewRequesterName = root.querySelector('#view-requester-name');
-    if (viewRequesterName) viewRequesterName.textContent = data.name || 'N/A';
-
+  private hydrateSchoolSelect(root: ShadowRoot, data: TranslationRequest) {
     const schoolSelect = root.querySelector('#detail-school') as any;
     if (schoolSelect) {
       schoolSelect.value = data.school || '';
       schoolSelect.mode = this._mode;
     }
+  }
 
-    const viewDescription = root.querySelector('#view-description');
-    if (viewDescription) viewDescription.textContent = data.description || 'No description provided.';
+  // Responsibility: Mapping data to read-only labels
+  private hydrateViewFields(root: ShadowRoot, data: TranslationRequest) {
+    this.setSafeText(root, '#view-reqType', data.reqType);
+    this.setSafeText(root, '#view-submitted', formatDate(data.submittedDate, 'MMM D, YYYY'));
+    this.setSafeText(root, '#view-requester-name', data.name);
+    this.setSafeText(root, '#view-description', data.description, 'No description provided.');
 
-    // Edit Mode Shared Fields
-    const editName = root.querySelector('#edit-requester-name') as HTMLInputElement;
-    if (editName) editName.value = data.name || '';
+    const langs = [data.originalLanguage, data.targetLanguage].filter(Boolean).join(' to ');
+    this.setSafeText(root, '#view-languages', langs);
+  }
 
-    const editOrigLang = root.querySelector('#edit-orig-lang') as HTMLInputElement;
-    if (editOrigLang) editOrigLang.value = data.originalLanguage || '';
+  // Responsibility: Mapping data to form inputs
+  private hydrateEditFields(root: ShadowRoot, data: TranslationRequest) {
+    this.setInputValue(root, '#edit-requester-name', data.name);
+    this.setInputValue(root, '#edit-orig-lang', data.originalLanguage);
+    this.setInputValue(root, '#edit-target-lang', data.targetLanguage);
+    this.setInputValue(root, '#edit-description', data.description);
+  }
 
-    const editTargetLang = root.querySelector('#edit-target-lang') as HTMLInputElement;
-    if (editTargetLang) editTargetLang.value = data.targetLanguage || '';
-
-    const editDescription = root.querySelector('#edit-description') as HTMLTextAreaElement;
-    if (editDescription) editDescription.value = data.description || '';
-
+  private hydrateApprovalSection(root: ShadowRoot, data: TranslationRequest) {
     // Hydrate Approval Info
     const approvedBy = root.querySelector('#detail-approved-by');
     if (approvedBy) approvedBy.textContent = (data as any).approvedBy || 'N/A';
@@ -263,8 +281,29 @@ class DetailsPanel extends HTMLElement {
       if (approvedDateLabel) approvedDateLabel.textContent = 'Approved Date';
     }
     this.updateApprovalVisibility(data.status);
+  }
 
-    // 2. Hydrate Dynamic Content
+  private hydrateSpecializedSection(root: ShadowRoot, data: TranslationRequest) {
+    const interpretationType = root.querySelector('#interpretationType');
+    if (interpretationType) interpretationType.textContent = data.interpretationType || 'N/A';
+
+    const eventLocation = root.querySelector('#eventLocation');
+    if (eventLocation) eventLocation.textContent = data.eventLocation || 'N/A';
+
+    const startTime = root.querySelector('#startTime');
+    if (startTime) startTime.textContent = data.startTime ? formatTime(data.startTime) : 'N/A';
+
+    const endTime = root.querySelector('#endTime');
+    if (endTime) endTime.textContent = data.endTime ? formatTime(data.endTime) : 'N/A';
+
+    const docPageCount = root.querySelector('#docPageCount');
+    if (docPageCount) docPageCount.textContent = data.docPageCount || 'N/A';
+
+    const docLink = root.querySelector('#docLink');
+    if (docLink) docLink.textContent = data.docLink || 'N/A';
+  }
+
+  private injectDynamicContent(root: ShadowRoot, data: TranslationRequest) {
     const container = root.querySelector('#dynamic-content');
     if (container) {
       container.innerHTML = ''; // Clear previous view
@@ -286,7 +325,7 @@ class DetailsPanel extends HTMLElement {
     }
   }
 
-  updateApprovalVisibility(status: string) {
+  private updateApprovalVisibility(status: string) {
     const approvalInfo = this.shadowRoot?.querySelector('#approval-info') as HTMLElement;
     if (approvalInfo) {
       approvalInfo.style.display = status !== 'Needs Approval' ? 'block' : 'none';
@@ -294,96 +333,126 @@ class DetailsPanel extends HTMLElement {
   }
 
   async onSave() {
-    if (!this._data) return;
-
     const root = this.shadowRoot;
-    if (!root) return;
+    if (!this._data || !root) return;
 
+    const updatedRequest = this.gatherFormData(root);
+
+    await this.withLoadingState('#save-btn', async () => {
+      try {
+        const savedData = await saveRequest(updatedRequest);
+
+        this.syncGlobalState(savedData);
+        this.setMode('view');
+      } catch (err) {
+        console.error('Failed to save:', err);
+        alert('Failed to save changes. Please try again.');
+      }
+    });
+  }
+
+  private gatherFormData(root: ShadowRoot): TranslationRequest {
     const dynamicEl = root.querySelector('#dynamic-content')?.firstElementChild as any;
-    const childData = dynamicEl?.getSaveData() || {};
 
-    const updatedRequest: TranslationRequest = {
-      ...this._data,
-      name: (root.querySelector('#edit-requester-name') as HTMLInputElement).value,
-      school: (root.querySelector('#detail-school') as any).value,
-      originalLanguage: (root.querySelector('#edit-orig-lang') as HTMLInputElement).value,
-      targetLanguage: (root.querySelector('#edit-target-lang') as HTMLInputElement).value,
-      description: (root.querySelector('#edit-description') as HTMLTextAreaElement).value,
-      status: (root.querySelector('#detail-status') as any).status,
-      ...childData,
+    return {
+      ...this._data!,
+      name: this.getInputValue(root, '#edit-requester-name'),
+      school: (root.querySelector('#detail-school') as any)?.value,
+      originalLanguage: this.getInputValue(root, '#edit-orig-lang'),
+      targetLanguage: this.getInputValue(root, '#edit-target-lang'),
+      description: this.getInputValue(root, '#edit-description'),
+      status: (root.querySelector('#detail-status') as any)?.status,
+      ...(dynamicEl?.getSaveData() || {}),
     };
+  }
 
-    const saveBtn = root.querySelector('#save-btn') as HTMLButtonElement;
-    if (!saveBtn) return;
+  private async withLoadingState(selector: string, action: () => Promise<void>) {
+    const btn = this.shadowRoot?.querySelector(selector) as HTMLButtonElement;
+    if (!btn) return await action();
 
-    const originalText = saveBtn.textContent;
-    saveBtn.textContent = 'Saving...';
-    saveBtn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
 
     try {
-      const savedData = await saveRequest(updatedRequest);
-
-      const state = store.getState();
-      const updatedRows = state.allRows.map((row) => (row.id === savedData.id ? savedData : row));
-
-      store.setState({
-        allRows: updatedRows,
-        selectedRow: savedData,
-      });
-
-      this.setMode('view');
-    } catch (err) {
-      console.error('Failed to save:', err);
-      alert('Failed to save changes. Please try again.');
+      await action();
     } finally {
-      saveBtn.textContent = originalText;
-      saveBtn.disabled = false;
+      btn.textContent = originalText;
+      btn.disabled = false;
     }
+  }
+
+  // Responsibility: Updating the Store
+  private syncGlobalState(savedData: TranslationRequest) {
+    const { allRows } = store.getState();
+    const updatedRows = allRows.map((row) => (row.id === savedData.id ? savedData : row));
+
+    store.setState({
+      allRows: updatedRows,
+      selectedRow: savedData,
+    });
+  }
+
+  // Utility for gathering
+  private getInputValue(root: ShadowRoot, selector: string): string {
+    return (root.querySelector(selector) as HTMLInputElement)?.value || '';
   }
 
   async onDelete() {
     const data = this._data;
-    if (!data || !this.shadowRoot) return;
+    if (!data) return;
 
-    // 1. Use the custom Modal for confirmation
     showModal(
       "Confirm Deletion",
       `Are you sure you want to delete this ${data.reqType} request?`,
-      async () => {
-        // Capture the original state in case we need to roll back
-        const previousRows = [...store.getState().allRows];
-
-        // 2. OPTIMISTIC UPDATE: Update UI immediately
-        const updatedRows = previousRows.filter((row) => row.id !== data.id);
-
-        store.setState({
-          allRows: updatedRows,
-          selectedRow: null,
-        });
-
-        this.setMode('view');
-        showToast("Deleting request..."); // Provide immediate feedback
-
-        try {
-          // 3. Perform the actual network call
-          await deleteRequest(data);
-          showToast("Request deleted successfully.");
-        } catch (err) {
-          // 4. ROLLBACK: Something went wrong on the server
-          console.error('Failed to delete:', err);
-
-          store.setState({
-            allRows: previousRows,
-            selectedRow: data, // Put the user back where they were
-          });
-
-          this.setMode('edit'); // Return to the view they were on
-
-          // Use toast or modal to inform them of the failure
-          showToast("Error: Could not delete. Restoring data...", 5000);
-        }
-      }
+      () => this.performOptimisticDelete(data)
     );
+  }
+
+  private async performOptimisticDelete(data: TranslationRequest) {
+    const previousRows = [...store.getState().allRows];
+
+    this.applyDeleteToStore(data.id, null);
+    this.setMode('view');
+    showToast("Deleting request...");
+
+    try {
+      await deleteRequest(data);
+      showToast("Request deleted successfully.");
+    } catch (err) {
+      this.handleDeleteError(err, previousRows, data);
+    }
+  }
+
+  private applyDeleteToStore(id: string, selectedRow: TranslationRequest | null) {
+    const { allRows } = store.getState();
+    store.setState({
+      allRows: allRows.filter((row) => row.id !== id),
+      selectedRow: selectedRow,
+    });
+  }
+
+  private handleDeleteError(err: any, backup: TranslationRequest[], originalItem: TranslationRequest) {
+    console.error('Failed to delete:', err);
+
+    // Rollback state
+    store.setState({
+      allRows: backup,
+      selectedRow: originalItem,
+    });
+
+    this.setMode('edit');
+    showToast("Error: Could not delete. Restoring data...", 5000);
+  }
+
+  private setSafeText(root: ShadowRoot, selector: string, val: any, fallback = 'N/A') {
+    const el = root.querySelector(selector);
+    if (el) el.textContent = val || fallback;
+  }
+
+  private setInputValue(root: ShadowRoot, selector: string, val: string | undefined | null) {
+    const el = root.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement;
+    if (el) el.value = val || '';
   }
 }
 

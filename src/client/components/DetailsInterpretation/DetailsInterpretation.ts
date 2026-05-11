@@ -78,7 +78,13 @@ class DetailsInterpretation extends HTMLElement {
     const root = this.shadowRoot;
     if (!root) return;
 
-    // View Mode Hydration
+    this.viewModeHydration(root);
+    this.editModeHydration(root);
+
+    this.mode = this._mode;
+  }
+
+  private viewModeHydration(root: ShadowRoot) {
     const viewEventDate = root.querySelector('#view-event-date');
     if (viewEventDate)
       viewEventDate.textContent = this._data.requestDate ? formatDate(this._data.requestDate, 'MMM D, YYYY') : 'N/A';
@@ -112,8 +118,9 @@ class DetailsInterpretation extends HTMLElement {
       viewTechConfirmed.textContent = (this._data as any).techConfirmedDate
         ? formatDate((this._data as any).techConfirmedDate, 'MMM D, YYYY')
         : 'N/A';
+  }
 
-    // Edit Mode Hydration
+  private editModeHydration(root: ShadowRoot) {
     const formatDateForInput = (date: any) => (date ? new Date(date).toISOString().split('T')[0] : '');
     const formatTimeForInput = (date: any) => (date ? new Date(date).toTimeString().slice(0, 5) : '');
 
@@ -149,8 +156,6 @@ class DetailsInterpretation extends HTMLElement {
       };
       contractorSelect.mode = this._mode;
     }
-
-    this.mode = this._mode; // Apply current mode visibility
   }
 
   getSaveData() {
