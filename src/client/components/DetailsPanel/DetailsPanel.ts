@@ -1,8 +1,8 @@
 import { store } from '../../services/state';
 import { formatDate, formatTime } from '../../services/utils';
-import { saveRequest, deleteRequest } from '../../services/api';
 import { TranslationRequest } from '../../../shared/types';
 import { showToast, showModal } from '../../services/ui';
+import { requestActions } from '../../services/actions';
 
 import panelTemplate from './DetailsPanel.htm?raw';
 import sharedPanelStyles from '../shared/DetailsStyles.css?inline';
@@ -12,6 +12,8 @@ import '../DetailsInterpretation/DetailsInterpretation';
 import '../DetailsTranslation/DetailsTranslation';
 import '../StatusSelect/StatusSelect';
 import '../SchoolSelect/SchoolSelect';
+
+import { DetailsBase } from '../shared/DetailsBase';
 
 const sharedSheet = new CSSStyleSheet();
 sharedSheet.replaceSync(sharedPanelStyles);
@@ -26,24 +28,17 @@ export type PanelMode = 'view' | 'edit' | 'process';
  * It uses a "Mode" system ('view', 'edit', 'process') to toggle between
  * different UI states and dynamically loads sub-components based on request type.
  */
-class DetailsPanel extends HTMLElement {
-  // UI state: 'view' (readonly), 'edit' (requester edit), 'process' (admin workflow)
-  private _mode: PanelMode = 'view';
-
-  // The current request data being displayed.
-  private _data: TranslationRequest | null = null;
+class DetailsPanel extends DetailsBase {
+  protected get template() {
+    return panelTemplate;
+  }
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
       // Use both shared and component-specific stylesheets for consistent UI.
       this.shadowRoot.adoptedStyleSheets = [sharedSheet, panelSheet];
     }
-  }
-
-  get mode(): PanelMode {
-    return this._mode;
   }
 
   connectedCallback() {
@@ -53,20 +48,24 @@ class DetailsPanel extends HTMLElement {
   }
 
   setupEventListeners() {
-    this.shadowRoot?.addEventListener('click', (e: any) => {
+    const root = this.shadowRoot;
+    if (!root) return;
+
+    this.setupBaseListeners(root);
+
+    root.addEventListener('click', (e: any) => {
       const target = e.target as HTMLElement;
       const path = e.composedPath() as HTMLElement[];
 
       if (target.id === 'process-btn') this.setMode('process');
       if (target.id === 'cancel-btn') this.cancelEdit();
-      if (target.id === 'close-btn') this.handleClose();
       if (target.id === 'save-btn') this.onSave();
 
       if (path.some((el: any) => el.id === 'edit-btn')) this.handleEditToggle();
       if (path.some((el: any) => el.id === 'delete-btn')) this.onDelete();
     });
 
-    this.shadowRoot?.addEventListener('change', (e: any) => {
+    root.addEventListener('change', (e: any) => {
       if (e.target.id === 'detail-status') {
         this.updateApprovalVisibility(e.detail.status);
       }
@@ -79,8 +78,11 @@ class DetailsPanel extends HTMLElement {
     this.toggleButtons(this.shadowRoot!, newMode);
   }
 
-  private handleClose() {
-    store.setState({ selectedRow: null });
+  protected onClose() {
+    // Only update store if we are actually clearing a selection
+    if (store.getState().selectedRow !== null) {
+      store.setState({ selectedRow: null });
+    }
     this.setMode('view');
   }
 
@@ -95,24 +97,24 @@ class DetailsPanel extends HTMLElement {
   subscribeToStore() {
     store.subscribe((state) => {
       if (state.selectedRow) {
-        this.hydrate(state.selectedRow);
+        this.data = state.selectedRow;
         this.setMode('view');
-        this.classList.add('open'); // Slide in the panel via CSS transition
+        this.open = true;
       } else {
-        this.classList.remove('open'); // Slide out the panel
+        this.open = false;
       }
     });
   }
 
   setMode(mode: PanelMode) {
-    this._mode = mode;
-    const root = this.shadowRoot;
-    if (!root) return;
+    this.mode = mode; // Uses DetailsBase setter which calls applyMode()
+  }
 
+  protected applyMode(root: ShadowRoot, mode: PanelMode) {
     this.toggleButtons(root, mode);
     this.populateContent(root, mode);
 
-    if (this._data) this.hydrate(this._data);
+    if (this._data) this.hydrate(root);
   }
 
   private populateContent(root: ShadowRoot, mode: string) {
@@ -210,55 +212,21 @@ class DetailsPanel extends HTMLElement {
     }
   }
 
-  hydrate(data: TranslationRequest) {
-    this._data = data;
-    const root = this.shadowRoot;
-    if (!root) return;
+  hydrate(root: ShadowRoot) {
+    if (!this._data) return;
 
-    this.hydrateViewFields(root, data);
-    this.hydrateEditFields(root, data);
-    this.hydrateApprovalSection(root, data);
-    this.hydrateSpecializedSection(root, data);
+    // Call base auto-hydration for [data-bind] fields
+    this.autoHydrate(root);
 
-    this.hydrateStatusSelect(root, data);
-    this.hydrateSchoolSelect(root, data);
-
-    this.injectDynamicContent(root, data);
-  }
-
-  private hydrateStatusSelect(root: ShadowRoot, data: TranslationRequest) {
-    const statusSelect = root.querySelector('#detail-status') as any;
-    if (statusSelect) {
-      statusSelect.status = data.status;
-      statusSelect.mode = this._mode;
-    }
-  }
-
-  private hydrateSchoolSelect(root: ShadowRoot, data: TranslationRequest) {
-    const schoolSelect = root.querySelector('#detail-school') as any;
-    if (schoolSelect) {
-      schoolSelect.value = data.school || '';
-      schoolSelect.mode = this._mode;
-    }
-  }
-
-  // Responsibility: Mapping data to read-only labels
-  private hydrateViewFields(root: ShadowRoot, data: TranslationRequest) {
-    this.setSafeText(root, '#view-reqType', data.reqType);
-    this.setSafeText(root, '#view-submitted', formatDate(data.submittedDate, 'MMM D, YYYY'));
-    this.setSafeText(root, '#view-requester-name', data.name);
-    this.setSafeText(root, '#view-description', data.description, 'No description provided.');
-
-    const langs = [data.originalLanguage, data.targetLanguage].filter(Boolean).join(' to ');
+    // Handle compound fields not covered by simple data-bind
+    const langs = [this._data.originalLanguage, this._data.targetLanguage].filter(Boolean).join(' to ');
     this.setSafeText(root, '#view-languages', langs);
-  }
 
-  // Responsibility: Mapping data to form inputs
-  private hydrateEditFields(root: ShadowRoot, data: TranslationRequest) {
-    this.setInputValue(root, '#edit-requester-name', data.name);
-    this.setInputValue(root, '#edit-orig-lang', data.originalLanguage);
-    this.setInputValue(root, '#edit-target-lang', data.targetLanguage);
-    this.setInputValue(root, '#edit-description', data.description);
+    this.hydrateApprovalSection(root, this._data);
+    this.hydrateStatusSelect(root, this._data);
+    this.hydrateSchoolSelect(root, this._data);
+
+    this.injectDynamicContent(root, this._data);
   }
 
   private hydrateApprovalSection(root: ShadowRoot, data: TranslationRequest) {
@@ -283,25 +251,23 @@ class DetailsPanel extends HTMLElement {
     this.updateApprovalVisibility(data.status);
   }
 
-  private hydrateSpecializedSection(root: ShadowRoot, data: TranslationRequest) {
-    const interpretationType = root.querySelector('#interpretationType');
-    if (interpretationType) interpretationType.textContent = data.interpretationType || 'N/A';
-
-    const eventLocation = root.querySelector('#eventLocation');
-    if (eventLocation) eventLocation.textContent = data.eventLocation || 'N/A';
-
-    const startTime = root.querySelector('#startTime');
-    if (startTime) startTime.textContent = data.startTime ? formatTime(data.startTime) : 'N/A';
-
-    const endTime = root.querySelector('#endTime');
-    if (endTime) endTime.textContent = data.endTime ? formatTime(data.endTime) : 'N/A';
-
-    const docPageCount = root.querySelector('#docPageCount');
-    if (docPageCount) docPageCount.textContent = data.docPageCount || 'N/A';
-
-    const docLink = root.querySelector('#docLink');
-    if (docLink) docLink.textContent = data.docLink || 'N/A';
+  private hydrateStatusSelect(root: ShadowRoot, data: TranslationRequest) {
+    const statusSelect = root.querySelector('#detail-status') as any;
+    if (statusSelect) {
+      statusSelect.status = data.status;
+      statusSelect.mode = this._mode;
+    }
   }
+
+  private hydrateSchoolSelect(root: ShadowRoot, data: TranslationRequest) {
+    const schoolSelect = root.querySelector('#detail-school') as any;
+    if (schoolSelect) {
+      schoolSelect.value = data.school || '';
+      schoolSelect.mode = this._mode;
+    }
+  }
+
+
 
   private injectDynamicContent(root: ShadowRoot, data: TranslationRequest) {
     const container = root.querySelector('#dynamic-content');
@@ -340,13 +306,10 @@ class DetailsPanel extends HTMLElement {
 
     await this.withLoadingState('#save-btn', async () => {
       try {
-        const savedData = await saveRequest(updatedRequest);
-
-        this.syncGlobalState(savedData);
+        await requestActions.save(updatedRequest);
         this.setMode('view');
       } catch (err) {
-        console.error('Failed to save:', err);
-        alert('Failed to save changes. Please try again.');
+        // Error is handled by the service (toasts/logs)
       }
     });
   }
@@ -356,11 +319,8 @@ class DetailsPanel extends HTMLElement {
 
     return {
       ...this._data!,
-      name: this.getInputValue(root, '#edit-requester-name'),
+      ...this.getSaveData(), // Automatically gathers all data-bind fields
       school: (root.querySelector('#detail-school') as any)?.value,
-      originalLanguage: this.getInputValue(root, '#edit-orig-lang'),
-      targetLanguage: this.getInputValue(root, '#edit-target-lang'),
-      description: this.getInputValue(root, '#edit-description'),
       status: (root.querySelector('#detail-status') as any)?.status,
       ...(dynamicEl?.getSaveData() || {}),
     };
@@ -382,21 +342,7 @@ class DetailsPanel extends HTMLElement {
     }
   }
 
-  // Responsibility: Updating the Store
-  private syncGlobalState(savedData: TranslationRequest) {
-    const { allRows } = store.getState();
-    const updatedRows = allRows.map((row) => (row.id === savedData.id ? savedData : row));
-
-    store.setState({
-      allRows: updatedRows,
-      selectedRow: savedData,
-    });
-  }
-
-  // Utility for gathering
-  private getInputValue(root: ShadowRoot, selector: string): string {
-    return (root.querySelector(selector) as HTMLInputElement)?.value || '';
-  }
+  // --- Actions ---
 
   async onDelete() {
     const data = this._data;
@@ -405,55 +351,26 @@ class DetailsPanel extends HTMLElement {
     showModal(
       "Confirm Deletion",
       `Are you sure you want to delete this ${data.reqType} request?`,
-      () => this.performOptimisticDelete(data)
+      async () => {
+        try {
+          await requestActions.delete(data);
+          this.setMode('view');
+        } catch (err) {
+          // Error is handled by the service (toasts/logs)
+          this.setMode('edit');
+        }
+      }
     );
   }
 
-  private async performOptimisticDelete(data: TranslationRequest) {
-    const previousRows = [...store.getState().allRows];
-
-    this.applyDeleteToStore(data.id, null);
-    this.setMode('view');
-    showToast("Deleting request...");
-
-    try {
-      await deleteRequest(data);
-      showToast("Request deleted successfully.");
-    } catch (err) {
-      this.handleDeleteError(err, previousRows, data);
-    }
-  }
-
-  private applyDeleteToStore(id: string, selectedRow: TranslationRequest | null) {
-    const { allRows } = store.getState();
-    store.setState({
-      allRows: allRows.filter((row) => row.id !== id),
-      selectedRow: selectedRow,
-    });
-  }
-
-  private handleDeleteError(err: any, backup: TranslationRequest[], originalItem: TranslationRequest) {
-    console.error('Failed to delete:', err);
-
-    // Rollback state
-    store.setState({
-      allRows: backup,
-      selectedRow: originalItem,
-    });
-
-    this.setMode('edit');
-    showToast("Error: Could not delete. Restoring data...", 5000);
-  }
+  // --- Utilities ---
 
   private setSafeText(root: ShadowRoot, selector: string, val: any, fallback = 'N/A') {
     const el = root.querySelector(selector);
     if (el) el.textContent = val || fallback;
   }
 
-  private setInputValue(root: ShadowRoot, selector: string, val: string | undefined | null) {
-    const el = root.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement;
-    if (el) el.value = val || '';
-  }
+
 }
 
 customElements.define('details-panel', DetailsPanel);

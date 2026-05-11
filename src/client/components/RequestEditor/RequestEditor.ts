@@ -1,16 +1,18 @@
 import { store } from '../../services/state';
-import { addRequest, uploadFile } from '../../services/api';
+import { uploadFile } from '../../services/api';
+import { requestActions } from '../../services/actions';
 import { TranslationRequest } from '../../../shared/types';
 // @ts-ignore
 import template from './RequestEditor.htm?raw';
 // @ts-ignore
 import styles from './RequestEditor.css?inline';
 
+import { BasePanel } from '../shared/BasePanel';
+
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
 
-class RequestEditor extends HTMLElement {
-  private _isOpen = false;
+class RequestEditor extends BasePanel {
   private _currentStep = 1;
 
   constructor() {
@@ -26,17 +28,13 @@ class RequestEditor extends HTMLElement {
     this.setupEventListeners();
   }
 
-  set open(value: boolean) {
-    this._isOpen = value;
-    const overlay = this.shadowRoot?.getElementById('editor-overlay');
-    if (overlay) {
-      if (value) {
-        overlay.classList.add('active');
-        this.resetForm();
-      } else {
-        overlay.classList.remove('active');
-      }
-    }
+  protected onOpen() {
+    this.shadowRoot?.getElementById('editor-overlay')?.classList.add('active');
+    this.resetForm();
+  }
+
+  protected onClose() {
+    this.shadowRoot?.getElementById('editor-overlay')?.classList.remove('active');
   }
 
   render() {
@@ -56,7 +54,7 @@ class RequestEditor extends HTMLElement {
     const root = this.shadowRoot;
     if (!root) return;
 
-    root.getElementById('close-modal')?.addEventListener('click', () => (this.open = false));
+    this.setupBaseListeners(root);
 
     const nextBtn = root.getElementById('next-btn') as HTMLButtonElement;
     const prevBtn = root.getElementById('prev-btn') as HTMLButtonElement;
@@ -247,19 +245,12 @@ class RequestEditor extends HTMLElement {
         newRequest.eventLocation = (root.getElementById('req-location') as HTMLInputElement).value;
       }
 
-      const savedRequest = await addRequest(newRequest);
-
-      const state = store.getState();
-      store.setState({
-        allRows: [savedRequest, ...state.allRows],
-        selectedRow: savedRequest,
-        activeView: 'dashboard',
-      });
+      await requestActions.create(newRequest);
 
       //Emit event for RequestEntry to know it's done
       this.dispatchEvent(new CustomEvent('request-submitted', { bubbles: true }));
     } catch (err) {
-      alert('Failed to submit request.');
+      // Error is handled by service
     } finally {
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;

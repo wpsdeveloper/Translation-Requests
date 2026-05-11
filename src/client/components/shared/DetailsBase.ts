@@ -3,18 +3,18 @@ import styles from './DetailsStyles.css?inline';
 import { TranslationRequest } from '../../../shared/types';
 import { PanelMode } from '../DetailsPanel/DetailsPanel';
 import { formatDate, formatTime } from '../../services/utils';
+import { BasePanel } from './BasePanel';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
 
-export abstract class DetailsBase extends HTMLElement {
+export abstract class DetailsBase extends BasePanel {
   protected _data: TranslationRequest = {} as TranslationRequest;
   protected _mode: PanelMode = 'view';
   protected abstract get template(): string;
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
       this.shadowRoot.adoptedStyleSheets = [sheet];
     }
@@ -50,7 +50,7 @@ export abstract class DetailsBase extends HTMLElement {
   /**
    * Automatically populates elements with [data-bind] attributes
    */
-  private autoHydrate(root: ShadowRoot) {
+  protected autoHydrate(root: ShadowRoot) {
     const elements = root.querySelectorAll('[data-bind]');
     elements.forEach((el) => {
       const prop = el.getAttribute('data-bind') as keyof TranslationRequest;

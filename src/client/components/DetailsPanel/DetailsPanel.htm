@@ -36,12 +36,12 @@
     <div class="shared-meta">
       <div class="detail-item">
         <label>Submitted</label>
-        <span id="view-submitted"></span>
+        <span id="view-submitted" data-bind="submittedDate" data-format="date"></span>
       </div>
       <div class="detail-item">
         <label>Requester Name</label>
-        <span id="view-requester-name" class="view-mode"></span>
-        <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none" />
+        <span id="view-requester-name" class="view-mode" data-bind="name"></span>
+        <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none" data-bind="name" />
       </div>
 
       <div class="detail-item">
@@ -53,7 +53,7 @@
   <hr />
   <div class="detail-item">
     <label>Type</label>
-    <span id="view-reqType"></span>
+    <span id="view-reqType" data-bind="reqType"></span>
   </div>
   <div class="detail-item">
     <label class="view-mode">Languages</label>
@@ -61,18 +61,18 @@
   </div>
   <div class="detail-item">
     <label class="edit-mode" style="display: none">Original Language</label>
-    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none" />
+    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none" data-bind="originalLanguage" />
   </div>
 
   <div class="detail-item">
     <label class="edit-mode" style="display: none">Target Language</label>
-    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none" />
+    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none" data-bind="targetLanguage" />
   </div>
 
   <div class="detail-item">
     <label>Description</label>
-    <div id="view-description" class="view-mode"></div>
-    <textarea id="edit-description" class="form-control edit-mode" style="display: none"></textarea>
+    <div id="view-description" class="view-mode" data-bind="description"></div>
+    <textarea id="edit-description" class="form-control edit-mode" style="display: none" data-bind="description"></textarea>
   </div>
 
   <div id="dynamic-content"></div>
