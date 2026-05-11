@@ -3,5 +3,5 @@ node_modules
 !.vscode/extensions.json
 .DS_Store
 .env
+dist
 src/server/bootstrap.ts
-dist/
