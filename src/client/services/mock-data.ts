@@ -111,9 +111,9 @@ const mockData: { requests: RawRequest[]; schools: string[]; user: AppUser } = {
     'Student Services',
   ],
   user: {
-    email: 'wpsdeveloper@walpole.k12.m.aus',
+    email: 'wpsdeveloper@walpole.k12.ma.us',
     name: 'App Developer',
-    role: 'Admin',
+    role: 'User',
     schools: ['Walpole High School', 'Walpole Middle School'],
   },
 };

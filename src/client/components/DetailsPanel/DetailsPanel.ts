@@ -92,6 +92,7 @@ class DetailsPanel extends HTMLElement {
     store.subscribe((state) => {
       if (state.selectedRow) {
         this.hydrate(state.selectedRow);
+        this.setMode('view');
         this.classList.add('open'); // Slide in the panel via CSS transition
       } else {
         this.classList.remove('open'); // Slide out the panel
@@ -164,6 +165,8 @@ class DetailsPanel extends HTMLElement {
     const cancelBtn = root.querySelector('#cancel-btn') as HTMLElement;
     const deleteBtn = root.querySelector('#delete-btn') as HTMLElement;
     const editBtn = root.querySelector('#edit-btn') as HTMLElement;
+    const approveBtn = root.querySelector('#approve-btn') as HTMLElement;
+    const denyBtn = root.querySelector('#deny-btn') as HTMLElement;
 
     if (saveBtn) saveBtn.style.display = !isView ? '' : 'none';
     if (cancelBtn) cancelBtn.style.display = !isView ? '' : 'none';
@@ -171,13 +174,20 @@ class DetailsPanel extends HTMLElement {
     if (editBtn) editBtn.style.display = !isEdit ? '' : 'none';
 
     const user = store.getState().user;
-    const processingRoles = ['User', 'Approver', 'Admin'];
-    const canProcess = user && processingRoles.includes(user.role);
+    const approvingRoles = ['Approver', 'Admin'];
+
+    const canApprove = user && approvingRoles.includes(user.role);
     const isNeedsApproval = this._data?.status === 'Needs Approval';
 
-    // Hide Process button for Users if the record is in Needs Approval status
+    if (approveBtn) approveBtn.style.display = !isEdit && isNeedsApproval && canApprove ? '' : 'none';
+    if (denyBtn) denyBtn.style.display = !isEdit && isNeedsApproval && canApprove ? '' : 'none';
     if (processBtn) {
-      processBtn.style.display = isView && canProcess && !isNeedsApproval ? '' : 'none';
+      processBtn.style.display = isView ? '' : 'none';
+      if (isNeedsApproval) {
+        processBtn.setAttribute('disabled', 'true');
+      } else {
+        processBtn.removeAttribute('disabled');
+      }
     }
   }
 

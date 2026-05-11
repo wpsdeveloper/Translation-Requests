@@ -363,6 +363,15 @@ tbody tr.active {
   background-color: #1d4ed8;
 }
 
+.btn-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
 .btn-secondary {
   background-color: #f1f5f9;
   color: #334155;
