@@ -94,6 +94,11 @@ export const saveRequest = (updatedData: TranslationRequest): Promise<Translatio
 
   console.log('Saving request to server (de-hydrated):', dataToSend);
 
+  if (IS_MOCK) {
+    console.warn('google.script.run.saveDataToServer called in mock mode');
+    return new Promise((resolve) => setTimeout(() => resolve(updatedData), 1500));
+  }
+
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((serverResult: any) => {
@@ -121,8 +126,12 @@ export const addRequest = (newData: TranslationRequest): Promise<TranslationRequ
     endTime: newData.endTime instanceof Date ? newData.endTime.toISOString() : newData.endTime || '',
   };
 
-  console.log('Adding new request to server:', dataToSend);
+  if (IS_MOCK) {
+    console.warn('google.script.run.addRequestToServer called in mock mode');
+    return new Promise((resolve) => setTimeout(() => resolve(newData), 1500));
+  }
 
+  console.log('Adding new request to server:', dataToSend);
   return new Promise((resolve, reject) => {
     if (IS_MOCK) {
       setTimeout(() => {
@@ -134,12 +143,34 @@ export const addRequest = (newData: TranslationRequest): Promise<TranslationRequ
     google.script.run
       .withSuccessHandler((serverResult: any) => {
         console.log('Server add successful:', serverResult);
-        resolve(hydrate(serverResult));
+        resolve(serverResult);
       })
       .withFailureHandler(reject)
       .addRequestToServer(dataToSend);
   });
 };
+
+/**
+ * Deletes a request from the server.
+ */
+export const deleteRequest = (request: TranslationRequest): Promise<TranslationRequest> => {
+  if (!request.id) throw new Error('Cannot delete request without ID');
+
+  if (IS_MOCK) {
+    console.warn('google.script.run.deleteRequest called in mock mode');
+    return new Promise((resolve) => setTimeout(() => resolve(request), 1500));
+  }
+
+  return new Promise((resolve, reject) => {
+    google.script.run
+      .withSuccessHandler((serverResult: any) => {
+        console.log('Server add successful:', serverResult);
+        resolve(serverResult);
+      })
+      .withFailureHandler(reject)
+      .deleteRequestFromServer(request.id);
+  });
+}
 
 /**
  * Uploads a file to Google Drive.

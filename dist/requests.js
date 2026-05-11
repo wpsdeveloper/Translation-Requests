@@ -370,3 +370,52 @@ function saveUserToAppSheet(userData, action) {
         return { success: true };
     }
 }
+/**
+ * Delete a request record from AppSheet.
+ * @param recordId The ID of the request to delete.
+ */
+function deleteRequestFromServer(recordId) {
+    const activeUserEmail = Session.getActiveUser().getEmail();
+    const user = getUser(activeUserEmail);
+    if (!user) {
+        throw new Error('Access Denied: User not found');
+    }
+    // Admin can delete any; non-admin must belong to same school
+    if (user.role !== 'Admin') {
+        const rawRequests = getRequestsFromAppSheet();
+        const existing = rawRequests.find(r => r.id === recordId);
+        if (!existing) {
+            throw new Error('Record not found');
+        }
+        const userSchools = user.schools || [];
+        if (!userSchools.includes(existing.school)) {
+            throw new Error(`Permission Denied: You are not authorized to delete records for ${existing.school}.`);
+        }
+    }
+    const tableName = 'Requests';
+    const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
+    const appSheetRow = { ID: makeString(recordId) };
+    const options = {
+        method: 'post',
+        contentType: 'application/json',
+        headers: { ApplicationAccessKey: Config.AppSheetAccessKey },
+        payload: JSON.stringify({
+            Action: 'Delete',
+            Properties: { Locale: 'en-US' },
+            Rows: [appSheetRow],
+        }),
+        muteHttpExceptions: true,
+    };
+    const response = UrlFetchApp.fetch(url, options);
+    const responseText = response.getContentText();
+    const responseCode = response.getResponseCode();
+    if (responseCode !== 200) {
+        throw new Error(`AppSheet Delete Error (${responseCode}): ${responseText}`);
+    }
+    try {
+        return JSON.parse(responseText);
+    }
+    catch (e) {
+        return { success: true };
+    }
+}

@@ -1,6 +1,6 @@
 import { store } from '../../services/state';
 import { formatDate } from '../../services/utils';
-import { saveRequest } from '../../services/api';
+import { saveRequest, deleteRequest } from '../../services/api';
 import { TranslationRequest } from '../../../shared/types';
 // @ts-ignore
 import panelTemplate from './DetailsPanel.htm?raw';
@@ -59,12 +59,23 @@ class DetailsPanel extends HTMLElement {
         store.setState({ selectedRow: null });
         this.setMode('view');
       }
+
       if (e.composedPath().some((el: any) => el.id === 'edit-btn')) {
         this.setMode(this._mode === 'edit' ? 'view' : 'edit');
       }
+      if (e.composedPath().some((el: any) => el.id === 'delete-btn')) this.onDelete();
       if (e.target.id === 'process-btn') this.setMode('process');
       if (e.target.id === 'cancel-btn') this.setMode('view');
       if (e.target.id === 'save-btn') this.onSave();
+
+      if (this.shadowRoot) {
+        const editBtn = this.shadowRoot.getElementById('edit-btn') as HTMLElement;
+        const deleteBtn = this.shadowRoot.getElementById('delete-btn') as HTMLElement;
+
+        editBtn.style.display = this._mode === 'edit' ? 'none' : '';
+        deleteBtn.style.display = this._mode === 'edit' ? '' : 'none';
+      }
+
     });
 
     this.shadowRoot?.addEventListener('change', (e: any) => {
@@ -292,6 +303,35 @@ class DetailsPanel extends HTMLElement {
     } finally {
       saveBtn.textContent = originalText;
       saveBtn.disabled = false;
+    }
+  }
+
+  async onDelete() {
+    const data = this._data;
+    if (!data) return;
+
+    const root = this.shadowRoot;
+    if (!root) return;
+
+    const c = confirm(`Are you sure you want to delete this ${data.reqType} request?`);
+    if (!c) return;
+
+    try {
+      await deleteRequest(data);
+
+      const state = store.getState();
+      const updatedRows = state.allRows.filter((row) => row.id !== data.id);
+      console.log('updatedRows', updatedRows);
+
+      store.setState({
+        allRows: updatedRows,
+        selectedRow: null,
+      });
+
+      this.setMode('view');
+    } catch (err) {
+      console.error('Failed to delete:', err);
+      alert('Failed to delete request. Please try again.');
     }
   }
 }
