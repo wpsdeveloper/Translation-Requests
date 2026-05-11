@@ -27,6 +27,8 @@ h3 {
   border-radius: 12px;
   padding: 10px 12px;
   font-family: inherit;
+  box-sizing: border-box;
+  margin-bottom: 10px;
 }
 
 .shared-meta p {
@@ -35,7 +37,7 @@ h3 {
 }
 
 .details-section label {
-  display: block;
+  display: inline-block;
   font-weight: bold;
   font-size: 0.8rem;
   margin-top: 10px;
@@ -115,7 +117,7 @@ footer {
 :host([mode='view']) [data-show~='view'],
 :host([mode='edit']) [data-show~='edit'],
 :host([mode='process']) [data-show~='process'] {
-  display: block !important;
+  display: inline-block !important;
 }
 
 /* Handle special display types */
@@ -123,4 +125,10 @@ footer {
 :host([mode='edit']) [data-show~='edit'].time-range,
 :host([mode='process']) [data-show~='process'].time-range {
   display: flex !important;
+  gap: 10px;
+}
+
+.time-range-separator {
+  display: flex;
+  align-items: center;
 }
