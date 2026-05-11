@@ -1,30 +1,30 @@
 <div class="interpretation-details">
   <div class="detail-item">
     <label>Interpretation Type </label>
-    <div class="view-mode" id="view-interpretation-type"></div>
-    <input type="text" class="form-control edit-mode" id="edit-interpretation-type" style="display: none" />
+    <div data-bind="interpretationType" data-show="view process"></div>
+    <input type="text" class="form-control" data-bind="interpretationType" data-show="edit" />
   </div>
 
   <div class="detail-item">
     <label>Event Date</label>
-    <div class="view-mode" id="view-event-date"></div>
-    <input type="date" class="form-control edit-mode" id="edit-event-date" style="display: none" />
+    <div data-bind="requestDate" data-format="date" data-show="view process"></div>
+    <input type="date" class="form-control" data-bind="requestDate" data-show="edit" />
   </div>
 
   <div class="detail-item">
     <label>Event Time</label>
-    <div class="view-mode" id="view-event-time"></div>
-    <div class="edit-mode time-range" style="display: none">
-      <input type="time" class="form-control" id="edit-start-time" />
+    <div id="view-event-time" data-show="view process"></div>
+    <div class="time-range" data-show="edit">
+      <input type="time" class="form-control" data-bind="startTime" />
       <span>to</span>
-      <input type="time" class="form-control" id="edit-end-time" />
+      <input type="time" class="form-control" data-bind="endTime" />
     </div>
   </div>
 
   <div class="detail-item">
     <label>Event Location</label>
-    <div class="view-mode" id="view-event-location"></div>
-    <input type="text" class="form-control edit-mode" id="edit-event-location" style="display: none" />
+    <div data-bind="eventLocation" data-show="view process"></div>
+    <input type="text" class="form-control" data-bind="eventLocation" data-show="edit" />
   </div>
 
   <hr />
@@ -33,19 +33,19 @@
 
   <div class="detail-item">
     <label>Date Scheduled</label>
-    <div class="view-mode" id="view-date-scheduled"></div>
-    <input type="date" class="form-control edit-mode" id="edit-date-scheduled" style="display: none" />
+    <div data-bind="scheduledDate" data-format="date" data-show="view edit"></div>
+    <input type="date" class="form-control" data-bind="scheduledDate" data-show="process" />
   </div>
 
   <div class="detail-item">
     <label>Date Guest Confirmed</label>
-    <div class="view-mode" id="view-date-guest-confirmed"></div>
-    <input type="date" class="form-control edit-mode" id="edit-date-guest-confirmed" style="display: none" />
+    <div data-bind="guestConfirmedDate" data-format="date" data-show="view edit"></div>
+    <input type="date" class="form-control" data-bind="guestConfirmedDate" data-show="process" />
   </div>
 
   <div class="detail-item">
     <label>Date Tech Confirmed</label>
-    <div class="view-mode" id="view-date-tech-confirmed"></div>
-    <input type="date" class="form-control edit-mode" id="edit-date-tech-confirmed" style="display: none" />
+    <div data-bind="techConfirmedDate" data-format="date" data-show="view edit"></div>
+    <input type="date" class="form-control" data-bind="techConfirmedDate" data-show="process" />
   </div>
 </div>

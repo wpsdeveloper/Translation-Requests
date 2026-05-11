@@ -106,3 +106,21 @@ footer {
   margin-top: 4px;
   display: block;
 }
+
+/* Declarative Visibility */
+[data-show] {
+  display: none !important;
+}
+
+:host([mode='view']) [data-show~='view'],
+:host([mode='edit']) [data-show~='edit'],
+:host([mode='process']) [data-show~='process'] {
+  display: block !important;
+}
+
+/* Handle special display types */
+:host([mode='view']) [data-show~='view'].time-range,
+:host([mode='edit']) [data-show~='edit'].time-range,
+:host([mode='process']) [data-show~='process'].time-range {
+  display: flex !important;
+}
