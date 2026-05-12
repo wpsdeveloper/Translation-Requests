@@ -30,13 +30,15 @@
   --tms-body-background-color: #f5f7fb;
   --tms-panel-background-color: #ffffff;
 
-  --tms-primary-blue: #2563eb;
-  --tms-primary-blue-highlight: #1d4ed8;
-  --tms-primary-emerald: #10b981;
-  --tms-primary-emerald-highlight: #059669;
-  --tms-primary-slate: #1d2939;
-  --tms-secondary-gray: #f1f5f9;
-  --tms-secondary-gray-highlight: #e2e8f0;
+  --tms-primary: #2563eb;
+  --tms-primary-highlight: #1d4ed8;
+  --tms-success: #10b981;
+  --tms-success-highlight: #059669;
+  --tms-danger: #ef4444;
+  --tms-danger-highlight: #dc2626;
+  --tms-slate: #1d2939;
+  --tms-secondary: #f1f5f9;
+  --tms-secondary-highlight: #e2e8f0;
   --tms-nav-text-color: #64748b;
   --tms-nav-hover-background-color: #e6e6e6;
   --tms-nav-hover-text-color: #1e293b;

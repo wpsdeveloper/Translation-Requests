@@ -35,38 +35,38 @@ h3 {
   font-size: var(--tms-font-size-small);
 
   &.btn-primary {
-    background-color: var(--tms-primary-blue);
+    background-color: var(--tms-primary);
     color: white;
 
     &:hover {
-      background-color: var(--tms-primary-blue-highlight);
+      background-color: var(--tms-primary-highlight);
     }
   }
 
   &.btn-secondary {
-    background-color: var(--tms-secondary-gray);
+    background-color: var(--tms-secondary);
     color: #334155;
 
     &:hover {
-      background-color: var(--tms-secondary-gray-highlight);
+      background-color: var(--tms-secondary-highlight);
     }
   }
 
   &.btn-success {
-    background-color: var(--tms-primary-emerald);
+    background-color: var(--tms-success);
     color: white;
 
     &:hover {
-      background-color: var(--tms-primary-emerald-highlight);
+      background-color: var(--tms-success-highlight);
     }
   }
 
   &.btn-danger {
-    background-color: var(--tms-primary-red);
+    background-color: var(--tms-danger);
     color: white;
 
     &:hover {
-      background-color: var(--tms-primary-red-highlight);
+      background-color: var(--tms-danger-highlight);
     }
   }
 
