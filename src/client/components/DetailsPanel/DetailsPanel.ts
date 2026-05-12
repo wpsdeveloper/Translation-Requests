@@ -3,10 +3,11 @@ import { formatDate, formatTime } from '../../services/utils';
 import { TranslationRequest } from '../../../shared/types';
 import { showToast, showModal } from '../../services/ui';
 import { requestActions } from '../../services/actions';
-
 import panelTemplate from './DetailsPanel.htm?raw';
+
 import sharedPanelStyles from '../shared/SharedStyles.css?inline';
 import panelStyles from './DetailsPanel.css?inline';
+import detailsStyles from '../shared/DetailsStyles.css?inline';
 
 import '../DetailsInterpretation/DetailsInterpretation';
 import '../DetailsTranslation/DetailsTranslation';
@@ -17,6 +18,9 @@ import { DetailsBase } from '../shared/DetailsBase';
 
 const sharedSheet = new CSSStyleSheet();
 sharedSheet.replaceSync(sharedPanelStyles);
+
+const detailsSheet = new CSSStyleSheet();
+detailsSheet.replaceSync(detailsStyles);
 
 const panelSheet = new CSSStyleSheet();
 panelSheet.replaceSync(panelStyles);
@@ -37,7 +41,7 @@ class DetailsPanel extends DetailsBase {
     super();
     if (this.shadowRoot) {
       // Use both shared and component-specific stylesheets for consistent UI.
-      this.shadowRoot.adoptedStyleSheets = [sharedSheet, panelSheet];
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, detailsSheet, panelSheet];
     }
   }
 
@@ -178,9 +182,7 @@ class DetailsPanel extends DetailsBase {
     this.setVisibility(root, '#edit-btn', !isEdit);
     this.setVisibility(root, '#delete-btn', isEdit);
 
-    this.setVisibility(root, '#approve-btn', !isEdit && canApprove);
-    this.setVisibility(root, '#deny-btn', !isEdit && canApprove);
-
+    this.updateApproveDenyButtons(root, isView, isEdit, canApprove);
     this.updateProcessButton(root, isView);
   }
 
@@ -200,11 +202,24 @@ class DetailsPanel extends DetailsBase {
     const processBtn = root.querySelector('#process-btn') as HTMLElement;
     if (!processBtn) return;
 
-    processBtn.style.display = isView ? '' : 'none';
+    const needsApproval = this._data?.status === 'Needs Approval';
 
-    this._data?.status === 'Needs Approval' ?
+    processBtn.style.display = isView && !needsApproval ? '' : 'none';
+
+    needsApproval ?
       processBtn.setAttribute('disabled', 'true') :
       processBtn.removeAttribute('disabled');
+  }
+
+  private updateApproveDenyButtons(root: ShadowRoot, isView: boolean, isEdit: boolean, canApprove: boolean) {
+    const approveBtn = root.querySelector('#approve-btn') as HTMLElement;
+    const denyBtn = root.querySelector('#deny-btn') as HTMLElement;
+    if (!approveBtn || !denyBtn) return;
+
+    const needsApproval = this._data?.status === 'Needs Approval';
+
+    approveBtn.style.display = isView && !isEdit && canApprove && needsApproval ? '' : 'none';
+    denyBtn.style.display = isView && !isEdit && canApprove && needsApproval ? '' : 'none';
   }
 
   hydrate(root: ShadowRoot) {
@@ -360,7 +375,7 @@ class DetailsPanel extends DetailsBase {
 
   // --- Utilities ---
 
-  private setSafeText(root: ShadowRoot, selector: string, val: any, fallback = 'N/A') {
+  private setSafeText(root: ShadowRoot, selector: string, val: any, fallback = '') {
     const el = root.querySelector(selector);
     if (el) el.textContent = val || fallback;
   }

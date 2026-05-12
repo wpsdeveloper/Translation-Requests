@@ -11,6 +11,7 @@
   box-sizing: border-box;
   overflow-y: auto;
   z-index: 1000;
+  font-size: var(--tms-font-size-small);
   /* Ensure it's above the dashboard content */
 
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
@@ -78,4 +79,10 @@
 
 .icon-btn svg {
   display: block;
+}
+
+footer {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
 }

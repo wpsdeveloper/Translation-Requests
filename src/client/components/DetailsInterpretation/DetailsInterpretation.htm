@@ -29,7 +29,13 @@
 
   <hr />
 
-  <contractor-select id="contractor-select"></contractor-select>
+  <div class="detail-item">
+    <label>Contractor</label>
+    <div data-show="view edit" data-bind="contractor"></div>
+    <div id="process-mode" data-show="process" style="display: none">
+      <contractor-select id="contractor-select"></contractor-select>
+    </div>
+  </div>
 
   <div class="detail-item">
     <label>Date Scheduled</label>

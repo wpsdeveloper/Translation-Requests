@@ -84,6 +84,7 @@ export abstract class DetailsBase extends BasePanel {
 
         if (el instanceof HTMLAnchorElement) {
           el.href = value || '#';
+          el.textContent = 'View Document';
           el.style.display = value ? 'inline' : 'none';
         }
       }

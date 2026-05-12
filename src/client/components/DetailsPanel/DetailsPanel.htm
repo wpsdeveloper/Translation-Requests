@@ -46,48 +46,56 @@
       </div>
 
       <div class="detail-item">
-        <school-select id="detail-school"></school-select>
+        <label>School</label>
+        <!-- View Mode -->
+        <span id="view-school" class="view-mode" data-bind="school"></span>
+        <!-- Edit Mode -->
+        <div id="edit-school" class="edit-mode" style="display: none">
+          <school-select id="detail-school"></school-select>
+        </div>
       </div>
+
     </div>
-  </header>
+</div>
+</header>
 
-  <hr />
-  <div class="detail-item">
-    <label>Type</label>
-    <span id="view-reqType" data-bind="reqType"></span>
-  </div>
-  <div class="detail-item">
-    <label class="view-mode">Languages</label>
-    <span id="view-languages" class="view-mode"></span>
-  </div>
-  <div class="detail-item">
-    <label class="edit-mode" style="display: none">Original Language</label>
-    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none"
-      data-bind="originalLanguage" />
-  </div>
+<hr />
+<div class="detail-item">
+  <label>Type</label>
+  <span id="view-reqType" data-bind="reqType"></span>
+</div>
+<div class="detail-item">
+  <label class="view-mode">Languages</label>
+  <span id="view-languages" class="view-mode"></span>
+</div>
+<div class="detail-item">
+  <label class="edit-mode" style="display: none">Original Language</label>
+  <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none"
+    data-bind="originalLanguage" />
+</div>
 
-  <div class="detail-item">
-    <label class="edit-mode" style="display: none">Target Language</label>
-    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none"
-      data-bind="targetLanguage" />
-  </div>
+<div class="detail-item">
+  <label class="edit-mode" style="display: none">Target Language</label>
+  <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none"
+    data-bind="targetLanguage" />
+</div>
 
-  <div class="detail-item">
-    <label>Description</label>
-    <div id="view-description" class="view-mode" data-bind="description"></div>
-    <textarea id="edit-description" class="form-control edit-mode" style="display: none"
-      data-bind="description"></textarea>
-  </div>
+<div class="detail-item">
+  <label>Description</label>
+  <div id="view-description" class="view-mode" data-bind="description"></div>
+  <textarea id="edit-description" class="form-control edit-mode" style="display: none"
+    data-bind="description"></textarea>
+</div>
 
-  <div id="dynamic-content"></div>
+<div id="dynamic-content"></div>
 
-  <div class="detail-item">
-    <footer>
-      <button id="process-btn" class="btn btn-primary">Process</button>
-      <button id="approve-btn" class="btn btn-success">Approve</button>
-      <button id="deny-btn" class="btn btn-danger">Deny</button>
-      <button id="save-btn" class="btn btn-primary" style="display: none">Save Changes</button>
-      <button id="cancel-btn" class="btn btn-secondary" style="display: none">Cancel</button>
-    </footer>
-  </div>
+<div class="detail-item">
+  <footer>
+    <button id="process-btn" class="btn btn-primary" style="display: none">Process</button>
+    <button id="approve-btn" class="btn btn-success" style="display: none">Approve</button>
+    <button id="deny-btn" class="btn btn-danger" style="display: none">Deny</button>
+    <button id="save-btn" class="btn btn-primary" style="display: none">Save Changes</button>
+    <button id="cancel-btn" class="btn btn-secondary" style="display: none">Cancel</button>
+  </footer>
+</div>
 </div>

@@ -1,27 +1,13 @@
-<div class="contractor-select-container">
-  <!-- View Mode -->
-  <div id="view-mode" class="detail-item">
-    <label>Contractor:</label>
-    <div id="view-value" class="view-mode"></div>
-  </div>
+<select id="contractor-dropdown" class="form-control">
+  <option value="" disabled selected>Select a contractor</option>
+  <option value="Lexikeet">Lexikeet</option>
+  <option value="MAPA">MAPA</option>
+  <option value="Google Translate">Google Translate</option>
+  <option value="Staff Member">Staff Member</option>
+  <option value="Private Contractor">Private Contractor</option>
+</select>
 
-  <!-- Edit Mode -->
-  <div id="edit-mode" style="display: none">
-    <div class="detail-item">
-      <label for="contractor-dropdown">Contractor:</label>
-      <select id="contractor-dropdown" class="form-control">
-        <option value="" disabled selected>Select a contractor</option>
-        <option value="Lexikeet">Lexikeet</option>
-        <option value="MAPA">MAPA</option>
-        <option value="Google Translate">Google Translate</option>
-        <option value="Staff Member">Staff Member</option>
-        <option value="Private Contractor">Private Contractor</option>
-      </select>
-    </div>
-
-    <div id="manual-entry" class="detail-item" style="display: none">
-      <label for="contractor-name">Contractor Name:</label>
-      <input type="text" id="contractor-name" class="form-control" placeholder="Enter name" />
-    </div>
-  </div>
+<div class="manual-entry-container" style="display: none;">
+  <label for="contractor-name">Contractor Name:</label>
+  <input type="text" id="contractor-name" class="form-control" placeholder="Enter name" />
 </div>

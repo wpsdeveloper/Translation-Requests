@@ -9,6 +9,7 @@
   color: #1d2939;
   background: #f5f7fb;
   line-height: 1.5;
+  font-size: var(--tms-font-size-base);
 
   --tms-font-size-tiny: 0.75rem;
   --tms-font-size-small: 0.875rem;

@@ -1,14 +1,10 @@
-.details-section label {
-  display: inline-block;
-  font-weight: bold;
-  font-size: 0.8rem;
-  margin-top: 10px;
+:host {
+  font-size: var(--tms-font-size-small);
 }
 
-footer {
-  margin-top: 30px;
-  display: flex;
-  gap: 10px;
+label {
+  display: inline-block;
+  font-weight: bold;
 }
 
 .btn {
