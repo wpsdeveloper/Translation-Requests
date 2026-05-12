@@ -1,16 +1,20 @@
 // @ts-ignore
+import statusColors from '../shared/StatusColors.css?inline';
+// @ts-ignore
+import sharedStyles from '../shared/SharedStyles.css?inline';
+// @ts-ignore
 import styles from './StatusSelect.css?inline';
 // @ts-ignore
 import template from './StatusSelect.htm?raw';
-// @ts-ignore
-import statusColors from '../shared/StatusColors.css?inline';
 import '../StatusBadge/StatusBadge';
 
-const sheet = new CSSStyleSheet();
-sheet.replaceSync(styles);
-
+const sharedSheet = new CSSStyleSheet();
 const colorSheet = new CSSStyleSheet();
+const sheet = new CSSStyleSheet();
+
+sharedSheet.replaceSync(sharedStyles);
 colorSheet.replaceSync(statusColors);
+sheet.replaceSync(styles);
 
 class StatusSelect extends HTMLElement {
   static get observedAttributes() {
@@ -24,7 +28,7 @@ class StatusSelect extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet, colorSheet];
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, colorSheet, sheet];
     }
   }
 

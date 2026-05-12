@@ -1,16 +1,16 @@
 // @ts-ignore
-import styles from './SchoolSelect.css?inline';
+import sharedStyles from '../shared/SharedStyles.css?inline';
 // @ts-ignore
-import sharedStyles from '../shared/DetailsStyles.css?inline';
+import styles from './SchoolSelect.css?inline';
 // @ts-ignore
 import template from './SchoolSelect.htm?raw';
 import { store } from '../../services/state';
 
-const sheet = new CSSStyleSheet();
-sheet.replaceSync(styles);
-
 const sharedSheet = new CSSStyleSheet();
+const sheet = new CSSStyleSheet();
+
 sharedSheet.replaceSync(sharedStyles);
+sheet.replaceSync(styles);
 
 class SchoolSelect extends HTMLElement {
   static get observedAttributes() {

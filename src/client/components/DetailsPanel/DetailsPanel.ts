@@ -5,7 +5,7 @@ import { showToast, showModal } from '../../services/ui';
 import { requestActions } from '../../services/actions';
 
 import panelTemplate from './DetailsPanel.htm?raw';
-import sharedPanelStyles from '../shared/DetailsStyles.css?inline';
+import sharedPanelStyles from '../shared/SharedStyles.css?inline';
 import panelStyles from './DetailsPanel.css?inline';
 
 import '../DetailsInterpretation/DetailsInterpretation';

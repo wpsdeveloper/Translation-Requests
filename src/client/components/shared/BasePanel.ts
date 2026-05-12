@@ -1,3 +1,8 @@
+import BasePanelCss from './BasePanel.css?inline';
+
+const sheet = new CSSStyleSheet();
+sheet.replaceSync(BasePanelCss);
+
 /**
  * BasePanel: A base class for custom elements that function as sliding side panels.
  * Handles the 'open' state, slide-in animations, and close button events.
@@ -8,6 +13,9 @@ export abstract class BasePanel extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    if (this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sheet];
+    }
   }
 
   /**
@@ -24,7 +32,7 @@ export abstract class BasePanel extends HTMLElement {
     if (this._isOpen === value) return; // Prevent redundant triggers and recursion
     this._isOpen = value;
     this.classList.toggle('open', value);
-    
+
     if (value) {
       this.onOpen();
     } else {
@@ -43,8 +51,8 @@ export abstract class BasePanel extends HTMLElement {
   /**
    * Lifecycle hooks for subclasses
    */
-  protected onOpen() {}
-  protected onClose() {}
+  protected onOpen() { }
+  protected onClose() { }
 
   /**
    * Closes the panel.

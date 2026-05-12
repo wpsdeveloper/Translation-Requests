@@ -1,12 +1,16 @@
 // @ts-ignore
-import styles from './DetailsStyles.css?inline';
+import styles from './SharedStyles.css?inline';
+import detailStyles from './DetailsStyles.css?inline';
 import { TranslationRequest } from '../../../shared/types';
 import { PanelMode } from '../DetailsPanel/DetailsPanel';
 import { formatDate, formatTime } from '../../services/utils';
 import { BasePanel } from './BasePanel';
 
-const sheet = new CSSStyleSheet();
-sheet.replaceSync(styles);
+const sharedSheet = new CSSStyleSheet();
+sharedSheet.replaceSync(styles);
+
+const detailSheet = new CSSStyleSheet();
+detailSheet.replaceSync(detailStyles);
 
 export abstract class DetailsBase extends BasePanel {
   protected _data: TranslationRequest = {} as TranslationRequest;
@@ -16,7 +20,7 @@ export abstract class DetailsBase extends BasePanel {
   constructor() {
     super();
     if (this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet];
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, detailSheet];
     }
   }
 
@@ -109,7 +113,7 @@ export abstract class DetailsBase extends BasePanel {
   /**
    * Hook for sub-classes to handle custom hydration logic
    */
-  protected hydrate(_root: ShadowRoot): void {}
+  protected hydrate(_root: ShadowRoot): void { }
 
   /**
    * Hook for sub-classes to handle custom mode logic (rarely needed with declarative CSS)

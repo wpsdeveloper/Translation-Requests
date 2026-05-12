@@ -1,7 +1,7 @@
 <div class="panel-container">
   <button id="close-btn" class="close-icon" aria-label="Close panel">&times;</button>
   <header>
-    <div class="header-main">
+    <div class="detail-header-main">
       <div style="display: flex; align-items: center; gap: 8px">
         <h2>Request Details</h2>
         <button id="edit-btn" class="edit-icon-btn icon-btn" title="Edit request">
@@ -41,7 +41,8 @@
       <div class="detail-item">
         <label>Requester Name</label>
         <span id="view-requester-name" class="view-mode" data-bind="name"></span>
-        <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none" data-bind="name" />
+        <input type="text" id="edit-requester-name" class="form-control edit-mode" style="display: none"
+          data-bind="name" />
       </div>
 
       <div class="detail-item">
@@ -61,18 +62,21 @@
   </div>
   <div class="detail-item">
     <label class="edit-mode" style="display: none">Original Language</label>
-    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none" data-bind="originalLanguage" />
+    <input type="text" id="edit-orig-lang" class="form-control edit-mode" style="display: none"
+      data-bind="originalLanguage" />
   </div>
 
   <div class="detail-item">
     <label class="edit-mode" style="display: none">Target Language</label>
-    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none" data-bind="targetLanguage" />
+    <input type="text" id="edit-target-lang" class="form-control edit-mode" style="display: none"
+      data-bind="targetLanguage" />
   </div>
 
   <div class="detail-item">
     <label>Description</label>
     <div id="view-description" class="view-mode" data-bind="description"></div>
-    <textarea id="edit-description" class="form-control edit-mode" style="display: none" data-bind="description"></textarea>
+    <textarea id="edit-description" class="form-control edit-mode" style="display: none"
+      data-bind="description"></textarea>
   </div>
 
   <div id="dynamic-content"></div>

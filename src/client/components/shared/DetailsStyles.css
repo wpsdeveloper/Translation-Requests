@@ -1,41 +1,3 @@
-:host {
-  font-size: 0.9rem;
-}
-
-h2 {
-  font-size: 1.2rem;
-}
-
-h3 {
-  font-size: 1rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.header-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  margin-top: 30px;
-}
-
-.form-control {
-  width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 10px 12px;
-  font-family: inherit;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-}
-
-.shared-meta p {
-  font-size: 0.9rem;
-  margin: 5px 0;
-}
-
 .details-section label {
   display: inline-block;
   font-weight: bold;
@@ -100,13 +62,6 @@ footer {
 
 .detail-item .view-mode {
   display: inline-block;
-}
-
-.help-text {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: 4px;
-  display: block;
 }
 
 /* Declarative Visibility */

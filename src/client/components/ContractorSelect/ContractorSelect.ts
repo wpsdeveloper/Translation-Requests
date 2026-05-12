@@ -1,7 +1,7 @@
 // @ts-ignore
 import styles from './ContractorSelect.css?inline';
 // @ts-ignore
-import sharedStyles from '../shared/DetailsStyles.css?inline';
+import sharedStyles from '../shared/SharedStyles.css?inline';
 // @ts-ignore
 import template from './ContractorSelect.htm?raw';
 import { PanelMode } from '../DetailsPanel/DetailsPanel';

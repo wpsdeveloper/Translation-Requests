@@ -1,37 +1,37 @@
 /* StatusColors.css - Centralized status colors */
 
 :host([status='Needs Approval']) .status-indicator {
-  background-color: #ffc107;
+  background-color: var(--tms-status-pending);
   color: #212529;
 }
 
-:host([status='Scheduled']) .status-indicator {
-  background-color: #17a2b8;
-  color: white;
-}
-
-:host([status='Complete']) .status-indicator {
-  background-color: #28a745;
-  color: white;
-}
-
-:host([status='Canceled']) .status-indicator {
-  background-color: #dc3545;
-  color: white;
-}
-
 :host([status='Approved']) .status-indicator {
-  background-color: #4b86ff;
+  background-color: var(--tms-status-approved);
   color: white;
 }
 
-:host([status='Denied']) .status-indicator {
-  background-color: #dc3545;
+:host([status='Scheduled']) .status-indicator {
+  background-color: var(--tms-status-in-progress);
   color: white;
 }
 
 :host([status='Out for Translation']) .status-indicator,
 :host([status='Sent for translation']) .status-indicator {
-  background-color: #4b86ff;
+  background-color: var(--tms-status-in-progress);
+  color: white;
+}
+
+:host([status='Complete']) .status-indicator {
+  background-color: var(--tms-status-completed);
+  color: white;
+}
+
+:host([status='Canceled']) .status-indicator {
+  background-color: var(--tms-status-denied);
+  color: white;
+}
+
+:host([status='Denied']) .status-indicator {
+  background-color: var(--tms-status-denied);
   color: white;
 }

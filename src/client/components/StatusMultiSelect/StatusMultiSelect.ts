@@ -1,10 +1,15 @@
 // @ts-ignore
+import sharedStyles from '../shared/SharedStyles.css?inline';
+// @ts-ignore
 import styles from './StatusMultiSelect.css?inline';
 // @ts-ignore
 import template from './StatusMultiSelect.htm?raw';
 import { store } from '../../services/state';
 
+const sharedSheet = new CSSStyleSheet();
 const sheet = new CSSStyleSheet();
+
+sharedSheet.replaceSync(sharedStyles);
 sheet.replaceSync(styles);
 
 class StatusMultiSelect extends HTMLElement {
@@ -14,7 +19,7 @@ class StatusMultiSelect extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet];
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, sheet];
     }
   }
 

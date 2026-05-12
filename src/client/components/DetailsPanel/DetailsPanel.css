@@ -25,6 +25,14 @@
   transform: translateX(0);
 }
 
+.detail-header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-top: 30px;
+}
+
 .close-icon {
   position: absolute;
   top: 10px;
