@@ -5,7 +5,6 @@ import RequestsRowTemplate from './RequestsRow.htm?raw';
 import '../StatusBadge/StatusBadge';
 import { store } from '../../services/state';
 import { formatDate } from '../../services/utils';
-import { TranslationRequest } from '../../../shared/types';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(RequestsRowStyles);
@@ -55,7 +54,7 @@ class RequestsRow extends HTMLElement {
     this.addEventListener('click', () => {
       // UPDATE STATE: Tell the app which row was selected.
       store.setState({
-        selectedRow: this._data
+        selectedRow: this._data,
       });
     });
 

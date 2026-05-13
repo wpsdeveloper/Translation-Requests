@@ -1,6 +1,6 @@
 import { store } from '../../services/state';
 import { formatDate, formatTime } from '../../services/utils';
-import { TranslationRequest } from '../../../shared/types';
+
 import { showToast, showModal } from '../../services/ui';
 import { requestActions } from '../../services/actions';
 import panelTemplate from './DetailsPanel.htm?raw';
@@ -137,8 +137,8 @@ class DetailsPanel extends DetailsBase {
     const viewEls = root.querySelectorAll('.view-mode');
     const editEls = root.querySelectorAll('.edit-mode');
 
-    viewEls.forEach((el: any) => el.style.display = isEdit ? 'none' : '');
-    editEls.forEach((el: any) => el.style.display = isEdit ? '' : 'none');
+    viewEls.forEach((el: any) => (el.style.display = isEdit ? 'none' : ''));
+    editEls.forEach((el: any) => (el.style.display = isEdit ? '' : 'none'));
   }
 
   private syncDynamicComponent(root: ShadowRoot, mode: string) {
@@ -206,9 +206,7 @@ class DetailsPanel extends DetailsBase {
 
     processBtn.style.display = isView && !needsApproval ? '' : 'none';
 
-    needsApproval ?
-      processBtn.setAttribute('disabled', 'true') :
-      processBtn.removeAttribute('disabled');
+    needsApproval ? processBtn.setAttribute('disabled', 'true') : processBtn.removeAttribute('disabled');
   }
 
   private updateApproveDenyButtons(root: ShadowRoot, isView: boolean, isEdit: boolean, canApprove: boolean) {
@@ -276,8 +274,6 @@ class DetailsPanel extends DetailsBase {
       schoolSelect.mode = this._mode;
     }
   }
-
-
 
   private injectDynamicContent(root: ShadowRoot, data: TranslationRequest) {
     const container = root.querySelector('#dynamic-content');
@@ -358,19 +354,15 @@ class DetailsPanel extends DetailsBase {
     const data = this._data;
     if (!data) return;
 
-    showModal(
-      "Confirm Deletion",
-      `Are you sure you want to delete this ${data.reqType} request?`,
-      async () => {
-        try {
-          await requestActions.delete(data);
-          this.setMode('view');
-        } catch (err) {
-          // Error is handled by the service (toasts/logs)
-          this.setMode('edit');
-        }
+    showModal('Confirm Deletion', `Are you sure you want to delete this ${data.reqType} request?`, async () => {
+      try {
+        await requestActions.delete(data);
+        this.setMode('view');
+      } catch (err) {
+        // Error is handled by the service (toasts/logs)
+        this.setMode('edit');
       }
-    );
+    });
   }
 
   // --- Utilities ---
@@ -379,8 +371,6 @@ class DetailsPanel extends DetailsBase {
     const el = root.querySelector(selector);
     if (el) el.textContent = val || fallback;
   }
-
-
 }
 
 customElements.define('details-panel', DetailsPanel);

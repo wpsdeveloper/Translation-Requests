@@ -1,10 +1,10 @@
 // @ts-ignore
 import styles from './SharedStyles.css?inline';
 import detailStyles from './DetailsStyles.css?inline';
-import { TranslationRequest } from '../../../shared/types';
+
 import { PanelMode } from '../DetailsPanel/DetailsPanel';
 import { formatDate, formatTime } from '../../services/utils';
-import { BasePanel } from './BasePanel';
+import { SlidingPanel } from './SlidingPanel';
 
 const sharedSheet = new CSSStyleSheet();
 sharedSheet.replaceSync(styles);
@@ -12,7 +12,7 @@ sharedSheet.replaceSync(styles);
 const detailSheet = new CSSStyleSheet();
 detailSheet.replaceSync(detailStyles);
 
-export abstract class DetailsBase extends BasePanel {
+export abstract class DetailsBase extends SlidingPanel {
   protected _data: TranslationRequest = {} as TranslationRequest;
   protected _mode: PanelMode = 'view';
   protected abstract get template(): string;
@@ -114,7 +114,7 @@ export abstract class DetailsBase extends BasePanel {
   /**
    * Hook for sub-classes to handle custom hydration logic
    */
-  protected hydrate(_root: ShadowRoot): void { }
+  protected hydrate(_root: ShadowRoot): void {}
 
   /**
    * Hook for sub-classes to handle custom mode logic (rarely needed with declarative CSS)

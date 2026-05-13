@@ -4,7 +4,6 @@ import RequestsTableStyles from './RequestsTable.css?inline';
 import RequestsTableTemplate from './RequestsTable.htm?raw';
 import { store } from '../../services/state';
 import '../RequestsRow/RequestsRow'; // Ensure the row component is registered
-import { TranslationRequest } from '../../../shared/types';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(RequestsTableStyles);

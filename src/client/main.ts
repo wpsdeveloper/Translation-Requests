@@ -6,7 +6,7 @@ import './components/DetailsPanel/DetailsPanel';
 import './components/StatusMultiSelect/StatusMultiSelect';
 import './components/UserManagement/UserManagement';
 import './components/UserEditor/UserEditor';
-import './components/RequestEditor/RequestEditor';
+import './components/NewRequestEntry/NewRequestEntry';
 import './components/RequestsDashboard/RequestsDashboard';
 
 /**
@@ -43,12 +43,12 @@ export class App {
         viewContainer.appendChild(dashboard);
       }
       if (user && ['Admin', 'User', 'Guest'].includes(user.role) && viewContainer) {
-        const requestEditor = document.createElement('request-editor');
-        requestEditor.style.display = 'none';
-        viewContainer.appendChild(requestEditor);
+        const newRequestEntry = document.createElement('new-request-entry');
+        newRequestEntry.style.display = 'none';
+        viewContainer.appendChild(newRequestEntry);
       }
 
-      const defaultView = user && user.role === 'Guest' ? 'request-entry' : 'dashboard';
+      const defaultView = user && user.role === 'Guest' ? 'new-request-entry' : 'dashboard';
 
       // 3. Update the store
       store.setState({
@@ -90,7 +90,7 @@ export class App {
         store.setState({ activeView: 'dashboard' });
       });
       navRequest.addEventListener('click', () => {
-        store.setState({ activeView: 'request-entry' });
+        store.setState({ activeView: 'new-request-entry' });
       });
     }
 
@@ -114,7 +114,7 @@ export class App {
       const loadingView = document.getElementById('loading-view');
       const dashboardView = document.querySelector('requests-dashboard');
       const usersView = document.querySelector('user-management');
-      const requestEntryView = document.querySelector('request-editor');
+      const requestEntryView = document.querySelector('new-request-entry');
       const subtitle = document.getElementById('portal-subtitle');
 
       if (loadingView) {
@@ -139,7 +139,7 @@ export class App {
         usersView.style.display = 'block';
         usersView.classList.add('active');
         navUsers?.classList.add('active');
-      } else if (activeView === 'request-entry' && requestEntryView) {
+      } else if (activeView === 'new-request-entry' && requestEntryView) {
         requestEntryView.style.display = 'block';
         requestEntryView.classList.add('active');
         navRequest?.classList.add('active');

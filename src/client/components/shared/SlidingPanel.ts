@@ -7,7 +7,7 @@ sheet.replaceSync(BasePanelCss);
  * BasePanel: A base class for custom elements that function as sliding side panels.
  * Handles the 'open' state, slide-in animations, and close button events.
  */
-export abstract class BasePanel extends HTMLElement {
+export abstract class SlidingPanel extends HTMLElement {
   protected _isOpen = false;
 
   constructor() {
@@ -51,8 +51,8 @@ export abstract class BasePanel extends HTMLElement {
   /**
    * Lifecycle hooks for subclasses
    */
-  protected onOpen() { }
-  protected onClose() { }
+  protected onOpen() {}
+  protected onClose() {}
 
   /**
    * Closes the panel.

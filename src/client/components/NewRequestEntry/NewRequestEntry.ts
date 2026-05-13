@@ -1,22 +1,23 @@
 import { store } from '../../services/state';
 import { uploadFile } from '../../services/api';
 import { requestActions } from '../../services/actions';
-import { TranslationRequest } from '../../../shared/types';
-// @ts-ignore
-import template from './RequestEditor.htm?raw';
-// @ts-ignore
-import styles from './RequestEditor.css?inline';
 
-import { BasePanel } from '../shared/BasePanel';
+// @ts-ignore
+import template from './NewRequestEntry.htm?raw';
+// @ts-ignore
+import styles from './NewRequestEntry.css?inline';
+
+import { SlidingPanel } from '../shared/SlidingPanel';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
 
-class RequestEditor extends BasePanel {
+class NewRequestEntry extends HTMLElement {
   private _currentStep = 1;
 
   constructor() {
     super();
+    this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
       this.shadowRoot.adoptedStyleSheets = [sheet];
     }
@@ -52,8 +53,6 @@ class RequestEditor extends BasePanel {
   setupEventListeners() {
     const root = this.shadowRoot;
     if (!root) return;
-
-    this.setupBaseListeners(root);
 
     const nextBtn = root.getElementById('next-btn') as HTMLButtonElement;
     const prevBtn = root.getElementById('prev-btn') as HTMLButtonElement;
@@ -257,10 +256,10 @@ class RequestEditor extends BasePanel {
   }
 }
 
-customElements.define('request-editor', RequestEditor);
+customElements.define('new-request-entry', NewRequestEntry);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'request-editor': RequestEditor;
+    'new-request-entry': NewRequestEntry;
   }
 }
