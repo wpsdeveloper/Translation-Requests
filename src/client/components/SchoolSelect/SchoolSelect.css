@@ -1,0 +1,8 @@
+:host {
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+:root {
+    box-sizing: border-box;
+}

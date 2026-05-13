@@ -1,10 +1,14 @@
 import { store } from '../../services/state';
 import { saveUserData } from '../../services/api';
-import { AppUser } from '../../../shared/types';
 // @ts-ignore
 import template from './UserEditor.htm?raw';
 // @ts-ignore
+import sharedStyles from '../shared/SharedStyles.css?inline';
+// @ts-ignore
 import styles from './UserEditor.css?inline';
+
+const sharedSheet = new CSSStyleSheet();
+sharedSheet.replaceSync(sharedStyles);
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
@@ -17,7 +21,7 @@ class UserEditor extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet];
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, sheet];
     }
   }
 
