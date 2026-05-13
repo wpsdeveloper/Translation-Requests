@@ -28,29 +28,37 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
 
-/* Specific column adjustments to match AppTable headers */
-.td {
   &:nth-child(1) {
     flex: 1 0;
-  } /* Status */
+  }
+
+  /* Status */
   &:nth-child(2) {
     flex: 0.8;
-  } /* Request Date */
+  }
+
+  /* Request Date */
   &:nth-child(3) {
     flex: 0.8;
-  } /* Submitted */
+  }
+
+  /* Submitted */
   &:nth-child(4) {
     flex: 1;
-  } /* Type */
+  }
+
+  /* Type */
   &:nth-child(5) {
     flex: 2;
-  } /* Requested By */
+  }
+
+  /* Requested By */
 }
 
 .requester-school {
   font-size: 0.85rem;
   color: #555;
-  display: block; /* Ensure it stays under the name if needed, but here it's inside the same cell usually */
+  display: block;
+  /* Ensure it stays under the name if needed, but here it's inside the same cell usually */
 }

@@ -1,7 +1,7 @@
-import BasePanelCss from './BasePanel.css?inline';
+import SlidingPanelCss from './SlidingPanel.css?inline';
 
 const sheet = new CSSStyleSheet();
-sheet.replaceSync(BasePanelCss);
+sheet.replaceSync(SlidingPanelCss);
 
 /**
  * BasePanel: A base class for custom elements that function as sliding side panels.
@@ -51,8 +51,8 @@ export abstract class SlidingPanel extends HTMLElement {
   /**
    * Lifecycle hooks for subclasses
    */
-  protected onOpen() {}
-  protected onClose() {}
+  protected onOpen() { }
+  protected onClose() { }
 
   /**
    * Closes the panel.

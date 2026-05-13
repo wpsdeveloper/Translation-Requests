@@ -1,8 +1,4 @@
 /* StatusBadge.css */
-:host {
-  display: inline-block;
-}
-
 .badge {
   display: inline-flex;
   align-items: center;
