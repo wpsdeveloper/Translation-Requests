@@ -36,12 +36,24 @@ class SchoolSelect extends HTMLElement {
         this._schools = state.schools;
         this.populateOptions();
       }
+
+      // If this is the dashboard filter, sync its value from the store
+      if (this.id === 'school-filter' && this._value !== state.filterSchool) {
+        this._value = state.filterSchool || '';
+        this.updateUI();
+      }
     });
-    // Initial population if schools already in store
+
+    // Initial state sync
     const state = store.getState();
     if (state.schools.length > 0) {
       this._schools = state.schools;
       this.populateOptions();
+    }
+
+    if (this.id === 'school-filter' && state.filterSchool !== undefined) {
+      this._value = state.filterSchool || '';
+      this.updateUI();
     }
   }
 
@@ -87,6 +99,12 @@ class SchoolSelect extends HTMLElement {
     select?.addEventListener('change', (e: any) => {
       this._value = e.target.value;
       this.updateUI();
+
+      // If this is the dashboard filter, update the global store
+      if (this.id === 'school-filter') {
+        store.setState({ filterSchool: this._value });
+      }
+
       this.dispatchEvent(
         new CustomEvent('change', {
           detail: { value: this._value },
