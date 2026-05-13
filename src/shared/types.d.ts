@@ -1,6 +1,6 @@
-export type UserRole = 'Admin' | 'User' | 'Approver' | 'Guest';
+type UserRole = 'Admin' | 'User' | 'Approver' | 'Guest';
 
-export interface AppUser {
+interface AppUser {
   email: string;
   name: string;
   role: UserRole;
@@ -11,7 +11,7 @@ export interface AppUser {
  * The raw data structure as it comes from/goes to the AppSheet API.
  * All dates and times are handled as strings.
  */
-export interface RawRequest {
+interface RawRequest {
   id: string;
   email: string;
   name: string;
@@ -39,7 +39,7 @@ export interface RawRequest {
  * The hydrated request object used throughout the frontend.
  * String dates are converted to real Date objects for easier manipulation.
  */
-export interface TranslationRequest extends Omit<
+interface TranslationRequest extends Omit<
   RawRequest,
   'requestDate' | 'approvedDate' | 'submittedDate' | 'startTime' | 'endTime'
 > {
@@ -50,7 +50,7 @@ export interface TranslationRequest extends Omit<
   endTime: Date | null;
 }
 
-export interface AppState {
+interface AppState {
   requests: TranslationRequest[];
   schools: string[];
   user: AppUser | null;
@@ -58,4 +58,4 @@ export interface AppState {
   error: string | null;
 }
 
-export type AppSheetAction = 'Find' | 'Add' | 'Edit' | 'Delete';
+type AppSheetAction = 'Find' | 'Add' | 'Edit' | 'Delete';

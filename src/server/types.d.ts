@@ -33,3 +33,28 @@ interface RawRequest {
   endTime: string;
   startTime: string;
 }
+
+/**
+ * The hydrated request object used throughout the frontend.
+ * String dates are converted to real Date objects for easier manipulation.
+ */
+export interface TranslationRequest extends Omit<
+  RawRequest,
+  'requestDate' | 'approvedDate' | 'submittedDate' | 'startTime' | 'endTime'
+> {
+  requestDate: Date | null;
+  approvedDate: Date | null;
+  submittedDate: Date | null;
+  startTime: Date | null;
+  endTime: Date | null;
+}
+
+export interface AppState {
+  requests: TranslationRequest[];
+  schools: string[];
+  user: AppUser | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export type AppSheetAction = 'Find' | 'Add' | 'Edit' | 'Delete';
