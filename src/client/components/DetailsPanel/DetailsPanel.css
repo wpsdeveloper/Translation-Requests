@@ -12,7 +12,6 @@
   overflow-y: auto;
   z-index: 1000;
   font-size: var(--tms-font-size-small);
-  /* Ensure it's above the dashboard content */
 
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
@@ -50,11 +49,11 @@
     color 0.2s ease,
     transform 0.2s ease;
   z-index: 10;
-}
 
-.close-icon:hover {
-  color: #0f172a;
-  transform: scale(1.1);
+  &:hover {
+    color: #0f172a;
+    transform: scale(1.1);
+  }
 }
 
 .icon-btn {
@@ -70,15 +69,15 @@
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
-}
 
-.icon-btn:hover {
-  background-color: #f1f5f9;
-  color: #007bff;
-}
+  svg {
+    display: block;
+  }
 
-.icon-btn svg {
-  display: block;
+  &:hover {
+    background-color: #f1f5f9;
+    color: #007bff;
+  }
 }
 
 footer {

@@ -5,12 +5,16 @@ import { requestActions } from '../../services/actions';
 // @ts-ignore
 import template from './NewRequestEntry.htm?raw';
 // @ts-ignore
+import shared from '../shared/SharedStyles.css?inline';
 import styles from './NewRequestEntry.css?inline';
 
 import { SlidingPanel } from '../shared/SlidingPanel';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);
+
+const sharedSheet = new CSSStyleSheet();
+sharedSheet.replaceSync(shared);
 
 class NewRequestEntry extends HTMLElement {
   private _currentStep = 1;
@@ -19,7 +23,7 @@ class NewRequestEntry extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     if (this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet];
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, sheet];
     }
   }
 

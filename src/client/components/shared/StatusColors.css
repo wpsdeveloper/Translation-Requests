@@ -10,11 +10,7 @@
   color: white;
 }
 
-:host([status='Scheduled']) .status-indicator {
-  background-color: var(--tms-status-in-progress);
-  color: white;
-}
-
+:host([status='Scheduled']) .status-indicator,
 :host([status='Out for Translation']) .status-indicator,
 :host([status='Sent for translation']) .status-indicator {
   background-color: var(--tms-status-in-progress);
@@ -26,11 +22,7 @@
   color: white;
 }
 
-:host([status='Canceled']) .status-indicator {
-  background-color: var(--tms-status-denied);
-  color: white;
-}
-
+:host([status='Canceled']) .status-indicator,
 :host([status='Denied']) .status-indicator {
   background-color: var(--tms-status-denied);
   color: white;

@@ -12,14 +12,6 @@
   font-weight: bold;
 }
 
-:host:hover {
-  background-color: #f8f9fa;
-}
-
-:host.selected {
-  background-color: #e8f0fe !important;
-}
-
 /* Add any specific styling for your cells here */
 .th {
   padding: 12px 8px;
@@ -28,34 +20,33 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
 
-/* Specific column adjustments */
-.th:nth-child(1) {
-  flex: 1;
-}
+  /* Specific column adjustments */
+  &:nth-child(1) {
+    flex: 1;
+  }
 
-/* Status */
-.th:nth-child(2) {
-  flex: 0.8;
-}
+  /* Status */
+  &:nth-child(2) {
+    flex: 0.8;
+  }
 
-/* Request Date */
-.th:nth-child(3) {
-  flex: 0.8;
-}
+  /* Request Date */
+  &:nth-child(3) {
+    flex: 0.8;
+  }
 
-/* Submitted */
-.th:nth-child(4) {
-  flex: 1;
-}
+  /* Submitted */
+  &:nth-child(4) {
+    flex: 1;
+  }
 
-/* Type */
-.th:nth-child(5) {
-  flex: 2;
+  /* Type */
+  &:nth-child(5) {
+    flex: 2;
+  }
+  /* Requested By */
 }
-
-/* Requested By */
 
 .table-message {
   padding: 60px 20px;

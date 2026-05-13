@@ -29,47 +29,20 @@
   pointer-events: auto;
 }
 
-.modal {
-  width: 100%;
-  max-width: 700px;
-  max-height: 90vh;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  transform: translateY(20px);
-  transition: transform 0.3s ease;
-}
-
-:host([embedded]) .modal {
-  transform: none;
-  max-width: 100%;
-  box-shadow: none;
-  border: 1px solid #e2e8f0;
-  max-height: none;
-}
-
-:host([embedded]) form {
-  overflow-y: visible;
-}
-
 .overlay.active .modal {
   transform: translateY(0);
-}
-
-.modal-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .header-titles {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: end;
+  gap: 12px;
 }
 
 .step-indicator {
@@ -90,18 +63,18 @@
   font-size: 0.75rem;
   font-weight: 600;
   border: 2px solid #e2e8f0;
-}
 
-.step.active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
+  &.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+  }
 
-.step.completed {
-  background: #10b981;
-  color: white;
-  border-color: #10b981;
+  &.completed {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+  }
 }
 
 .step-line {
@@ -112,38 +85,10 @@
 
 .form-step {
   display: none;
-}
 
-.form-step.active {
-  display: block;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: #64748b;
-  cursor: pointer;
-  padding: 4px;
-  line-height: 1;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-:host([embedded]) .close-btn {
-  display: none;
-}
-
-.close-btn:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  &.active {
+    display: block;
+  }
 }
 
 form {
@@ -171,24 +116,28 @@ label {
   color: #475569;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   padding: 10px 12px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   font-size: 0.95rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   background-color: #fff;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
 }
 
 input[readonly] {
   background-color: #f8fafc;
   cursor: not-allowed;
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 textarea {
@@ -211,55 +160,6 @@ textarea {
   font-style: italic;
 }
 
-.modal-footer {
-  padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.btn-primary, .btn-secondary {
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background: #2563eb;
-  color: white;
-  border: none;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #1d4ed8;
-}
-
-.btn-primary:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: white;
-  color: #475569;
-  border: 1px solid #cbd5e1;
-}
-
-.btn-secondary:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
-}
-
-.help-text {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: 4px;
-  display: block;
-}
-
 /* Radio Buttons */
 .radio-group {
   display: flex;
@@ -276,13 +176,13 @@ textarea {
   font-size: 0.9rem !important;
   cursor: pointer;
   margin-top: 0 !important;
-}
 
-.radio-label input[type="radio"] {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  cursor: pointer;
+  input[type='radio'] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+  }
 }
 
 /* Required Asterisk */
