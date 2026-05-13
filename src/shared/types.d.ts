@@ -13,26 +13,38 @@ interface AppUser {
  */
 interface RawRequest {
   id: string;
+
   email: string;
   name: string;
   school: string;
+  submittedDate: string;
+
   status: string;
   reqType: string;
+  requestDate: string;
+  
   originalLanguage: string;
   targetLanguage: string;
-  interpretationType: string;
-  docPageCount: string;
   description: string;
+  
+  docPageCount: string;
   docLink: string;
+  
+  interpretationType: string;
   eventLocation: string;
-  contractor: string;
-  contractorName: string;
-  approverName: string;
-  requestDate: string;
-  approvedDate: string;
-  submittedDate: string;
   endTime: string;
   startTime: string;
+  
+  approverName: string;
+  approvedDate: string;
+
+  contractor: string;
+  contractorName: string;
+
+  contractorScheduledDate: string;
+  documentReturnedDate: string;
+  guestConfirmedDate: string;
+  techConfirmedDate: string;
 }
 
 /**
@@ -43,11 +55,15 @@ interface TranslationRequest extends Omit<
   RawRequest,
   'requestDate' | 'approvedDate' | 'submittedDate' | 'startTime' | 'endTime'
 > {
-  requestDate: Date | null;
-  approvedDate: Date | null;
   submittedDate: Date | null;
+  requestDate: Date | null;
   startTime: Date | null;
   endTime: Date | null;
+  approvedDate: Date | null;
+  contractorScheduledDate: Date | null;
+  documentReturnedDate: Date | null;
+  guestConfirmedDate: Date | null;
+  techConfirmedDate: Date | null;
 }
 
 interface AppState {
