@@ -65,9 +65,9 @@ class DetailsPanel extends DetailsBase {
       if (target.id === 'cancel-btn') this.cancelEdit();
       if (target.id === 'save-btn') this.onSave();
       if (target.id === 'close-btn') this.onClose();
+      if (target.id === 'delete-btn') this.onDelete();
 
       if (path.some((el: any) => el.id === 'edit-btn')) this.handleEditToggle();
-      if (path.some((el: any) => el.id === 'delete-btn')) this.onDelete();
     });
 
     root.addEventListener('change', (e: any) => {
