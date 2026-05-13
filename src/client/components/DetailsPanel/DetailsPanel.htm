@@ -7,8 +7,17 @@
     <div class="header-actions">
       <status-select id="detail-status"></status-select>
       <button id="edit-btn" class="edit-icon-btn icon-btn" title="Edit request">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#000"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 18 18"
+          fill="none"
+          stroke="#000"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <path d="M8.25 3H3a1.5 1.5 0 0 0 -1.5 1.5v10.5a1.5 1.5 0 0 0 1.5 1.5h10.5a1.5 1.5 0 0 0 1.5 -1.5v-5.25" />
           <path d="M13.875 1.875a1.591 1.591 0 0 1 2.25 2.25L9 11.25l-3 0.75 0.75 -3z" />
         </svg>
@@ -16,49 +25,42 @@
     </div>
   </header>
 
-  <div id="approval-info" class="shared-meta" style="display: none">
-    <div class="detail-item">
-      <label id="approved-by-label">Approved By</label>
-      <span id="detail-approved-by"></span>
+  <div class="grid">
+    <div class="detail-item col-1">
+      <label>Submitted</label>
+      <span id="view-submitted" data-bind="submittedDate" data-show="view process edit" data-format="date"></span>
     </div>
-    <div class="detail-item">
-      <label id="approved-date-label">Approved Date</label>
-      <span id="detail-approved-date"></span>
-    </div>
-    <hr />
-  </div>
-
-  <div class="shared-meta">
-
-    <div>
+    <div id="approval-info" class="col-2" style="display: none">
       <div class="detail-item">
-        <label>Submitted</label>
-        <span id="view-submitted" data-bind="submittedDate" data-show="view process edit" data-format="date"></span>
-      </div>
-      <div class="detail-item">
-        <label>Requester Name</label>
-        <span id="view-requester-name" data-show="view process" data-bind="name"></span>
-        <input type="text" id="edit-requester-name" class="form-control" data-show="edit" data-bind="name" />
+        <label id="approved-by-label">Approved</label>
+        <span id="detail-approved-by"></span>
+        <span id="detail-approved-date"></span>
       </div>
     </div>
-    <div>
 
-      <div class="detail-item">
-        <label>School</label>
-        <span id="view-school" data-show="view process" data-bind="school"></span>
-        <div id="edit-school" data-show="edit">
-          <school-select id="detail-school"></school-select>
-        </div>
-      </div>
-
+    <div class="full-width">
+      <hr />
     </div>
-  </div>
 
-  <hr />
+    <div class="detail-item col-1">
+      <label>Requester Name</label>
+      <span id="view-requester-name" data-show="view process" data-bind="name"></span>
+      <input type="text" id="edit-requester-name" class="form-control" data-show="edit" data-bind="name" />
+    </div>
+    <div class="detail-item col-2">
+      <label>School</label>
+      <span id="view-school" data-show="view process" data-bind="school"></span>
+      <div id="edit-school" data-show="edit">
+        <school-select id="detail-school"></school-select>
+      </div>
+    </div>
 
-  <div id="dynamic-content"></div>
+    <div class="full-width">
+      <hr />
+    </div>
 
-  <div class="detail-item">
+    <div id="dynamic-content" class="full-width"></div>
+
     <footer>
       <button id="delete-btn" class="btn btn-danger" style="display: none">Delete</button>
       <button id="deny-btn" class="btn btn-danger" style="display: none">Deny</button>

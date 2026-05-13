@@ -4,25 +4,18 @@ import { formatDate, formatTime } from '../../services/utils';
 import { showToast, showModal } from '../../services/ui';
 import { requestActions } from '../../services/actions';
 import panelTemplate from './DetailsPanel.htm?raw';
-import translationTemplate from './DetailsTranslation/DetailsTranslation.htm?raw';
-import interpretationTemplate from './DetailsInterpretation/DetailsInterpretation.htm?raw';
+import translationTemplate from './DetailsTranslation.htm?raw';
+import interpretationTemplate from './DetailsInterpretation.htm?raw';
 
 import sharedPanelStyles from '../shared/SharedStyles.css?inline';
 import panelStyles from './DetailsPanel.css?inline';
-import detailsStyles from '../shared/DetailsStyles.css?inline';
 
-import '../DetailsInterpretation/DetailsInterpretation';
-import '../DetailsTranslation/DetailsTranslation';
+import { SlidingPanel } from './SlidingPanel';
 import '../StatusSelect/StatusSelect';
 import '../SchoolSelect/SchoolSelect';
 
-import { DetailsBase } from '../shared/DetailsBase';
-
 const sharedSheet = new CSSStyleSheet();
 sharedSheet.replaceSync(sharedPanelStyles);
-
-const detailsSheet = new CSSStyleSheet();
-detailsSheet.replaceSync(detailsStyles);
 
 const panelSheet = new CSSStyleSheet();
 panelSheet.replaceSync(panelStyles);
@@ -34,7 +27,10 @@ export type PanelMode = 'view' | 'edit' | 'process';
  * It uses a "Mode" system ('view', 'edit', 'process') to toggle between
  * different UI states and dynamically loads sub-components based on request type.
  */
-class DetailsPanel extends DetailsBase {
+class DetailsPanel extends SlidingPanel {
+  protected _data: TranslationRequest = {} as TranslationRequest;
+  protected _mode: PanelMode = 'view';
+
   protected get template() {
     return panelTemplate;
   }
@@ -43,14 +39,88 @@ class DetailsPanel extends DetailsBase {
     super();
     if (this.shadowRoot) {
       // Use both shared and component-specific stylesheets for consistent UI.
-      this.shadowRoot.adoptedStyleSheets = [sharedSheet, detailsSheet, panelSheet];
+      this.shadowRoot.adoptedStyleSheets = [sharedSheet, panelSheet];
     }
+  }
+
+  set data(value: TranslationRequest) {
+    this._data = value;
+    this.render();
+  }
+
+  get mode(): PanelMode {
+    return this._mode;
+  }
+
+  set mode(value: PanelMode) {
+    this._mode = value;
+    this.setAttribute('mode', value);
+    const root = this.shadowRoot;
+    if (!root) return;
+    this.applyMode(root, value);
+  }
+
+  render() {
+    const root = this.shadowRoot;
+    const data = this._data;
+    const mode = this._mode;
+    if (!root) return;
+
+    root.innerHTML = this.template;
+    this.injectDynamicContent(root, data);
+    this.autoHydrate(root);
+    this.hydrate(root);
+    this.applyMode(root, mode);
   }
 
   connectedCallback() {
     this.render();
     this.setupEventListeners();
     this.subscribeToStore();
+  }
+
+  /**
+   * Automatically populates elements with [data-bind] attributes
+   */
+  protected autoHydrate(root: ShadowRoot) {
+    const elements = root.querySelectorAll('[data-bind]');
+    elements.forEach((el) => {
+      const prop = el.getAttribute('data-bind') as keyof TranslationRequest;
+      if (!prop) return;
+
+      if (prop == 'reqType') {
+        console.log('reqtype');
+      }
+
+      const value = (this._data as any)[prop];
+      if (value === undefined || value === null) return;
+
+      if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) {
+        if (el.type === 'date') {
+          el.value = value ? new Date(value).toISOString().split('T')[0] : '';
+        } else if (el.type === 'time') {
+          el.value = value ? new Date(value).toTimeString().slice(0, 5) : '';
+        } else {
+          el.value = value;
+        }
+      } else {
+        // For view mode elements
+        const format = el.getAttribute('data-format');
+        if (format === 'date') {
+          el.textContent = value ? formatDate(value, 'MMM D, YYYY') : 'N/A';
+        } else if (format === 'time') {
+          el.textContent = value ? formatTime(value, 'h:mm A') : 'N/A';
+        } else {
+          el.textContent = value || 'N/A';
+        }
+
+        if (el instanceof HTMLAnchorElement) {
+          el.href = value || '#';
+          el.textContent = 'View Document';
+          el.style.display = value ? 'inline' : 'none';
+        }
+      }
+    });
   }
 
   setupEventListeners() {
@@ -122,6 +192,15 @@ class DetailsPanel extends DetailsBase {
     this.populateContent(root, mode);
 
     if (this._data) this.hydrate(root);
+
+    const contractorSelect = root.querySelector('#contractor-select') as any;
+    if (contractorSelect) {
+      contractorSelect.mode = this._mode === 'process' ? 'edit' : 'view';
+      contractorSelect.value = {
+        contractor: this._data.contractor,
+        name: this._data.contractorName,
+      };
+    }
   }
 
   private populateContent(root: ShadowRoot, mode: string) {
@@ -236,7 +315,7 @@ class DetailsPanel extends DetailsBase {
     this.hydrateStatusSelect(root, this._data);
     this.hydrateSchoolSelect(root, this._data);
 
-    this.injectDynamicContent(root, this._data);
+    // this.injectDynamicContent(root, this._data);
   }
 
   private hydrateApprovalSection(root: ShadowRoot, data: TranslationRequest) {
@@ -279,16 +358,19 @@ class DetailsPanel extends DetailsBase {
 
   private injectDynamicContent(root: ShadowRoot, data: TranslationRequest) {
     const container = root.querySelector('#dynamic-content');
-    if (container) {
-      container.innerHTML = ''; // Clear previous view
+    if (!container) return;
 
+    container!.innerHTML = '';
+    if (container) {
       let featureEl: any;
       if (data.reqType === 'Interpretation') {
-        featureEl = document.createElement('details-interpretation');
+        featureEl = document.createElement('div');
         featureEl.classList.add('details-interpretation');
+        featureEl.innerHTML = interpretationTemplate;
       } else if (data.reqType === 'Translation') {
-        featureEl = document.createElement('details-translation');
+        featureEl = document.createElement('div');
         featureEl.classList.add('details-translation');
+        featureEl.innerHTML = translationTemplate;
       }
 
       if (featureEl) {
@@ -351,6 +433,26 @@ class DetailsPanel extends DetailsBase {
   }
 
   // --- Actions ---
+
+  /**
+   * Automatically gathers data from elements with [data-bind] attributes
+   */
+  public getSaveData(): any {
+    const root = this.shadowRoot;
+    if (!root) return {};
+
+    const data: any = {};
+    const elements = root.querySelectorAll('input[data-bind], select[data-bind], textarea[data-bind]');
+
+    elements.forEach((el) => {
+      const prop = el.getAttribute('data-bind');
+      if (prop) {
+        data[prop] = (el as HTMLInputElement).value;
+      }
+    });
+
+    return data;
+  }
 
   async onDelete() {
     const data = this._data;

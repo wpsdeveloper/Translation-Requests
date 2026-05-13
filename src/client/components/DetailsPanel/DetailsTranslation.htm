@@ -1,44 +1,48 @@
-<div>
+<div class="grid">
   <div class="detail-item">
     <label>Type</label>
-    <span id="view-reqType" data-bind="reqType"></span>
+    <div data-show="view edit process" data-bind="reqType"></div>
   </div>
-  <div class="detail-item">
+  <div class="detail-item col-2">
     <label>Original Language</label>
     <div data-show="view" data-bind="originalLanguage"></div>
     <input type="text" class="form-control" data-show="edit" data-bind="originalLanguage" />
   </div>
   <div class="detail-item">
+    <label data-show="edit">Document Link</label>
+    <div data-show="view process">
+      <a href="#" target="_blank" id="view-document-link" class="file-link" data-bind="docLink">View Document</a>
+      <div data-show="view process"><span data-bind="docPageCount"></span> pages</div>
+    </div>
+    <input type="text" class="form-control" data-bind="docLink" data-show="edit" />
+  </div>
+  <div class="detail-item col-2">
     <label>Target Language</label>
     <div data-show="view" data-bind="targetLanguage"></div>
     <input type="text" class="form-control" data-show="edit" data-bind="targetLanguage" />
   </div>
-</div>
 
-<div>
   <div class="detail-item">
-    <label>Page Count</label>
-    <div data-bind="docPageCount" data-show="view process"></div>
+    <label data-show="edit">Page Count</label>
     <input type="text" class="form-control" data-bind="docPageCount" data-show="edit" />
   </div>
 
   <div class="detail-item">
-    <label data-show="edit">Document Link</label>
-    <div data-show="view process">
-      <a href="#" target="_blank" id="view-document-link" class="file-link" data-bind="docLink">View Document</a>
-    </div>
-    <input type="text" class="form-control" data-bind="docLink" data-show="edit" />
+    <label>Description</label>
+    <div id="view-description" data-show="view process" data-bind="description"></div>
+    <textarea
+      id="edit-description"
+      class="form-control"
+      data-show="edit"
+      style="display: none"
+      data-bind="description"
+    ></textarea>
   </div>
-</div>
 
-<div class="detail-item">
-  <label>Description</label>
-  <div id="view-description" data-show="view process" data-bind="description"></div>
-  <textarea id="edit-description" class="form-control" data-show="edit" style="display: none"
-    data-bind="description"></textarea>
-</div>
+  <div class="full-width">
+    <hr />
+  </div>
 
-<div>
   <div class="detail-item">
     <label>Contractor</label>
     <div data-show="view edit" data-bind="contractor"></div>
@@ -47,16 +51,16 @@
     </div>
   </div>
 
-  <div class="detail-item">
+  <div class="detail-item col-2">
     <label>Date Sent to Contractor</label>
     <div data-bind="docSentDate" data-format="date" data-show="view edit"></div>
     <input type="date" class="form-control" data-bind="docSentDate" data-show="process" />
   </div>
 
-  <div class="detail-item">
+  <div class="detail-item col-2">
     <label>Date Received from Contractor</label>
     <div data-bind="docReceivedDate" data-format="date" data-show="view edit"></div>
     <input type="date" class="form-control" data-bind="docReceivedDate" data-show="process" />
   </div>
+  <hr />
 </div>
-<hr />
