@@ -1,0 +1,8 @@
+.panel {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    gap: 24px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}

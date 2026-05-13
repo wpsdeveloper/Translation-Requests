@@ -1,0 +1,29 @@
+/* StatusColors.css - Centralized status colors */
+
+:host([status='Needs Approval']) .status-indicator {
+  background-color: var(--tms-status-pending);
+  color: #212529;
+}
+
+:host([status='Approved']) .status-indicator {
+  background-color: var(--tms-status-approved);
+  color: white;
+}
+
+:host([status='Scheduled']) .status-indicator,
+:host([status='Out for Translation']) .status-indicator,
+:host([status='Sent for translation']) .status-indicator {
+  background-color: var(--tms-status-in-progress);
+  color: white;
+}
+
+:host([status='Complete']) .status-indicator {
+  background-color: var(--tms-status-completed);
+  color: white;
+}
+
+:host([status='Canceled']) .status-indicator,
+:host([status='Denied']) .status-indicator {
+  background-color: var(--tms-status-denied);
+  color: white;
+}

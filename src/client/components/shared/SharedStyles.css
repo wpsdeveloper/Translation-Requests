@@ -1,0 +1,85 @@
+:host {
+  font-size: var(--tms-font-size-base);
+}
+
+h2 {
+  font-size: var(--tms-font-size-large);
+}
+
+h3 {
+  font-size: var(--tms-font-size-base);
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.form-control {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: inherit;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  font-size: var(--tms-font-size-small);
+  line-height: 1.5;
+}
+
+/* Button Styles */
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: var(--tms-font-size-small);
+
+  &.btn-primary {
+    background-color: var(--tms-primary);
+    color: white;
+
+    &:hover {
+      background-color: var(--tms-primary-highlight);
+    }
+  }
+
+  &.btn-secondary {
+    background-color: var(--tms-secondary);
+    color: #334155;
+
+    &:hover {
+      background-color: var(--tms-secondary-highlight);
+    }
+  }
+
+  &.btn-success {
+    background-color: var(--tms-success);
+    color: white;
+
+    &:hover {
+      background-color: var(--tms-success-highlight);
+    }
+  }
+
+  &.btn-danger {
+    background-color: var(--tms-danger);
+    color: white;
+
+    &:hover {
+      background-color: var(--tms-danger-highlight);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.help-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 4px;
+  display: block;
+}

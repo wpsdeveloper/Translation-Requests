@@ -1,0 +1,57 @@
+<div class="interpretation-details">
+  <div class="detail-item">
+    <label>Interpretation Type </label>
+    <div data-bind="interpretationType" data-show="view process"></div>
+    <input type="text" class="form-control" data-bind="interpretationType" data-show="edit" />
+  </div>
+
+  <div class="detail-item">
+    <label>Event Date</label>
+    <div data-bind="requestDate" data-format="date" data-show="view process"></div>
+    <input type="date" class="form-control" data-bind="requestDate" data-show="edit" />
+  </div>
+
+  <div class="detail-item">
+    <label>Event Time</label>
+    <div id="view-event-time" data-show="view process"></div>
+    <div class="time-range" data-show="edit">
+      <input type="time" class="form-control" data-bind="startTime" />
+      <span class="time-range-separator">to</span>
+      <input type="time" class="form-control" data-bind="endTime" />
+    </div>
+  </div>
+
+  <div class="detail-item">
+    <label>Event Location</label>
+    <div data-bind="eventLocation" data-show="view process"></div>
+    <input type="text" class="form-control" data-bind="eventLocation" data-show="edit" />
+  </div>
+
+  <hr />
+
+  <div class="detail-item">
+    <label>Contractor</label>
+    <div data-show="view edit" data-bind="contractor"></div>
+    <div id="process-mode" data-show="process" style="display: none">
+      <contractor-select id="contractor-select"></contractor-select>
+    </div>
+  </div>
+
+  <div class="detail-item">
+    <label>Date Scheduled</label>
+    <div data-bind="scheduledDate" data-format="date" data-show="view edit"></div>
+    <input type="date" class="form-control" data-bind="scheduledDate" data-show="process" />
+  </div>
+
+  <div class="detail-item">
+    <label>Date Guest Confirmed</label>
+    <div data-bind="guestConfirmedDate" data-format="date" data-show="view edit"></div>
+    <input type="date" class="form-control" data-bind="guestConfirmedDate" data-show="process" />
+  </div>
+
+  <div class="detail-item">
+    <label>Date Tech Confirmed</label>
+    <div data-bind="techConfirmedDate" data-format="date" data-show="view edit"></div>
+    <input type="date" class="form-control" data-bind="techConfirmedDate" data-show="process" />
+  </div>
+</div>

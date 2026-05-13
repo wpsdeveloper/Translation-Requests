@@ -1,0 +1,77 @@
+header,
+.panel {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.panel {
+  .panel {
+    display: flex;
+    gap: 24px;
+  }
+
+  /* Center the left panel when details panel is empty */
+  .panel:has(#details-card:empty) {
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* Align left when details panel has content */
+  .panel:has(#details-card:not(:empty)) {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  /* Hide empty details card to avoid extra space */
+  #details-card:empty {
+    display: none;
+  }
+}
+
+/* Flex children sizing */
+.panel>section:first-child {
+  flex: 2.5;
+}
+
+.panel>section:last-child {
+  flex: 1;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  padding: 24px;
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: start;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+}

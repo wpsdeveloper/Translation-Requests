@@ -1,0 +1,64 @@
+:host {
+  display: flex !important;
+  flex-direction: row;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #eee;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+
+  &.selected {
+    background-color: #e8f0fe !important;
+  }
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.td {
+  padding: 12px 8px;
+  vertical-align: middle;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:nth-child(1) {
+    flex: 1 0;
+  }
+
+  /* Status */
+  &:nth-child(2) {
+    flex: 0.8;
+  }
+
+  /* Request Date */
+  &:nth-child(3) {
+    flex: 0.8;
+  }
+
+  /* Submitted */
+  &:nth-child(4) {
+    flex: 1;
+  }
+
+  /* Type */
+  &:nth-child(5) {
+    flex: 2;
+  }
+
+  /* Requested By */
+}
+
+.requester-school {
+  font-size: 0.85rem;
+  color: #555;
+  display: block;
+  /* Ensure it stays under the name if needed, but here it's inside the same cell usually */
+}

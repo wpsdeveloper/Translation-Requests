@@ -1,0 +1,57 @@
+# --- Dependencies (The biggest token burners) ---
+node_modules/
+bower_components/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+vendor/
+.venv/
+env/
+venv/
+
+# --- Build & Output (AI should never read compiled code) ---
+dist/
+build/
+.next/
+.nuxt/
+out/
+*.min.js
+*.min.css
+*.map
+
+# --- Version Control & IDE ---
+.git/
+.svn/
+.hg/
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# --- Logs & Databases ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.sqlite
+*.db
+
+# --- Media & Assets (Too heavy for LLM context) ---
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.mp4
+*.pdf
+*.zip
+*.tar.gz
+
+# --- Secrets & Sensitive Data (Security Best Practice) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key

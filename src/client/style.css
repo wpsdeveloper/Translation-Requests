@@ -1,0 +1,241 @@
+:root {
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: #1d2939;
+  background: #f5f7fb;
+  line-height: 1.5;
+  font-size: var(--tms-font-size-base);
+
+  --tms-font-size-tiny: 0.75rem;
+  --tms-font-size-small: 0.875rem;
+  --tms-font-size-base: 1rem;
+  --tms-font-size-large: 1.125rem;
+  --tms-font-size-xlarge: 1.25rem;
+  --tms-font-size-2xlarge: 1.5rem;
+  --tms-font-size-3xlarge: 1.875rem;
+  --tms-font-size-4xlarge: 2.25rem;
+  --tms-font-size-5xlarge: 3rem;
+
+  --tms-text-primary: #1d2939;
+  --tms-text-secondary: #64748b;
+  --tms-text-muted: #94a3b8;
+  --tms-text-on-primary: #ffffff;
+
+  --tms-border-color: #e2e8f0;
+
+  --tms-body-background-color: #f5f7fb;
+  --tms-panel-background-color: #ffffff;
+
+  --tms-primary: #2563eb;
+  --tms-primary-highlight: #1d4ed8;
+  --tms-success: #10b981;
+  --tms-success-highlight: #059669;
+  --tms-danger: #ef4444;
+  --tms-danger-highlight: #dc2626;
+  --tms-slate: #1d2939;
+  --tms-secondary: #f1f5f9;
+  --tms-secondary-highlight: #e2e8f0;
+  --tms-nav-text-color: #64748b;
+  --tms-nav-hover-background-color: #e6e6e6;
+  --tms-nav-hover-text-color: #1e293b;
+  --tms-nav-active-background-color: #2563eb;
+  --tms-nav-active-text-color: #ffffff;
+
+  --tms-status-pending: #ffc107;
+  --tms-status-approved: #17a2b8;
+  --tms-status-in-progress: #6747ff;
+  --tms-status-completed: #10b981;
+  --tms-status-denied: #dc3545;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 24px;
+  background: #f5f7fb;
+}
+
+header {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 2.4vw, 2.5rem);
+  }
+
+  .subtitle {
+    color: #475569;
+    font-size: 0.98rem;
+    max-width: 720px;
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--tms-nav-text-color);
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: var(--tms-nav-hover-background-color);
+      color: var(--tms-nav-hover-text-color);
+    }
+
+    &:focus {
+      background: var(--tms-nav-hover-background-color);
+      color: var(--tms-nav-hover-text-color);
+    }
+
+    &.active {
+      background: var(--tms-nav-active-background-color);
+      color: var(--tms-nav-active-text-color);
+    }
+  }
+}
+
+.view {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  padding: 24px;
+
+  h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+  }
+}
+
+select {
+  min-width: 200px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+
+
+/* Modal Styling */
+.modal {
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-content {
+    padding: 24px;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}
+
+/* Toast Styling */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .toast {
+    background: #334155;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    animation: slideIn 0.3s ease-out;
+  }
+}
+
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 960px) {
+  .panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 18px;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid var(--tms-primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

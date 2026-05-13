@@ -1,0 +1,88 @@
+:host {
+  font-size: var(--tms-font-size-small);
+
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 450px;
+  background: white;
+  border-left: 1px solid #ddd;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 1000;
+
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+
+  /* Start hidden (pushed off-screen to the right) */
+  transform: translateX(100%);
+}
+
+/* When the 'open' class is added to the host element */
+:host(.open) {
+  transform: translateX(0);
+}
+
+.detail-header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-top: 30px;
+}
+
+.close-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: #64748b;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    color: #0f172a;
+    transform: scale(1.1);
+  }
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  svg {
+    display: block;
+  }
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: #007bff;
+  }
+}
+
+footer {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}

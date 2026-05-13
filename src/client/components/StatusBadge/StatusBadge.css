@@ -1,0 +1,14 @@
+/* StatusBadge.css */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: white;
+  background-color: #6c757d;
+  /* Default Gray */
+}

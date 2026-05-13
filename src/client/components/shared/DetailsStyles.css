@@ -1,0 +1,43 @@
+:host {
+  font-size: var(--tms-font-size-small);
+}
+
+label {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.detail-item {
+  label {
+    display: inline-block;
+    font-weight: bold;
+  }
+
+  .view-mode {
+    display: inline-block;
+  }
+}
+
+/* Declarative Visibility */
+[data-show] {
+  display: none !important;
+}
+
+:host([mode='view']) [data-show~='view'],
+:host([mode='edit']) [data-show~='edit'],
+:host([mode='process']) [data-show~='process'] {
+  display: inline-block !important;
+}
+
+/* Handle special display types */
+:host([mode='view']) [data-show~='view'].time-range,
+:host([mode='edit']) [data-show~='edit'].time-range,
+:host([mode='process']) [data-show~='process'].time-range {
+  display: flex !important;
+  gap: 10px;
+}
+
+.time-range-separator {
+  display: flex;
+  align-items: center;
+}
