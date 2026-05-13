@@ -4,6 +4,8 @@ import { formatDate, formatTime } from '../../services/utils';
 import { showToast, showModal } from '../../services/ui';
 import { requestActions } from '../../services/actions';
 import panelTemplate from './DetailsPanel.htm?raw';
+import translationTemplate from './DetailsTranslation/DetailsTranslation.htm?raw';
+import interpretationTemplate from './DetailsInterpretation/DetailsInterpretation.htm?raw';
 
 import sharedPanelStyles from '../shared/SharedStyles.css?inline';
 import panelStyles from './DetailsPanel.css?inline';

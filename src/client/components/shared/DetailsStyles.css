@@ -2,25 +2,66 @@
   font-size: var(--tms-font-size-small);
 }
 
+.interpretation-details,
+.details-translation,
+.shared-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Creates two equal columns */
+  gap: 0 16px;
+  /* Adds space between items */
+  align-items: start;
+  padding-top: 10px;
+}
+
 label {
   display: inline-block;
   font-weight: bold;
+  color: #64748b;
 }
 
 .detail-item {
-  label {
-    display: inline-block;
-    font-weight: bold;
-  }
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+  gap: 4px;
+  min-width: 0;
 
-  .view-mode {
-    display: inline-block;
+  label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    color: #64748b;
+    /* Muted slate color */
+    font-weight: 600;
   }
+}
+
+/* Items that MUST take full width */
+.full-width,
+hr,
+.detail-item:has(textarea),
+.detail-item:has([data-bind="eventLocation"]),
+.detail-item:has([data-bind="description"]) {
+  grid-column: span 2;
+}
+
+/* Force specific items to take up the full width (e.g., Description, Location) */
+.detail-item:has([data-bind="description"]),
+.detail-item:has([data-bind="eventLocation"]),
+hr {
+  grid-column: span 2;
 }
 
 /* Declarative Visibility */
 [data-show] {
   display: none !important;
+}
+
+div[data-bind]:empty::before {
+  content: 'None assigned';
+  color: #94a3b8;
+  font-style: italic;
 }
 
 :host([mode='view']) [data-show~='view'],

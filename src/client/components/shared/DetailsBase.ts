@@ -114,7 +114,7 @@ export abstract class DetailsBase extends SlidingPanel {
   /**
    * Hook for sub-classes to handle custom hydration logic
    */
-  protected hydrate(_root: ShadowRoot): void {}
+  protected hydrate(_root: ShadowRoot): void { }
 
   /**
    * Hook for sub-classes to handle custom mode logic (rarely needed with declarative CSS)

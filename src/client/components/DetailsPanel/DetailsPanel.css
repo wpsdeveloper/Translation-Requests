@@ -1,24 +1,22 @@
 :host {
   font-size: var(--tms-font-size-small);
-
-  display: block;
+  content: '';
+  /* 1. Reset the host to be the narrow panel only */
   position: fixed;
   top: 0;
   right: 0;
-  width: 450px;
-  background: white;
-  border-left: 1px solid #ddd;
-  height: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow-y: auto;
+  width: 550px;
+  /* This is your fixed width */
+  height: 100vh;
   z-index: 1000;
 
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
+  /* 2. Remove the gray background and padding from here */
+  background: transparent;
+  padding: 0;
 
-  /* Start hidden (pushed off-screen to the right) */
+  /* 3. Sliding logic */
   transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* When the 'open' class is added to the host element */
@@ -26,30 +24,123 @@
   transform: translateX(0);
 }
 
-.detail-header-main {
+:host(.open)::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  right: 550px;
+  /* This keeps the blur to the LEFT of the panel */
+  left: -100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(2px);
+  z-index: -1;
+  pointer-events: auto;
+  /* Click this to close! */
+}
+
+.panel-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #ffffff;
+  /* This provides the white background */
+  padding: 20px 30px;
+  box-sizing: border-box;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+  /* Stronger shadow for depth */
+  overflow-y: auto;
+  /* Scroll happens inside the white area */
+}
+
+header {
+  /* Create a distinct section at the top */
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  /* Aligns title and status bar to the top */
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 20px;
+}
+
+.header-top-row {
+  display: flex;
+  justify-content: space-between;
+  /* Pushes Title/Edit to left, Status to right */
   align-items: center;
-  margin-bottom: 15px;
-  margin-top: 30px;
+  gap: 12px;
+}
+
+.header-top-row h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  /* Slate 900 */
+  letter-spacing: -0.025em;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  /* Stack status and edit button */
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Group Title and Edit Button */
+.detail-header-main>div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Modernize the Status Select component positioning */
+#detail-status {
+  min-width: 140px;
+}
+
+/* Polish the Edit Button */
+.edit-icon-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.edit-icon-btn:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.edit-icon-btn svg {
+  stroke: currentColor;
+  /* Matches the color transition of the button */
 }
 
 .close-icon {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  font-weight: 300;
-  color: #64748b;
-  cursor: pointer;
-  line-height: 1;
-  padding: 4px 8px;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-  z-index: 10;
+  top: 15px;
+  left: -45px;
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 
   &:hover {
     color: #0f172a;
@@ -82,7 +173,10 @@
 }
 
 footer {
-  margin-top: 30px;
-  display: flex;
-  gap: 10px;
+  margin-top: auto;
+  /* Push to bottom if you use flex container */
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+  justify-content: flex-end;
+  /* Align buttons to the right */
 }
