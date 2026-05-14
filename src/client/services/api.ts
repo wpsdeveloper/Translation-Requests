@@ -1,3 +1,4 @@
+import { formatDate, formatTime } from './utils';
 // Determine if we are running in a local environment or inside Google Apps Script.
 // This allows us to use mock data for faster frontend development.
 const IS_MOCK = !window.location.href.includes('google') && !window.location.href.includes('script');
@@ -27,18 +28,38 @@ if (IS_MOCK && typeof (window as any).google === 'undefined') {
   };
 }
 
-
 /**
  * Helper to convert Date objects back to ISO strings for the server,
  * or return an empty string if null/undefined.
  */
 const dehydrateDate = (date: Date | string | null | undefined): string => {
+  if (date instanceof Date) return formatDate(date, 'MM/DD/YYYY');
+  return '';
+};
+
+const dehydrateDateTime = (date: Date | string | null | undefined): string => {
   if (date instanceof Date) return date.toISOString();
-  return date || '';
+  return '';
+};
+
+const dehydrateTime = (date: Date | string | null | undefined): string => {
+  if (date instanceof Date) return formatTime(date, 'h:mm A');
+  return '';
+};
+
+const hydrateDate = (value: string | null | undefined): Date | null => {
+  if (value === null || value === undefined) return null;
+  try {
+    const newDate = new Date(value);
+    if (isNaN(newDate.getTime())) return null;
+    return newDate;
+  } catch {
+    return null;
+  }
 };
 
 export interface FetchDataResult {
-  requests: BaseRequest[];
+  requests: HydratedRequest[];
   schools: string[];
   user: AppUser | null;
 }
@@ -84,70 +105,28 @@ export const fetchData = (): Promise<FetchDataResult> => {
 export const saveRequest = (updatedData: HydratedRequest): Promise<HydratedRequest> => {
   // Create a copy and convert Dates back to ISO strings or formatted strings for the server
   let dataToSend: RawTranslationRequest | RawInterpretationRequest;
-  if (updatedData.reqType === "Translation") {
+  if (updatedData.reqType === 'Translation') {
     const translationRequest = updatedData as TranslationRequest;
     dataToSend = {
       ...translationRequest,
-      requestDate:
-        translationRequest.requestDate instanceof Date ? translationRequest.requestDate.toISOString() : translationRequest.requestDate || '',
-      submittedDate:
-        translationRequest.submittedDate instanceof Date
-          ? translationRequest.submittedDate.toISOString()
-          : translationRequest.submittedDate || '',
-      approvedDate:
-        translationRequest.approvedDate instanceof Date
-          ? translationRequest.approvedDate.toISOString()
-          : translationRequest.approvedDate || '',
-      documentReturnedDate:
-        translationRequest.documentReturnedDate instanceof Date
-          ? translationRequest.documentReturnedDate.toISOString()
-          : translationRequest.documentReturnedDate || '',
-      contractorScheduledDate:
-        translationRequest.contractorScheduledDate instanceof Date
-          ? translationRequest.contractorScheduledDate.toISOString()
-          : translationRequest.contractorScheduledDate || '',
-      guestConfirmedDate:
-        translationRequest.guestConfirmedDate instanceof Date
-          ? translationRequest.guestConfirmedDate.toISOString()
-          : translationRequest.guestConfirmedDate || '',
-      techConfirmedDate:
-        translationRequest.techConfirmedDate instanceof Date
-          ? translationRequest.techConfirmedDate.toISOString()
-          : translationRequest.techConfirmedDate || '',
+      requestDate: dehydrateDate(translationRequest.requestDate),
+      submittedDate: dehydrateDate(translationRequest.submittedDate),
+      approvedDate: dehydrateDate(translationRequest.approvedDate),
+      documentReturnedDate: dehydrateDate(translationRequest.documentReturnedDate),
+      contractorScheduledDate: dehydrateDate(translationRequest.contractorScheduledDate),
     } as RawTranslationRequest;
   } else {
     const interpretationRequest = updatedData as InterpretationRequest;
     dataToSend = {
       ...interpretationRequest,
-      requestDate:
-        updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || '',
-      submittedDate:
-        updatedData.submittedDate instanceof Date
-          ? updatedData.submittedDate.toISOString()
-          : updatedData.submittedDate || '',
-      approvedDate:
-        updatedData.approvedDate instanceof Date
-          ? updatedData.approvedDate.toISOString()
-          : updatedData.approvedDate || '',
-      startTime:
-        updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || '',
-      endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || '',
-      contractorScheduledDate:
-        updatedData.contractorScheduledDate instanceof Date
-          ? updatedData.contractorScheduledDate.toISOString()
-          : updatedData.contractorScheduledDate || '',
-      documentReturnedDate:
-        updatedData.documentReturnedDate instanceof Date
-          ? updatedData.documentReturnedDate.toISOString()
-          : updatedData.documentReturnedDate || '',
-      guestConfirmedDate:
-        updatedData.guestConfirmedDate instanceof Date
-          ? updatedData.guestConfirmedDate.toISOString()
-          : updatedData.guestConfirmedDate || '',
-      techConfirmedDate:
-        updatedData.techConfirmedDate instanceof Date
-          ? updatedData.techConfirmedDate.toISOString()
-          : updatedData.techConfirmedDate || '',
+      requestDate: dehydrateDate(interpretationRequest.requestDate),
+      submittedDate: dehydrateDateTime(interpretationRequest.submittedDate),
+      approvedDate: dehydrateDateTime(interpretationRequest.approvedDate),
+      startTime: dehydrateTime(interpretationRequest.startTime),
+      endTime: dehydrateTime(interpretationRequest.endTime),
+      contractorScheduledDate: dehydrateDate(interpretationRequest.contractorScheduledDate),
+      guestConfirmedDate: dehydrateDate(interpretationRequest.guestConfirmedDate),
+      techConfirmedDate: dehydrateDate(interpretationRequest.techConfirmedDate),
     } as RawInterpretationRequest;
   }
 
@@ -175,49 +154,26 @@ export const saveRequest = (updatedData: HydratedRequest): Promise<HydratedReque
  */
 export const addRequest = (newData: HydratedRequest): Promise<HydratedRequest> => {
   let dataToSend: RawTranslationRequest | RawInterpretationRequest;
-  if (newData.reqType === "Translation") {
+  if (newData.reqType === 'Translation') {
     dataToSend = {
       ...(newData as any),
-      requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
-      submittedDate:
-        newData.submittedDate instanceof Date ? newData.submittedDate.toISOString() : newData.submittedDate || '',
-      approvedDate:
-        newData.approvedDate instanceof Date ? newData.approvedDate.toISOString() : newData.approvedDate || '',
-      contractorScheduledDate:
-        newData.contractorScheduledDate instanceof Date
-          ? newData.contractorScheduledDate.toISOString()
-          : newData.contractorScheduledDate || '',
-      documentReturnedDate:
-        newData.documentReturnedDate instanceof Date
-          ? newData.documentReturnedDate.toISOString()
-          : newData.documentReturnedDate || '',
+      requestDate: dehydrateDate(newData.requestDate),
+      submittedDate: dehydrateDate(newData.submittedDate),
+      approvedDate: dehydrateDate(newData.approvedDate),
+      contractorScheduledDate: dehydrateDate(newData.contractorScheduledDate),
+      documentReturnedDate: dehydrateDate(newData.documentReturnedDate),
     } as RawTranslationRequest;
   } else {
     dataToSend = {
       ...(newData as any),
-      requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
-      submittedDate:
-        newData.submittedDate instanceof Date ? newData.submittedDate.toISOString() : newData.submittedDate || '',
-      approvedDate:
-        newData.approvedDate instanceof Date ? newData.approvedDate.toISOString() : newData.approvedDate || '',
-      startTime: newData.startTime instanceof Date ? newData.startTime.toISOString() : newData.startTime || '',
-      endTime: newData.endTime instanceof Date ? newData.endTime.toISOString() : newData.endTime || '',
-      contractorScheduledDate:
-        newData.contractorScheduledDate instanceof Date
-          ? newData.contractorScheduledDate.toISOString()
-          : newData.contractorScheduledDate || '',
-      documentReturnedDate:
-        newData.documentReturnedDate instanceof Date
-          ? newData.documentReturnedDate.toISOString()
-          : newData.documentReturnedDate || '',
-      guestConfirmedDate:
-        newData.guestConfirmedDate instanceof Date
-          ? newData.guestConfirmedDate.toISOString()
-          : newData.guestConfirmedDate || '',
-      techConfirmedDate:
-        newData.techConfirmedDate instanceof Date
-          ? newData.techConfirmedDate.toISOString()
-          : newData.techConfirmedDate || '',
+      requestDate: dehydrateDate(newData.requestDate),
+      submittedDate: dehydrateDateTime(newData.submittedDate),
+      approvedDate: dehydrateDateTime(newData.approvedDate),
+      startTime: dehydrateTime(newData.startTime),
+      endTime: dehydrateTime(newData.endTime),
+      contractorScheduledDate: dehydrateDate(newData.contractorScheduledDate),
+      guestConfirmedDate: dehydrateDate(newData.guestConfirmedDate),
+      techConfirmedDate: dehydrateDate(newData.techConfirmedDate),
     } as RawInterpretationRequest;
   }
 
@@ -265,7 +221,7 @@ export const deleteRequest = (request: BaseRequest): Promise<BaseRequest> => {
       .withFailureHandler(reject)
       .deleteRequestFromServer(request.id);
   });
-}
+};
 
 /**
  * Uploads a file to Google Drive.
@@ -326,9 +282,9 @@ export const saveUserData = (userData: AppUser, action: string): Promise<AppUser
  * which are much easier to format and manipulate in the UI.
  */
 export function hydrate(request: RawRequest): HydratedRequest {
-  if (request.reqType === "Translation") {
+  if (request.reqType === 'Translation') {
     return {
-      ...request as any,
+      ...(request as any),
       requestDate: request.requestDate ? new Date(request.requestDate) : null,
       submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
       approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
@@ -337,16 +293,41 @@ export function hydrate(request: RawRequest): HydratedRequest {
     } as TranslationRequest;
   } else {
     return {
-      ...request as any,
+      ...(request as any),
       requestDate: request.requestDate ? new Date(request.requestDate) : null,
       submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
       approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
-      startTime: request.startTime ? new Date(request.startTime) : null,
-      endTime: request.endTime ? new Date(request.endTime) : null,
       contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
-      documentReturnedDate: request.documentReturnedDate ? new Date(request.documentReturnedDate) : null,
       guestConfirmedDate: request.guestConfirmedDate ? new Date(request.guestConfirmedDate) : null,
       techConfirmedDate: request.techConfirmedDate ? new Date(request.techConfirmedDate) : null,
+
+      startTime: hydrateTime(request.startTime),
+      endTime: hydrateTime(request.endTime),
     } as InterpretationRequest;
+  }
+}
+
+function hydrateTime(time: string | null): string | null {
+  if (!time) return 'Invalid time';
+
+  const timeRegex = /^\d{2}:\d{2}(:\d{2})?$/;
+  if (!timeRegex.test(time)) {
+    return 'Invalid time format';
+  }
+
+  try {
+    let [hours, minutes, seconds] = time.split(':').map(Number);
+
+    if (hours > 23 || minutes > 59 || seconds > 59) {
+      return 'Invalid time';
+    }
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+  } catch {
+    return 'Invalid time';
   }
 }

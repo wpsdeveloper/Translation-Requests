@@ -26,7 +26,6 @@ interface RawBaseRequest {
   targetLanguage: string;
   description: string;
 
-
   approverName: string;
   approvedDate: string;
 
@@ -34,24 +33,23 @@ interface RawBaseRequest {
   contractorName: string;
 
   contractorScheduledDate: string;
-
-  documentReturnedDate: string;
-  guestConfirmedDate: string;
-  techConfirmedDate: string;
 }
 
 interface RawTranslationRequest extends RawBaseRequest {
-  reqType: "Translation";
+  reqType: 'Translation';
   docPageCount: string;
   docLink: string;
+  documentReturnedDate: string;
 }
 
 interface RawInterpretationRequest extends RawBaseRequest {
-  reqType: "Interpretation";
+  reqType: 'Interpretation';
   interpretationType: string;
   eventLocation: string;
   endTime: string;
   startTime: string;
+  guestConfirmedDate: string;
+  techConfirmedDate: string;
 }
 
 type RawRequest = RawTranslationRequest | RawInterpretationRequest;
@@ -62,35 +60,29 @@ type RawRequest = RawTranslationRequest | RawInterpretationRequest;
  */
 interface BaseRequest extends Omit<
   RawBaseRequest,
-  | 'submittedDate'
-  | 'requestDate'
-  | 'approvedDate'
-  | 'contractorScheduledDate'
-  | 'documentReturnedDate'
-  | 'guestConfirmedDate'
-  | 'techConfirmedDate'
+  'submittedDate' | 'requestDate' | 'approvedDate' | 'contractorScheduledDate'
 > {
   submittedDate: Date | null;
   requestDate: Date | null;
   approvedDate: Date | null;
   contractorScheduledDate: Date | null;
-  documentReturnedDate: Date | null;
-  guestConfirmedDate: Date | null;
-  techConfirmedDate: Date | null;
 }
 
 interface TranslationRequest extends BaseRequest {
-  reqType: "Translation";
+  reqType: 'Translation';
+  documentReturnedDate: Date | null;
   docPageCount: string;
   docLink: string;
 }
 
 interface InterpretationRequest extends BaseRequest {
-  reqType: "Interpretation";
+  reqType: 'Interpretation';
   interpretationType: string;
   eventLocation: string;
-  startTime: Date | null;
-  endTime: Date | null;
+  startTime: string | null;
+  endTime: string | null;
+  guestConfirmedDate: Date | null;
+  techConfirmedDate: Date | null;
 }
 
 type HydratedRequest = TranslationRequest | InterpretationRequest;

@@ -266,6 +266,11 @@ div[data-bind]:empty::before {
   gap: 10px;
 }
 
+.time-view {
+  display: flex;
+  gap: 10px;
+}
+
 .time-range-separator {
   display: flex;
   align-items: center;

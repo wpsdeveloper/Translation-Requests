@@ -9,17 +9,23 @@
     <input type="text" class="form-control" data-show="edit" data-bind="originalLanguage" />
   </div>
   <div class="detail-item">
+    <label>Needed By</label>
+    <div data-show="view" data-bind="requestDate" data-format="date"></div>
+    <input type="text" class="form-control" data-bind="requestDate" data-format="date" data-show="edit" />
+  </div>
+  <div class="detail-item col-2">
+    <label>Target Language</label>
+    <div data-show="view" data-bind="targetLanguage"></div>
+    <input type="text" class="form-control" data-show="edit" data-bind="targetLanguage" />
+  </div>
+
+  <div class="detail-item">
     <label data-show="edit">Document Link</label>
     <div data-show="view process">
       <a href="#" target="_blank" id="view-document-link" class="file-link" data-bind="docLink">View Document</a>
       <div data-show="view process"><span data-bind="docPageCount"></span> pages</div>
     </div>
     <input type="text" class="form-control" data-bind="docLink" data-show="edit" />
-  </div>
-  <div class="detail-item col-2">
-    <label>Target Language</label>
-    <div data-show="view" data-bind="targetLanguage"></div>
-    <input type="text" class="form-control" data-show="edit" data-bind="targetLanguage" />
   </div>
 
   <div class="detail-item">

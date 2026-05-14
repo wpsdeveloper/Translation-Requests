@@ -18,7 +18,11 @@
 
   <div class="detail-item">
     <label>Event Time</label>
-    <div data-bind="startTime" data-show="view process"></div>
+    <div class="time-view">
+      <span data-bind="startTime" data-show="view process"></span>
+      <span class="time-range-separator">to</span>
+      <span data-bind="endTime" data-show="view process"></span>
+    </div>
     <div class="time-range" data-show="edit">
       <input type="time" class="form-control" data-bind="startTime" />
       <span class="time-range-separator">to</span>
@@ -29,8 +33,13 @@
   <div class="detail-item">
     <label>Description</label>
     <div id="view-description" data-show="view process" data-bind="description"></div>
-    <textarea id="edit-description" class="form-control" data-show="edit" style="display: none"
-      data-bind="description"></textarea>
+    <textarea
+      id="edit-description"
+      class="form-control"
+      data-show="edit"
+      style="display: none"
+      data-bind="description"
+    ></textarea>
   </div>
 
   <div class="full-width">
