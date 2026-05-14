@@ -13,5 +13,6 @@
     "skipLibCheck": true,
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/shared/*.ts"]
+  "include": ["src/shared/*.ts", "src/server/**/*"],
+  "exclude": ["src/test/**/*", "src/client/**/*"]
 }

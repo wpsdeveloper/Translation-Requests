@@ -117,6 +117,11 @@ function mapAppSheetRequest(row: any): RawRequest {
     submittedDate: makeString(row['Submitted Date'] || row['SubmittedDate'] || row['submitted_date']),
     endTime: makeString(row['End Time'] || row['EndTime'] || row['end_time']),
     startTime: makeString(row['Start Time'] || row['StartTime'] || row['start_time']),
+
+    contractorScheduledDate: makeString(row['Contractor Scheduled Date'] || row['contractor_scheduled_date']),
+    documentReturnedDate: makeString(row['Document Returned Date'] || row['document_returned_date']),
+    guestConfirmedDate: makeString(row['Guest Confirmed Date'] || row['guest_confirmed_date']),
+    techConfirmedDate: makeString(row['Tech Confirmed Date'] || row['tech_confirmed_date']),
   };
 }
 
@@ -442,7 +447,7 @@ function deleteRequestFromServer(recordId: string) {
   // Admin can delete any; non-admin must belong to same school
   if (user.role !== 'Admin') {
     const rawRequests = getRequestsFromAppSheet();
-    const existing = rawRequests.find(r => r.id === recordId);
+    const existing = rawRequests.find((r) => r.id === recordId);
     if (!existing) {
       throw new Error('Record not found');
     }
@@ -478,4 +483,3 @@ function deleteRequestFromServer(recordId: string) {
     return { success: true };
   }
 }
-
