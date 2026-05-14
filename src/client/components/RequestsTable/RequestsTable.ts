@@ -101,7 +101,7 @@ class RequestsTable extends HTMLElement {
 
     rows.forEach((rowData) => {
       // Create our custom row element
-      const rowEl = document.createElement('app-row') as any;
+      const rowEl = document.createElement('requests-row') as any;
       container.appendChild(rowEl);
 
       // Pass the row data directly to the child component
@@ -110,10 +110,10 @@ class RequestsTable extends HTMLElement {
   }
 }
 
-customElements.define('app-table', RequestsTable);
+customElements.define('requests-table', RequestsTable);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'app-table': RequestsTable;
+    'requests-table': RequestsTable;
   }
 }

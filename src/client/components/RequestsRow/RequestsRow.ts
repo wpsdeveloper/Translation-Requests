@@ -16,7 +16,7 @@ sheet.replaceSync(RequestsRowStyles);
  */
 class RequestsRow extends HTMLElement {
   // Internal state for the row data.
-  private _data: BaseRequest = {} as BaseRequest;
+  private _data: HydratedRequest = {} as HydratedRequest;
 
   constructor() {
     super();
@@ -30,7 +30,7 @@ class RequestsRow extends HTMLElement {
    * Complex data (like a Request object) should be passed via a property setter
    * rather than an attribute, to avoid expensive stringification.
    */
-  set data(value: BaseRequest) {
+  set data(value: HydratedRequest) {
     this._data = value;
     // Only render if the element is actually in the DOM.
     if (this.isConnected) {
@@ -38,7 +38,7 @@ class RequestsRow extends HTMLElement {
     }
   }
 
-  get data(): BaseRequest {
+  get data(): HydratedRequest {
     return this._data;
   }
 
@@ -101,10 +101,10 @@ class RequestsRow extends HTMLElement {
   }
 }
 
-customElements.define('app-row', RequestsRow);
+customElements.define('requests-row', RequestsRow);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'app-row': RequestsRow;
+    'requests-row': RequestsRow;
   }
 }
