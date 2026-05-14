@@ -1,8 +1,8 @@
-import { AppUser, TranslationRequest } from '../../shared/types';
+import { AppUser, BaseRequest } from '../../shared/types';
 
 interface State {
-  selectedRow: TranslationRequest | null;
-  allRows: TranslationRequest[];
+  selectedRow: BaseRequest | null;
+  allRows: BaseRequest[];
   schools: string[];
   filterSchool: string | null;
   filterStatuses: string[];

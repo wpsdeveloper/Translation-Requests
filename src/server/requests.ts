@@ -12,14 +12,14 @@
  */
 function getDataFromAppSheet(user: AppUser) {
   try {
-    const rawRequests = getRequestsFromAppSheet();
+    const RawBaseRequests = getRequestsFromAppSheet();
     const schools = getSchoolsFromAppSheet();
 
     // Role-based filtering
-    let filteredRequests = rawRequests;
+    let filteredRequests = RawBaseRequests;
     if (user.role !== 'Admin') {
       const userSchools = user.schools || [];
-      filteredRequests = rawRequests.filter((req) => userSchools.includes(req.school));
+      filteredRequests = RawBaseRequests.filter((req) => userSchools.includes(req.school));
     }
 
     return {
@@ -32,7 +32,7 @@ function getDataFromAppSheet(user: AppUser) {
   }
 }
 
-function getRequestsFromAppSheet(): RawRequest[] {
+function getRequestsFromAppSheet(): RawBaseRequest[] {
   const tableName = 'Requests';
 
   const url = `https://api.appsheet.com/api/v2/apps/${Config.AppSheetAppId}/tables/${tableName}/Action`;
@@ -89,40 +89,50 @@ function getSchoolsFromAppSheet(): string[] {
  */
 /**
  * mapAppSheetRequest: Translates AppSheet's internal row format into our application's
- * typed RawRequest interface. This layer is critical because AppSheet column names
+ * typed RawBaseRequest interface. This layer is critical because AppSheet column names
  * often contain spaces or vary between tables.
  */
-function mapAppSheetRequest(row: any): RawRequest {
-  return {
+function mapAppSheetRequest(row: any): RawTranslationRequest | RawInterpretationRequest {
+  const newBaseRow: RawBaseRequest = {
     id: makeString(row['ID'] || row['id']),
     email: makeString(row['Requester Email'] || row['RequesterEmail'] || row['requester_email']),
     name: makeString(row['Requester Name'] || row['RequesterName'] || row['requester_name']),
     school: makeString(row['School'] || row['school']),
     status: makeString(row['Status'] || row['status']),
-    reqType: makeString(row['Request Type'] || row['RequestType'] || row['request_type']),
     originalLanguage: makeString(row['Language Original'] || row['LanguageOriginal'] || row['language_original']),
     targetLanguage: makeString(row['Language Target'] || row['LanguageTarget'] || row['language_target']),
-    interpretationType: makeString(
-      row['Interpretation Type'] || row['InterpretationType'] || row['interpretation_type']
-    ),
-    docPageCount: makeString(row['Page Count'] || row['PageCount'] || row['page_count']),
     description: makeString(row['Description'] || row['description']),
-    docLink: makeString(row['Document Link'] || row['DocumentLink'] || row['document_link']),
-    eventLocation: makeString(row['Event Location'] || row['EventLocation'] || row['event_location']),
     contractor: makeString(row['Contractor'] || row['contractor']),
     contractorName: makeString(row['Contractor Name'] || row['contractor_name']),
     approverName: makeString(row['Approver Name'] || row['approver_name']),
     requestDate: makeString(row['Date Needed'] || row['DateNeeded'] || row['date_needed']),
+    contractorScheduledDate: makeString(row['Contractor Scheduled Date'] || row['contractor_scheduled_date']),
     approvedDate: makeString(row['Approved Date'] || row['approved_date']),
     submittedDate: makeString(row['Submitted Date'] || row['SubmittedDate'] || row['submitted_date']),
-    endTime: makeString(row['End Time'] || row['EndTime'] || row['end_time']),
-    startTime: makeString(row['Start Time'] || row['StartTime'] || row['start_time']),
-
-    contractorScheduledDate: makeString(row['Contractor Scheduled Date'] || row['contractor_scheduled_date']),
-    documentReturnedDate: makeString(row['Document Returned Date'] || row['document_returned_date']),
-    guestConfirmedDate: makeString(row['Guest Confirmed Date'] || row['guest_confirmed_date']),
-    techConfirmedDate: makeString(row['Tech Confirmed Date'] || row['tech_confirmed_date']),
   };
+
+  const reqType = makeString(row['Request Type'] || row['RequestType'] || row['request_type']);
+  if (reqType === 'Translation') {
+    return {
+      ...newBaseRow,
+      reqType: 'Translation',
+      docPageCount: makeString(row['Page Count'] || row['PageCount'] || row['page_count']),
+      docLink: makeString(row['Document Link'] || row['DocumentLink'] || row['document_link']),
+      documentReturnedDate: makeString(row['Document Returned Date'] || row['document_returned_date']),
+    } as RawTranslationRequest;
+  } else {
+    return {
+      ...newBaseRow,
+      reqType: 'Interpretation',
+      interpretationType: makeString(row['Interpretation Type'] || row['InterpretationType'] || row['interpretation_type']),
+      eventLocation: makeString(row['Event Location'] || row['EventLocation'] || row['event_location']),
+      endTime: makeString(row['End Time'] || row['EndTime'] || row['end_time']),
+      startTime: makeString(row['Start Time'] || row['StartTime'] || row['start_time']),
+      guestConfirmedDate: makeString(row['Guest Confirmed Date'] || row['guest_confirmed_date']),
+      techConfirmedDate: makeString(row['Tech Confirmed Date'] || row['tech_confirmed_date']),
+    } as RawInterpretationRequest;
+  }
+  throw new Error(`Unknown request type: ${reqType}`);
 }
 
 function makeString(value: any): string {
@@ -132,7 +142,7 @@ function makeString(value: any): string {
 /**
  * Server function to update a request in AppSheet.
  */
-function saveDataToServer(updatedData: RawRequest) {
+function saveDataToServer(updatedData: RawBaseRequest) {
   const activeUserEmail = Session.getActiveUser().getEmail();
   const user = getUser(activeUserEmail);
 
@@ -151,8 +161,8 @@ function saveDataToServer(updatedData: RawRequest) {
   // 2. Status restriction check for 'User' role
   if (user.role === 'User') {
     // Fetch the existing record to check its current status
-    const rawRequests = getRequestsFromAppSheet();
-    const existingRecord = rawRequests.find((r) => r.id === updatedData.id);
+    const RawBaseRequests = getRequestsFromAppSheet();
+    const existingRecord = RawBaseRequests.find((r) => r.id === updatedData.id);
 
     if (existingRecord) {
       const oldStatus = existingRecord.status;
@@ -206,7 +216,7 @@ function saveDataToServer(updatedData: RawRequest) {
 /**
  * Server function to add a new request to AppSheet.
  */
-function addRequestToServer(data: RawRequest) {
+function addRequestToServer(data: RawTranslationRequest | RawInterpretationRequest) {
   const activeUserEmail = Session.getActiveUser().getEmail();
   let user = getUser(activeUserEmail);
 
@@ -290,7 +300,7 @@ function uploadFileToDrive(base64Data: string, fileName: string, mimeType: strin
 /**
  * Maps the internal Request object back to AppSheet's expected column names.
  */
-function mapRequestToAppSheet(data: RawRequest) {
+function mapRequestToAppSheet(data: any): RawTranslationRequest | RawInterpretationRequest {
   // Helper to format dates for AppSheet (removes T00:00:00.000Z)
   const formatDate = (val: any) => {
     if (!val) return '';
@@ -299,8 +309,22 @@ function mapRequestToAppSheet(data: RawRequest) {
     return makeString(val);
   };
 
+  let newRequest: RawTranslationRequest | RawInterpretationRequest | null = null;
+
   const row: any = {};
 
+  if (data.reqType == "Translation") {
+    row['Document Link'] = makeString(data.docLink);
+    row['Page Count'] = makeString(data.docPageCount);
+  } else if (data.reqType == "Interpretation") {
+    row['Interpretation Type'] = makeString(data.interpretationType);
+    row['Description'] = makeString(data.description);
+    row['Event Location'] = makeString(data.eventLocation);
+    row['Start Time'] = makeString(data.startTime);
+    row['End Time'] = makeString(data.endTime);
+  } else {
+    throw new Error('Invalid request type: ' + data.reqType);
+  }
   row['ID'] = makeString(data.id);
   row['Requester Email'] = makeString(data.email);
   row['Requester Name'] = makeString(data.name);
@@ -309,23 +333,13 @@ function mapRequestToAppSheet(data: RawRequest) {
   row['Request Type'] = makeString(data.reqType);
   row['Language Original'] = makeString(data.originalLanguage);
   row['Language Target'] = makeString(data.targetLanguage);
-  row['Interpretation Type'] = makeString(data.interpretationType);
-  row['Page Count'] = makeString(data.docPageCount);
-  row['Description'] = makeString(data.description);
-  row['Document Link'] = makeString(data.docLink);
-  row['Event Location'] = makeString(data.eventLocation);
+  row['Date Needed'] = formatDate(data.requestDate);
+  row['Submitted Date'] = formatDate(data.submittedDate);
+  row['Approved Date'] = formatDate(data.approvedDate);
+  row['Approver Name'] = makeString(data.approverName);
   row['Contractor'] = makeString(data.contractor);
   row['Contractor Name'] = makeString(data.contractorName);
-  row['Approver Name'] = makeString(data.approverName);
 
-  // Use the formatDate helper for all date/time fields
-  row['Date Needed'] = formatDate(data.requestDate);
-  row['Approved Date'] = formatDate(data.approvedDate);
-  row['Submitted Date'] = formatDate(data.submittedDate);
-
-  // For times, we might want to keep the time part if it exists
-  row['End Time'] = makeString(data.endTime);
-  row['Start Time'] = makeString(data.startTime);
 
   Logger.log('Mapped row for AppSheet: %s', JSON.stringify(row));
   return row;
@@ -446,8 +460,8 @@ function deleteRequestFromServer(recordId: string) {
   }
   // Admin can delete any; non-admin must belong to same school
   if (user.role !== 'Admin') {
-    const rawRequests = getRequestsFromAppSheet();
-    const existing = rawRequests.find((r) => r.id === recordId);
+    const RawBaseRequests = getRequestsFromAppSheet();
+    const existing = RawBaseRequests.find((r) => r.id === recordId);
     if (!existing) {
       throw new Error('Record not found');
     }

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { hydrate, saveRequest } from '../client/services/api';
-import { RawRequest, TranslationRequest } from '../shared/types';
+import { RawBaseRequest, BaseRequest } from '../shared/types';
 
 describe('api.ts', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('api.ts', () => {
 
   describe('hydrate', () => {
     it('should convert ISO strings to Date objects', () => {
-      const raw: RawRequest = {
+      const raw: RawBaseRequest = {
         id: '1',
         requestDate: '2023-10-25T12:00:00Z',
         submittedDate: '2023-10-20T10:00:00Z',
@@ -37,7 +37,7 @@ describe('api.ts', () => {
     });
 
     it('should handle null or empty dates', () => {
-      const raw: RawRequest = {
+      const raw: RawBaseRequest = {
         id: '1',
         requestDate: '',
         submittedDate: null,
@@ -52,7 +52,7 @@ describe('api.ts', () => {
 
   describe('saveRequest', () => {
     it('should convert Date objects back to strings when saving', async () => {
-      const rich: TranslationRequest = {
+      const rich: BaseRequest = {
         id: '1',
         requestDate: new Date('2023-10-25T12:00:00Z'),
         status: 'Approved',

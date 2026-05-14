@@ -52,11 +52,11 @@ function getDataFromServer() {
   };
 }
 
-function addRequest(requestData: RawRequest) {
+function addRequest(requestData: RawTranslationRequest | RawInterpretationRequest) {
   return addRequestToServer(requestData);
 }
 
-function saveRequest(requestData: RawRequest) {
+function saveRequest(requestData: RawTranslationRequest | RawInterpretationRequest) {
   return saveDataToServer(requestData);
 }
 

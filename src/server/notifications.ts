@@ -7,7 +7,7 @@
  * This function can be called directly by AppSheet via "Call a Script" automation.
  * @param {Object} request The raw row data from AppSheet.
  */
-function sendNewRequestNotification(request: RawRequest) {
+function sendNewRequestNotification(request: RawTranslationRequest | RawInterpretationRequest): void {
   try {
     Logger.log('Processing new request notification for: ' + JSON.stringify(request));
 

@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import '../client/components/DetailsPanel/DetailsPanel';
 import { store } from '../client/services/state';
-import { TranslationRequest } from '../shared/types';
+import { BaseRequest } from '../shared/types';
 
 describe('DetailsPanel', () => {
   let container: HTMLElement;
-  const mockRequest: TranslationRequest = {
+  const mockRequest: BaseRequest = {
     id: '456',
     name: 'Jane Smith',
     school: 'Boyden Elementary',

@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import '../client/components/RequestsRow/RequestsRow';
 import { store } from '../client/services/state';
-import { TranslationRequest } from '../shared/types';
+import { BaseRequest } from '../shared/types';
 
 describe('AppRow', () => {
   let container: HTMLElement;
-  const mockRequest: TranslationRequest = {
+  const mockRequest: BaseRequest = {
     id: '123',
     name: 'John Doe',
     school: 'Walpole High',

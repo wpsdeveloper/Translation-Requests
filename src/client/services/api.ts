@@ -28,7 +28,7 @@ if (IS_MOCK && typeof (window as any).google === 'undefined') {
 }
 
 export interface FetchDataResult {
-  requests: TranslationRequest[];
+  requests: BaseRequest[];
   schools: string[];
   user: AppUser | null;
 }
@@ -43,7 +43,7 @@ export const fetchData = (): Promise<FetchDataResult> => {
       import('./mock-data').then((module) => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
-        const cleanRequests = (data.requests as RawRequest[]).map(hydrate);
+        const cleanRequests = (data.requests as RawBaseRequest[]).map(hydrate);
         const user = (data.user || null) as AppUser | null;
         setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools, user: user }), 1500);
       });
@@ -52,7 +52,7 @@ export const fetchData = (): Promise<FetchDataResult> => {
     google.script.run
       .withSuccessHandler((data: any) => {
         console.log('Data received from server:', data);
-        const requests = (data.requests || []) as RawRequest[];
+        const requests = (data.requests || []) as RawBaseRequest[];
         const schools = (data.schools || []) as string[];
         const user = (data.user || null) as AppUser | null;
         const cleanRequests = requests.map(hydrate);
@@ -71,10 +71,10 @@ export const fetchData = (): Promise<FetchDataResult> => {
  * This function "de-hydrates" the object (converts Dates back to strings)
  * to match the AppSheet API's expected format.
  */
-export const saveRequest = (updatedData: TranslationRequest): Promise<TranslationRequest> => {
+export const saveRequest = (updatedData: BaseRequest): Promise<BaseRequest> => {
   // Create a copy and convert Dates back to ISO strings or formatted strings for the server
-  const dataToSend: RawRequest = {
-    ...(updatedData as TranslationRequest),
+  const dataToSend: RawBaseRequest = {
+    ...(updatedData as BaseRequest),
     requestDate:
       updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || '',
     submittedDate:
@@ -128,8 +128,8 @@ export const saveRequest = (updatedData: TranslationRequest): Promise<Translatio
 /**
  * Adds a new request to the server.
  */
-export const addRequest = (newData: TranslationRequest): Promise<TranslationRequest> => {
-  const dataToSend: RawRequest = {
+export const addRequest = (newData: BaseRequest): Promise<BaseRequest> => {
+  const dataToSend: RawBaseRequest = {
     ...(newData as any),
     requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
     submittedDate:
@@ -167,7 +167,7 @@ export const addRequest = (newData: TranslationRequest): Promise<TranslationRequ
 /**
  * Deletes a request from the server.
  */
-export const deleteRequest = (request: TranslationRequest): Promise<TranslationRequest> => {
+export const deleteRequest = (request: BaseRequest): Promise<BaseRequest> => {
   if (!request.id) throw new Error('Cannot delete request without ID');
 
   if (IS_MOCK) {
@@ -244,7 +244,7 @@ export const saveUserData = (userData: AppUser, action: string): Promise<AppUser
  * object. This primarily involves turning ISO date strings into real JS Date objects,
  * which are much easier to format and manipulate in the UI.
  */
-export function hydrate(request: RawRequest): TranslationRequest {
+export function hydrate(request: RawBaseRequest): BaseRequest {
   return {
     ...request,
     requestDate: request.requestDate ? new Date(request.requestDate) : null,

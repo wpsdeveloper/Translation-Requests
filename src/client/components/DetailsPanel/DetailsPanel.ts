@@ -28,7 +28,7 @@ export type PanelMode = 'view' | 'edit' | 'process';
  * different UI states and dynamically loads sub-components based on request type.
  */
 class DetailsPanel extends SlidingPanel {
-  protected _data: TranslationRequest = {} as TranslationRequest;
+  protected _data: TranslationRequest | InterpretationRequest = {} as TranslationRequest | InterpretationRequest;
   protected _mode: PanelMode = 'view';
 
   protected get template() {
@@ -43,7 +43,7 @@ class DetailsPanel extends SlidingPanel {
     }
   }
 
-  set data(value: TranslationRequest) {
+  set data(value: TranslationRequest | InterpretationRequest) {
     this._data = value;
     this.render();
   }
@@ -85,12 +85,8 @@ class DetailsPanel extends SlidingPanel {
   protected autoHydrate(root: ShadowRoot) {
     const elements = root.querySelectorAll('[data-bind]');
     elements.forEach((el) => {
-      const prop = el.getAttribute('data-bind') as keyof TranslationRequest;
+      const prop = el.getAttribute('data-bind') as keyof BaseRequest;
       if (!prop) return;
-
-      if (prop == 'reqType') {
-        console.log('reqtype');
-      }
 
       const value = (this._data as any)[prop];
       if (value === undefined || value === null) return;
@@ -318,10 +314,10 @@ class DetailsPanel extends SlidingPanel {
     // this.injectDynamicContent(root, this._data);
   }
 
-  private hydrateApprovalSection(root: ShadowRoot, data: TranslationRequest) {
+  private hydrateApprovalSection(root: ShadowRoot, data: HydratedRequest) {
     // Hydrate Approval Info
     const approvedBy = root.querySelector('#detail-approved-by');
-    if (approvedBy) approvedBy.textContent = (data as any).approvedBy || 'N/A';
+    if (approvedBy) approvedBy.textContent = data.approverName || 'N/A';
 
     const approvedDate = root.querySelector('#detail-approved-date');
     if (approvedDate)
@@ -340,7 +336,7 @@ class DetailsPanel extends SlidingPanel {
     this.updateApprovalVisibility(data.status);
   }
 
-  private hydrateStatusSelect(root: ShadowRoot, data: TranslationRequest) {
+  private hydrateStatusSelect(root: ShadowRoot, data: BaseRequest) {
     const statusSelect = root.querySelector('#detail-status') as any;
     if (statusSelect) {
       statusSelect.status = data.status;
@@ -348,7 +344,7 @@ class DetailsPanel extends SlidingPanel {
     }
   }
 
-  private hydrateSchoolSelect(root: ShadowRoot, data: TranslationRequest) {
+  private hydrateSchoolSelect(root: ShadowRoot, data: BaseRequest) {
     const schoolSelect = root.querySelector('#detail-school') as any;
     if (schoolSelect) {
       schoolSelect.value = data.school || '';
@@ -356,7 +352,7 @@ class DetailsPanel extends SlidingPanel {
     }
   }
 
-  private injectDynamicContent(root: ShadowRoot, data: TranslationRequest) {
+  private injectDynamicContent(root: ShadowRoot, data: BaseRequest) {
     const container = root.querySelector('#dynamic-content');
     if (!container) return;
 
@@ -404,7 +400,7 @@ class DetailsPanel extends SlidingPanel {
     });
   }
 
-  private gatherFormData(root: ShadowRoot): TranslationRequest {
+  private gatherFormData(root: ShadowRoot): BaseRequest {
     return {
       ...this._data!,
       ...this.getSaveData(), // Automatically gathers all data-bind fields
