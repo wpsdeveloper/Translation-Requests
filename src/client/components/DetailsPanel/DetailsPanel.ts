@@ -352,7 +352,7 @@ class DetailsPanel extends SlidingPanel {
     }
   }
 
-  private injectDynamicContent(root: ShadowRoot, data: BaseRequest) {
+  private injectDynamicContent(root: ShadowRoot, data: HydratedRequest) {
     const container = root.querySelector('#dynamic-content');
     if (!container) return;
 
