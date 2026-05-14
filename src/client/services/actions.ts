@@ -1,7 +1,6 @@
 import { store } from './state';
 import { saveRequest, deleteRequest, addRequest } from './api';
 import { showToast } from './ui';
-import { TranslationRequest } from '../../shared/types';
 
 /**
  * RequestActions: Encapsulates the business logic for managing requests.

@@ -8,7 +8,7 @@ import template from './NewRequestEntry.htm?raw';
 import shared from '../shared/SharedStyles.css?inline';
 import styles from './NewRequestEntry.css?inline';
 
-import { SlidingPanel } from '../shared/SlidingPanel';
+import { SlidingPanel } from '../DetailsPanel/SlidingPanel';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(styles);

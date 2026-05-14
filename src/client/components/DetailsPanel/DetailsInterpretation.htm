@@ -1,4 +1,4 @@
-<div class="interpretation-details">
+<div class="grid">
   <div class="detail-item">
     <label>Interpretation Type </label>
     <div data-bind="interpretationType" data-show="view process"></div>
@@ -9,6 +9,11 @@
     <label>Event Date</label>
     <div data-bind="requestDate" data-format="date" data-show="view process"></div>
     <input type="date" class="form-control" data-bind="requestDate" data-show="edit" />
+  </div>
+  <div class="detail-item">
+    <label>Event Location</label>
+    <div data-bind="eventLocation" data-show="view process"></div>
+    <input type="text" class="form-control" data-bind="eventLocation" data-show="edit" />
   </div>
 
   <div class="detail-item">
@@ -22,12 +27,20 @@
   </div>
 
   <div class="detail-item">
-    <label>Event Location</label>
-    <div data-bind="eventLocation" data-show="view process"></div>
-    <input type="text" class="form-control" data-bind="eventLocation" data-show="edit" />
+    <label>Description</label>
+    <div id="view-description" data-show="view process" data-bind="description"></div>
+    <textarea
+      id="edit-description"
+      class="form-control"
+      data-show="edit"
+      style="display: none"
+      data-bind="description"
+    ></textarea>
   </div>
 
-  <hr />
+  <div class="full-width">
+    <hr />
+  </div>
 
   <div class="detail-item">
     <label>Contractor</label>
@@ -38,15 +51,15 @@
   </div>
 
   <div class="detail-item">
-    <label>Date Scheduled</label>
-    <div data-bind="scheduledDate" data-format="date" data-show="view edit"></div>
-    <input type="date" class="form-control" data-bind="scheduledDate" data-show="process" />
-  </div>
-
-  <div class="detail-item">
     <label>Date Guest Confirmed</label>
     <div data-bind="guestConfirmedDate" data-format="date" data-show="view edit"></div>
     <input type="date" class="form-control" data-bind="guestConfirmedDate" data-show="process" />
+  </div>
+
+  <div class="detail-item">
+    <label>Date Contractor Scheduled</label>
+    <div data-bind="scheduledDate" data-format="date" data-show="view edit"></div>
+    <input type="date" class="form-control" data-bind="scheduledDate" data-show="process" />
   </div>
 
   <div class="detail-item">

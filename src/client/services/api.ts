@@ -1,5 +1,3 @@
-import { AppUser, RawRequest, TranslationRequest } from '../../shared/types';
-
 // Determine if we are running in a local environment or inside Google Apps Script.
 // This allows us to use mock data for faster frontend development.
 const IS_MOCK = !window.location.href.includes('google') && !window.location.href.includes('script');
@@ -76,7 +74,7 @@ export const fetchData = (): Promise<FetchDataResult> => {
 export const saveRequest = (updatedData: TranslationRequest): Promise<TranslationRequest> => {
   // Create a copy and convert Dates back to ISO strings or formatted strings for the server
   const dataToSend: RawRequest = {
-    ...(updatedData as any),
+    ...(updatedData as TranslationRequest),
     requestDate:
       updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || '',
     submittedDate:
@@ -90,6 +88,22 @@ export const saveRequest = (updatedData: TranslationRequest): Promise<Translatio
     startTime:
       updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || '',
     endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || '',
+    contractorScheduledDate:
+      updatedData.contractorScheduledDate instanceof Date
+        ? updatedData.contractorScheduledDate.toISOString()
+        : updatedData.contractorScheduledDate || '',
+    documentReturnedDate:
+      updatedData.documentReturnedDate instanceof Date
+        ? updatedData.documentReturnedDate.toISOString()
+        : updatedData.documentReturnedDate || '',
+    guestConfirmedDate:
+      updatedData.guestConfirmedDate instanceof Date
+        ? updatedData.guestConfirmedDate.toISOString()
+        : updatedData.guestConfirmedDate || '',
+    techConfirmedDate:
+      updatedData.techConfirmedDate instanceof Date
+        ? updatedData.techConfirmedDate.toISOString()
+        : updatedData.techConfirmedDate || '',
   };
 
   console.log('Saving request to server (de-hydrated):', dataToSend);
@@ -238,5 +252,9 @@ export function hydrate(request: RawRequest): TranslationRequest {
     approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
     startTime: request.startTime ? new Date(request.startTime) : null,
     endTime: request.endTime ? new Date(request.endTime) : null,
+    contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
+    documentReturnedDate: request.documentReturnedDate ? new Date(request.documentReturnedDate) : null,
+    guestConfirmedDate: request.guestConfirmedDate ? new Date(request.guestConfirmedDate) : null,
+    techConfirmedDate: request.techConfirmedDate ? new Date(request.techConfirmedDate) : null,
   };
 }
