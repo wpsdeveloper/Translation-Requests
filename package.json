@@ -3,6 +3,7 @@
   "devDependencies": {
     "@eslint/css": "^1.2.0",
     "@eslint/js": "^10.0.1",
+    "@google/clasp": "^3.3.0",
     "@types/google-apps-script": "^2.0.8",
     "clasp": "^1.0.0",
     "dotenv": "^17.4.2",
@@ -23,11 +24,11 @@
   "scripts": {
     "build": "npm run clean && npm run build:client && npm run build:server",
     "build:client": "vite build",
-    "build:server": "tsc --project tsconfig.server.json && xcopy src\\server\\*.html dist\\ /Y && xcopy appsscript.json dist\\ /Y",
+    "build:server": "tsc --project tsconfig.server.json && shx cp src/server/*.html dist/ && shx cp appsscript.json dist/",
     "clean": "shx rm -rf dist && shx mkdir dist",
     "deploy": "npm run build && clasp push",
     "props:sync": "node scripts/sync-props.js",
-    "dev": "npx vite",
+    "dev": "vite --host --port 5173",
     "test": "vitest"
   },
   "version": "1.0.0",
