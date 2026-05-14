@@ -405,14 +405,11 @@ class DetailsPanel extends SlidingPanel {
   }
 
   private gatherFormData(root: ShadowRoot): TranslationRequest {
-    const dynamicEl = root.querySelector('#dynamic-content')?.firstElementChild as any;
-
     return {
       ...this._data!,
       ...this.getSaveData(), // Automatically gathers all data-bind fields
       school: (root.querySelector('#detail-school') as any)?.value,
       status: (root.querySelector('#detail-status') as any)?.status,
-      ...(dynamicEl?.getSaveData() || {}),
     };
   }
 
