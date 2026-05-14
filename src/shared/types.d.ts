@@ -34,16 +34,16 @@ interface RawBaseRequest {
   contractorName: string;
 
   contractorScheduledDate: string;
+
+  documentReturnedDate: string;
+  guestConfirmedDate: string;
+  techConfirmedDate: string;
 }
 
 interface RawTranslationRequest extends RawBaseRequest {
   reqType: "Translation";
   docPageCount: string;
   docLink: string;
-
-  documentReturnedDate: string;
-  guestConfirmedDate: string;
-  techConfirmedDate: string;
 }
 
 interface RawInterpretationRequest extends RawBaseRequest {
@@ -56,34 +56,41 @@ interface RawInterpretationRequest extends RawBaseRequest {
 
 type RawRequest = RawTranslationRequest | RawInterpretationRequest;
 
+/**
+ * The hydrated request object used throughout the frontend.
+ * String dates are converted to real Date objects for easier manipulation.
+ */
 interface BaseRequest extends Omit<
-  RawRequest,
-  'requestDate' | 'approvedDate' | 'submittedDate' | 'contractorScheduledDate'
+  RawBaseRequest,
+  | 'submittedDate'
+  | 'requestDate'
+  | 'approvedDate'
+  | 'contractorScheduledDate'
+  | 'documentReturnedDate'
+  | 'guestConfirmedDate'
+  | 'techConfirmedDate'
 > {
   submittedDate: Date | null;
   requestDate: Date | null;
   approvedDate: Date | null;
   contractorScheduledDate: Date | null;
-}
-
-/**
- * The hydrated request object used throughout the frontend.
- * String dates are converted to real Date objects for easier manipulation.
- */
-interface TranslationRequest extends BaseRequest {
-  reqType: "Translation";
   documentReturnedDate: Date | null;
   guestConfirmedDate: Date | null;
   techConfirmedDate: Date | null;
+}
+
+interface TranslationRequest extends BaseRequest {
+  reqType: "Translation";
+  docPageCount: string;
+  docLink: string;
 }
 
 interface InterpretationRequest extends BaseRequest {
   reqType: "Interpretation";
+  interpretationType: string;
+  eventLocation: string;
   startTime: Date | null;
   endTime: Date | null;
-  documentReturnedDate: Date | null;
-  guestConfirmedDate: Date | null;
-  techConfirmedDate: Date | null;
 }
 
 type HydratedRequest = TranslationRequest | InterpretationRequest;

@@ -85,7 +85,7 @@ class DetailsPanel extends SlidingPanel {
   protected autoHydrate(root: ShadowRoot) {
     const elements = root.querySelectorAll('[data-bind]');
     elements.forEach((el) => {
-      const prop = el.getAttribute('data-bind') as keyof BaseRequest;
+      const prop = el.getAttribute('data-bind') as keyof HydratedRequest;
       if (!prop) return;
 
       const value = (this._data as any)[prop];

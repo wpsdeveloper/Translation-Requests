@@ -27,6 +27,16 @@ if (IS_MOCK && typeof (window as any).google === 'undefined') {
   };
 }
 
+
+/**
+ * Helper to convert Date objects back to ISO strings for the server,
+ * or return an empty string if null/undefined.
+ */
+const dehydrateDate = (date: Date | string | null | undefined): string => {
+  if (date instanceof Date) return date.toISOString();
+  return date || '';
+};
+
 export interface FetchDataResult {
   requests: BaseRequest[];
   schools: string[];
@@ -43,7 +53,7 @@ export const fetchData = (): Promise<FetchDataResult> => {
       import('./mock-data').then((module) => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
-        const cleanRequests = (data.requests as RawBaseRequest[]).map(hydrate);
+        const cleanRequests = (data.requests as RawRequest[]).map(hydrate);
         const user = (data.user || null) as AppUser | null;
         setTimeout(() => resolve({ requests: cleanRequests, schools: data.schools, user: user }), 1500);
       });
@@ -52,7 +62,7 @@ export const fetchData = (): Promise<FetchDataResult> => {
     google.script.run
       .withSuccessHandler((data: any) => {
         console.log('Data received from server:', data);
-        const requests = (data.requests || []) as RawBaseRequest[];
+        const requests = (data.requests || []) as RawRequest[];
         const schools = (data.schools || []) as string[];
         const user = (data.user || null) as AppUser | null;
         const cleanRequests = requests.map(hydrate);
@@ -71,40 +81,75 @@ export const fetchData = (): Promise<FetchDataResult> => {
  * This function "de-hydrates" the object (converts Dates back to strings)
  * to match the AppSheet API's expected format.
  */
-export const saveRequest = (updatedData: BaseRequest): Promise<BaseRequest> => {
+export const saveRequest = (updatedData: HydratedRequest): Promise<HydratedRequest> => {
   // Create a copy and convert Dates back to ISO strings or formatted strings for the server
-  const dataToSend: RawBaseRequest = {
-    ...(updatedData as BaseRequest),
-    requestDate:
-      updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || '',
-    submittedDate:
-      updatedData.submittedDate instanceof Date
-        ? updatedData.submittedDate.toISOString()
-        : updatedData.submittedDate || '',
-    approvedDate:
-      updatedData.approvedDate instanceof Date
-        ? updatedData.approvedDate.toISOString()
-        : updatedData.approvedDate || '',
-    startTime:
-      updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || '',
-    endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || '',
-    contractorScheduledDate:
-      updatedData.contractorScheduledDate instanceof Date
-        ? updatedData.contractorScheduledDate.toISOString()
-        : updatedData.contractorScheduledDate || '',
-    documentReturnedDate:
-      updatedData.documentReturnedDate instanceof Date
-        ? updatedData.documentReturnedDate.toISOString()
-        : updatedData.documentReturnedDate || '',
-    guestConfirmedDate:
-      updatedData.guestConfirmedDate instanceof Date
-        ? updatedData.guestConfirmedDate.toISOString()
-        : updatedData.guestConfirmedDate || '',
-    techConfirmedDate:
-      updatedData.techConfirmedDate instanceof Date
-        ? updatedData.techConfirmedDate.toISOString()
-        : updatedData.techConfirmedDate || '',
-  };
+  let dataToSend: RawTranslationRequest | RawInterpretationRequest;
+  if (updatedData.reqType === "Translation") {
+    const translationRequest = updatedData as TranslationRequest;
+    dataToSend = {
+      ...translationRequest,
+      requestDate:
+        translationRequest.requestDate instanceof Date ? translationRequest.requestDate.toISOString() : translationRequest.requestDate || '',
+      submittedDate:
+        translationRequest.submittedDate instanceof Date
+          ? translationRequest.submittedDate.toISOString()
+          : translationRequest.submittedDate || '',
+      approvedDate:
+        translationRequest.approvedDate instanceof Date
+          ? translationRequest.approvedDate.toISOString()
+          : translationRequest.approvedDate || '',
+      documentReturnedDate:
+        translationRequest.documentReturnedDate instanceof Date
+          ? translationRequest.documentReturnedDate.toISOString()
+          : translationRequest.documentReturnedDate || '',
+      contractorScheduledDate:
+        translationRequest.contractorScheduledDate instanceof Date
+          ? translationRequest.contractorScheduledDate.toISOString()
+          : translationRequest.contractorScheduledDate || '',
+      guestConfirmedDate:
+        translationRequest.guestConfirmedDate instanceof Date
+          ? translationRequest.guestConfirmedDate.toISOString()
+          : translationRequest.guestConfirmedDate || '',
+      techConfirmedDate:
+        translationRequest.techConfirmedDate instanceof Date
+          ? translationRequest.techConfirmedDate.toISOString()
+          : translationRequest.techConfirmedDate || '',
+    } as RawTranslationRequest;
+  } else {
+    const interpretationRequest = updatedData as InterpretationRequest;
+    dataToSend = {
+      ...interpretationRequest,
+      requestDate:
+        updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || '',
+      submittedDate:
+        updatedData.submittedDate instanceof Date
+          ? updatedData.submittedDate.toISOString()
+          : updatedData.submittedDate || '',
+      approvedDate:
+        updatedData.approvedDate instanceof Date
+          ? updatedData.approvedDate.toISOString()
+          : updatedData.approvedDate || '',
+      startTime:
+        updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || '',
+      endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || '',
+      contractorScheduledDate:
+        updatedData.contractorScheduledDate instanceof Date
+          ? updatedData.contractorScheduledDate.toISOString()
+          : updatedData.contractorScheduledDate || '',
+      documentReturnedDate:
+        updatedData.documentReturnedDate instanceof Date
+          ? updatedData.documentReturnedDate.toISOString()
+          : updatedData.documentReturnedDate || '',
+      guestConfirmedDate:
+        updatedData.guestConfirmedDate instanceof Date
+          ? updatedData.guestConfirmedDate.toISOString()
+          : updatedData.guestConfirmedDate || '',
+      techConfirmedDate:
+        updatedData.techConfirmedDate instanceof Date
+          ? updatedData.techConfirmedDate.toISOString()
+          : updatedData.techConfirmedDate || '',
+    } as RawInterpretationRequest;
+  }
 
   console.log('Saving request to server (de-hydrated):', dataToSend);
 
@@ -128,17 +173,53 @@ export const saveRequest = (updatedData: BaseRequest): Promise<BaseRequest> => {
 /**
  * Adds a new request to the server.
  */
-export const addRequest = (newData: BaseRequest): Promise<BaseRequest> => {
-  const dataToSend: RawBaseRequest = {
-    ...(newData as any),
-    requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
-    submittedDate:
-      newData.submittedDate instanceof Date ? newData.submittedDate.toISOString() : newData.submittedDate || '',
-    approvedDate:
-      newData.approvedDate instanceof Date ? newData.approvedDate.toISOString() : newData.approvedDate || '',
-    startTime: newData.startTime instanceof Date ? newData.startTime.toISOString() : newData.startTime || '',
-    endTime: newData.endTime instanceof Date ? newData.endTime.toISOString() : newData.endTime || '',
-  };
+export const addRequest = (newData: HydratedRequest): Promise<HydratedRequest> => {
+  let dataToSend: RawTranslationRequest | RawInterpretationRequest;
+  if (newData.reqType === "Translation") {
+    dataToSend = {
+      ...(newData as any),
+      requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
+      submittedDate:
+        newData.submittedDate instanceof Date ? newData.submittedDate.toISOString() : newData.submittedDate || '',
+      approvedDate:
+        newData.approvedDate instanceof Date ? newData.approvedDate.toISOString() : newData.approvedDate || '',
+      contractorScheduledDate:
+        newData.contractorScheduledDate instanceof Date
+          ? newData.contractorScheduledDate.toISOString()
+          : newData.contractorScheduledDate || '',
+      documentReturnedDate:
+        newData.documentReturnedDate instanceof Date
+          ? newData.documentReturnedDate.toISOString()
+          : newData.documentReturnedDate || '',
+    } as RawTranslationRequest;
+  } else {
+    dataToSend = {
+      ...(newData as any),
+      requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
+      submittedDate:
+        newData.submittedDate instanceof Date ? newData.submittedDate.toISOString() : newData.submittedDate || '',
+      approvedDate:
+        newData.approvedDate instanceof Date ? newData.approvedDate.toISOString() : newData.approvedDate || '',
+      startTime: newData.startTime instanceof Date ? newData.startTime.toISOString() : newData.startTime || '',
+      endTime: newData.endTime instanceof Date ? newData.endTime.toISOString() : newData.endTime || '',
+      contractorScheduledDate:
+        newData.contractorScheduledDate instanceof Date
+          ? newData.contractorScheduledDate.toISOString()
+          : newData.contractorScheduledDate || '',
+      documentReturnedDate:
+        newData.documentReturnedDate instanceof Date
+          ? newData.documentReturnedDate.toISOString()
+          : newData.documentReturnedDate || '',
+      guestConfirmedDate:
+        newData.guestConfirmedDate instanceof Date
+          ? newData.guestConfirmedDate.toISOString()
+          : newData.guestConfirmedDate || '',
+      techConfirmedDate:
+        newData.techConfirmedDate instanceof Date
+          ? newData.techConfirmedDate.toISOString()
+          : newData.techConfirmedDate || '',
+    } as RawInterpretationRequest;
+  }
 
   if (IS_MOCK) {
     console.warn('google.script.run.addRequestToServer called in mock mode');
@@ -244,17 +325,28 @@ export const saveUserData = (userData: AppUser, action: string): Promise<AppUser
  * object. This primarily involves turning ISO date strings into real JS Date objects,
  * which are much easier to format and manipulate in the UI.
  */
-export function hydrate(request: RawBaseRequest): BaseRequest {
-  return {
-    ...request,
-    requestDate: request.requestDate ? new Date(request.requestDate) : null,
-    submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
-    approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
-    startTime: request.startTime ? new Date(request.startTime) : null,
-    endTime: request.endTime ? new Date(request.endTime) : null,
-    contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
-    documentReturnedDate: request.documentReturnedDate ? new Date(request.documentReturnedDate) : null,
-    guestConfirmedDate: request.guestConfirmedDate ? new Date(request.guestConfirmedDate) : null,
-    techConfirmedDate: request.techConfirmedDate ? new Date(request.techConfirmedDate) : null,
-  };
+export function hydrate(request: RawRequest): HydratedRequest {
+  if (request.reqType === "Translation") {
+    return {
+      ...request as any,
+      requestDate: request.requestDate ? new Date(request.requestDate) : null,
+      submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
+      approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
+      contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
+      documentReturnedDate: request.documentReturnedDate ? new Date(request.documentReturnedDate) : null,
+    } as TranslationRequest;
+  } else {
+    return {
+      ...request as any,
+      requestDate: request.requestDate ? new Date(request.requestDate) : null,
+      submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
+      approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
+      startTime: request.startTime ? new Date(request.startTime) : null,
+      endTime: request.endTime ? new Date(request.endTime) : null,
+      contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
+      documentReturnedDate: request.documentReturnedDate ? new Date(request.documentReturnedDate) : null,
+      guestConfirmedDate: request.guestConfirmedDate ? new Date(request.guestConfirmedDate) : null,
+      techConfirmedDate: request.techConfirmedDate ? new Date(request.techConfirmedDate) : null,
+    } as InterpretationRequest;
+  }
 }
