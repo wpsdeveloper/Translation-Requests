@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import '../client/components/UserEditor/UserEditor';
-import { AppUser } from '../shared/types';
 import { store } from '../client/services/state';
 
 describe('UserEditor', () => {

@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import '../client/components/RequestsRow/RequestsRow';
 import { store } from '../client/services/state';
-import { BaseRequest } from '../shared/types';
 
 describe('AppRow', () => {
   let container: HTMLElement;
-  const mockRequest: BaseRequest = {
+  const mockRequest: TranslationRequest = {
     id: '123',
     name: 'John Doe',
     school: 'Walpole High',
@@ -17,16 +16,14 @@ describe('AppRow', () => {
     originalLanguage: 'English',
     targetLanguage: 'Spanish',
     description: 'Test description',
-    interpretationType: '',
     docPageCount: '5',
     docLink: '',
-    eventLocation: '',
     contractor: '',
-    contractorName: '',
-    approverName: '',
-    startTime: null,
-    endTime: null,
     approvedDate: null,
+    approverName: '',
+    documentReturnedDate: new Date('2023-10-20T12:00:00'),
+    contractorName: '',
+    contractorScheduledDate: new Date('2023-10-20T12:00:00'),
   };
 
   beforeEach(() => {

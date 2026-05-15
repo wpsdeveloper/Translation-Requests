@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import '../client/components/DetailsPanel/DetailsPanel';
 import { store } from '../client/services/state';
-import { BaseRequest } from '../shared/types';
 
 describe('DetailsPanel', () => {
   let container: HTMLElement;
-  const mockRequest: BaseRequest = {
+  const mockRequest: TranslationRequest = {
     id: '456',
     name: 'Jane Smith',
     school: 'Boyden Elementary',
@@ -17,16 +16,14 @@ describe('DetailsPanel', () => {
     originalLanguage: 'English',
     targetLanguage: 'French',
     description: 'Help with document',
-    interpretationType: '',
     docPageCount: '2',
     docLink: '',
-    eventLocation: '',
     contractor: '',
     contractorName: '',
     approverName: '',
-    startTime: null,
-    endTime: null,
     approvedDate: null,
+    documentReturnedDate: new Date(),
+    contractorScheduledDate: new Date(),
   };
 
   beforeEach(() => {

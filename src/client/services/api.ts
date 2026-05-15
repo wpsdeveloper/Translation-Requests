@@ -204,7 +204,7 @@ export const addRequest = (newData: HydratedRequest): Promise<HydratedRequest> =
 /**
  * Deletes a request from the server.
  */
-export const deleteRequest = (request: BaseRequest): Promise<BaseRequest> => {
+export const deleteRequest = (request: HydratedRequest): Promise<HydratedRequest> => {
   if (!request.id) throw new Error('Cannot delete request without ID');
 
   if (IS_MOCK) {

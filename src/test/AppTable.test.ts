@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import '../client/components/RequestsTable/RequestsTable';
 import { store } from '../client/services/state';
-import { BaseRequest } from '../shared/types';
 
 describe('AppTable', () => {
   let container: HTMLElement;
-  const mockRequests: BaseRequest[] = [
+  const mockRequests: TranslationRequest[] = [
     {
       id: '1',
       name: 'Req 1',
@@ -14,20 +13,18 @@ describe('AppTable', () => {
       requestDate: new Date(),
       submittedDate: new Date(),
       approvedDate: null,
-      startTime: null,
-      endTime: null,
       email: '',
       reqType: 'Translation',
       originalLanguage: '',
       targetLanguage: '',
-      interpretationType: '',
       docPageCount: '',
       description: '',
       docLink: '',
-      eventLocation: '',
       contractor: '',
       contractorName: '',
       approverName: '',
+      documentReturnedDate: new Date(),
+      contractorScheduledDate: new Date(),
     },
     {
       id: '2',
@@ -37,20 +34,18 @@ describe('AppTable', () => {
       requestDate: new Date(),
       submittedDate: new Date(),
       approvedDate: null,
-      startTime: null,
-      endTime: null,
       email: '',
       reqType: 'Translation',
       originalLanguage: '',
       targetLanguage: '',
-      interpretationType: '',
       docPageCount: '',
       description: '',
       docLink: '',
-      eventLocation: '',
       contractor: '',
       contractorName: '',
       approverName: '',
+      documentReturnedDate: new Date(),
+      contractorScheduledDate: new Date(),
     },
   ];
 

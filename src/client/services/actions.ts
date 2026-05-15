@@ -10,7 +10,7 @@ export const requestActions = {
   /**
    * Saves changes to an existing request.
    */
-  async save(request: BaseRequest): Promise<BaseRequest> {
+  async save(request: HydratedRequest): Promise<HydratedRequest> {
     try {
       const savedData = await saveRequest(request);
 
@@ -23,6 +23,7 @@ export const requestActions = {
       });
 
       showToast("Changes saved successfully.");
+      console.log("Base")
       return savedData;
     } catch (err) {
       console.error('Failed to save request:', err);
@@ -35,7 +36,7 @@ export const requestActions = {
    * Deletes a request with optimistic UI updates.
    * If the API call fails, it rolls back the state.
    */
-  async delete(request: BaseRequest): Promise<void> {
+  async delete(request: HydratedRequest): Promise<void> {
     const previousRows = [...store.getState().allRows];
     const previousSelected = store.getState().selectedRow;
 
@@ -67,9 +68,9 @@ export const requestActions = {
   /**
    * Creates a new request and updates the dashboard view.
    */
-  async create(request: Partial<BaseRequest>): Promise<BaseRequest> {
+  async create(request: Partial<HydratedRequest>): Promise<HydratedRequest> {
     try {
-      const savedRequest = await addRequest(request as BaseRequest);
+      const savedRequest = await addRequest(request as HydratedRequest);
 
       const { allRows } = store.getState();
       store.setState({

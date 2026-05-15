@@ -336,7 +336,7 @@ class DetailsPanel extends SlidingPanel {
     this.updateApprovalVisibility(data.status);
   }
 
-  private hydrateStatusSelect(root: ShadowRoot, data: BaseRequest) {
+  private hydrateStatusSelect(root: ShadowRoot, data: HydratedRequest) {
     const statusSelect = root.querySelector('#detail-status') as any;
     if (statusSelect) {
       statusSelect.status = data.status;
@@ -344,7 +344,7 @@ class DetailsPanel extends SlidingPanel {
     }
   }
 
-  private hydrateSchoolSelect(root: ShadowRoot, data: BaseRequest) {
+  private hydrateSchoolSelect(root: ShadowRoot, data: HydratedRequest) {
     const schoolSelect = root.querySelector('#detail-school') as any;
     if (schoolSelect) {
       schoolSelect.value = data.school || '';
@@ -400,7 +400,7 @@ class DetailsPanel extends SlidingPanel {
     });
   }
 
-  private gatherFormData(root: ShadowRoot): BaseRequest {
+  private gatherFormData(root: ShadowRoot): HydratedRequest {
     return {
       ...this._data!,
       ...this.getSaveData(), // Automatically gathers all data-bind fields

@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import '../client/components/UserManagement/UserManagement';
 import { store } from '../client/services/state';
-import { AppUser } from '../shared/types';
 
 describe('UserManagement', () => {
   let container: HTMLElement;

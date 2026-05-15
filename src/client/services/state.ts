@@ -1,8 +1,8 @@
-import { AppUser, BaseRequest } from '../../shared/types';
+import { AppUser, HydratedRequest } from '../../shared/types';
 
 interface State {
-  selectedRow: BaseRequest | null;
-  allRows: BaseRequest[];
+  selectedRow: HydratedRequest | null;
+  allRows: HydratedRequest[];
   schools: string[];
   filterSchool: string | null;
   filterStatuses: string[];

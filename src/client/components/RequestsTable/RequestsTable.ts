@@ -66,7 +66,7 @@ class RequestsTable extends HTMLElement {
     }
   }
 
-  updateRows(rows: BaseRequest[], isLoading: boolean) {
+  updateRows(rows: HydratedRequest[], isLoading: boolean) {
     const container = this.shadowRoot?.getElementById('requests-table-body');
     const resultsCount = document.getElementById('results-count');
 
