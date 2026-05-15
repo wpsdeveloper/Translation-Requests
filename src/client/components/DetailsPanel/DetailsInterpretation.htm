@@ -17,16 +17,21 @@
   </div>
 
   <div class="detail-item">
-    <label>Event Time</label>
+    <label data-show="view">Event Time</label>
     <div class="time-range" data-show="view process">
       <span data-bind="startTime"></span>
       <span class="time-range-separator">to</span>
       <span data-bind="endTime"></span>
     </div>
-    <div class="time-range" data-show="edit">
-      <input type="time" class="form-control" data-bind="startTime" />
-      <span class="time-range-separator">to</span>
-      <input type="time" class="form-control" data-bind="endTime" />
+    <div class="time-range-editor" data-show="edit">
+      <div>
+        <label>Start Time</label>
+        <input type="time" class="form-control" data-bind="startTime" />
+      </div>
+      <div>
+        <label>End Time</label>
+        <input type="time" class="form-control" data-bind="endTime" />
+      </div>
     </div>
   </div>
 
