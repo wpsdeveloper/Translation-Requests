@@ -102,7 +102,7 @@ class StatusSelect extends HTMLElement {
 
     if (viewEl && processEl) {
       viewEl.style.display = this._mode === 'view' ? '' : 'none';
-      processEl.style.display = this._mode === 'process' ? '' : 'none';
+      processEl.style.display = this._mode === 'process' || this._mode === 'edit' ? '' : 'none';
     }
   }
 

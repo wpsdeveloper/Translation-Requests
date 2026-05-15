@@ -98,7 +98,7 @@ class ContractorSelect extends HTMLElement {
 
     if (viewEl && editEl) {
       viewEl.style.display = value === 'view' ? '' : 'none';
-      editEl.style.display = value === 'edit' ? '' : 'none';
+      editEl.style.display = value === 'process' || value === 'edit' ? '' : 'none';
     }
     this.updateViewValue();
   }

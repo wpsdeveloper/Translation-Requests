@@ -13,6 +13,7 @@ import panelStyles from './DetailsPanel.css?inline';
 import { SlidingPanel } from './SlidingPanel';
 import '../StatusSelect/StatusSelect';
 import '../SchoolSelect/SchoolSelect';
+import '../ContractorSelect/ContractorSelect';
 
 const sharedSheet = new CSSStyleSheet();
 sharedSheet.replaceSync(sharedPanelStyles);
