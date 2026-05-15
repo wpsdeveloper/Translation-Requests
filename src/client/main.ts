@@ -1,6 +1,5 @@
 import { store } from './services/state';
 import { fetchData } from './services/api';
-// We don't need .js extension in imports for Vite when using TS
 import './components/RequestsTable/RequestsTable';
 import './components/DetailsPanel/DetailsPanel';
 import './components/StatusMultiSelect/StatusMultiSelect';

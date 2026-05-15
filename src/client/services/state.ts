@@ -1,5 +1,3 @@
-import { AppUser, HydratedRequest } from '../../shared/types';
-
 interface State {
   selectedRow: HydratedRequest | null;
   allRows: HydratedRequest[];

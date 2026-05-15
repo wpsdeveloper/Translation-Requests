@@ -39,4 +39,21 @@ describe('UserEditor', () => {
     const overlay = editor.shadowRoot.querySelector('#editor-overlay');
     expect(overlay.classList.contains('open')).toBe(true);
   });
+
+  it('should gather user data correctly via getSaveData', () => {
+
+    const editor = document.createElement('user-editor') as any;
+    container.appendChild(editor);
+
+    const root = editor.shadowRoot;
+    root.querySelector('#user-email').value = 'new@test.com';
+    root.querySelector('#user-name').value = 'New User';
+    root.querySelector('#user-role').value = 'User';
+
+    const data = editor.getSaveData();
+    expect(data.email).toBe('new@test.com');
+    expect(data.name).toBe('New User');
+    expect(data.role).toBe('User');
+  });
 });
+

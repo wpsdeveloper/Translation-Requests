@@ -1,6 +1,5 @@
 import { store } from '../../services/state';
 import { fetchAllUsers, saveUserData } from '../../services/api';
-import { AppUser } from '../../../shared/types';
 // @ts-ignore
 import template from './UserManagement.htm?raw';
 // @ts-ignore

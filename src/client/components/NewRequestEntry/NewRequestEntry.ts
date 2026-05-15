@@ -183,9 +183,9 @@ class NewRequestEntry extends HTMLElement {
     });
 
     if (type === 'Translation') {
-      (root.querySelector('.translation-only') as HTMLElement).style.display = 'block';
+      (root.querySelector('.translation-only') as HTMLElement).style.display = '';
     } else if (type === 'Interpretation') {
-      (root.querySelector('.interpretation-only') as HTMLElement).style.display = 'block';
+      (root.querySelector('.interpretation-only') as HTMLElement).style.display = '';
     }
   }
 

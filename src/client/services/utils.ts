@@ -23,7 +23,6 @@ export function formatTime(time: any, format?: string): string {
   }
 
   try {
-    console.log('Formatting time:', time, format);
     switch (format) {
       case 'h:mm A':
         return time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });

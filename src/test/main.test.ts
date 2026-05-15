@@ -3,6 +3,14 @@ import { store } from '../client/services/state';
 import * as api from '../client/services/api';
 import { App } from '../client/main';
 
+import '../client/components/UserEditor/UserEditor';
+import '../client/components/UserManagement/UserManagement';
+import '../client/components/RequestsTable/RequestsTable';
+import '../client/components/DetailsPanel/DetailsPanel';
+import '../client/components/StatusMultiSelect/StatusMultiSelect';
+import '../client/components/NewRequestEntry/NewRequestEntry';
+import '../client/components/RequestsDashboard/RequestsDashboard';
+
 describe('main.ts (App Integration)', () => {
   let app: App;
 
@@ -12,6 +20,7 @@ describe('main.ts (App Integration)', () => {
       <div id="main-nav"></div>
       <button id="nav-users"></button>
       <button id="nav-dashboard"></button>
+      <button id="nav-request"></button>
       <select id="school-filter"></select>
       <div id="dashboard-view"></div>
       <div id="users-view"></div>
