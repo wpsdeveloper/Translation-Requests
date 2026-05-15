@@ -28,6 +28,8 @@ export type PanelMode = 'view' | 'edit' | 'process';
  * different UI states and dynamically loads sub-components based on request type.
  */
 class DetailsPanel extends SlidingPanel {
+  // --- Foundation ---
+
   protected _data: TranslationRequest | InterpretationRequest = {} as TranslationRequest | InterpretationRequest;
   protected _mode: PanelMode = 'view';
 
@@ -42,6 +44,14 @@ class DetailsPanel extends SlidingPanel {
       this.shadowRoot.adoptedStyleSheets = [sharedSheet, panelSheet];
     }
   }
+
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+    this.subscribeToStore();
+  }
+
+  // --- Public API ---
 
   set data(value: TranslationRequest | InterpretationRequest) {
     this._data = value;
@@ -60,6 +70,8 @@ class DetailsPanel extends SlidingPanel {
     this.applyMode(root, value);
   }
 
+  // --- Core Logic ---
+
   render() {
     const root = this.shadowRoot;
     const data = this._data;
@@ -73,10 +85,37 @@ class DetailsPanel extends SlidingPanel {
     this.applyMode(root, mode);
   }
 
-  connectedCallback() {
-    this.render();
-    this.setupEventListeners();
-    this.subscribeToStore();
+  /**
+   * Listens for store updates. When a row is selected in the store,
+   * the panel automatically opens and hydrates itself with the data.
+   */
+  subscribeToStore() {
+    store.subscribe((state) => {
+      if (state.selectedRow) {
+        this.data = state.selectedRow;
+        this.setMode('view');
+        this.open = true;
+      } else {
+        this.open = false;
+      }
+    });
+  }
+
+  // --- Hydration ---
+
+  hydrate(root: ShadowRoot) {
+    if (!this._data) return;
+
+    // Call base auto-hydration for [data-bind] fields
+    this.autoHydrate(root);
+
+    // Handle compound fields not covered by simple data-bind
+    const langs = [this._data.originalLanguage, this._data.targetLanguage].filter(Boolean).join(' to ');
+    this.setSafeText(root, '#view-languages', langs);
+
+    this.hydrateApprovalSection(root, this._data);
+    this.hydrateStatusSelect(root, this._data);
+    this.hydrateSchoolSelect(root, this._data);
   }
 
   /**
@@ -95,7 +134,27 @@ class DetailsPanel extends SlidingPanel {
         if (el.type === 'date') {
           el.value = value ? new Date(value).toISOString().split('T')[0] : '';
         } else if (el.type === 'time') {
-          el.value = value ? new Date(value).toTimeString().slice(0, 5) : '';
+          if (!value) {
+            el.value = '';
+          } else if (typeof value === 'string') {
+            const ampmMatch = value.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+            if (ampmMatch) {
+              let [, h, m, ampm] = ampmMatch;
+              let hours = parseInt(h, 10);
+              if (ampm) {
+                const isPM = ampm.toUpperCase() === 'PM';
+                if (isPM && hours < 12) hours += 12;
+                if (!isPM && hours === 12) hours = 0;
+              }
+              el.value = `${hours.toString().padStart(2, '0')}:${m}`;
+            } else {
+              el.value = '';
+            }
+          } else if (value instanceof Date && !isNaN(value.getTime())) {
+            el.value = value.toTimeString().slice(0, 5);
+          } else {
+            el.value = '';
+          }
         } else {
           el.value = value;
         }
@@ -119,65 +178,70 @@ class DetailsPanel extends SlidingPanel {
     });
   }
 
-  setupEventListeners() {
-    const root = this.shadowRoot;
-    if (!root) return;
+  private injectDynamicContent(root: ShadowRoot, data: HydratedRequest) {
+    const container = root.querySelector('#dynamic-content');
+    if (!container) return;
 
-    this.setupBaseListeners(root);
-
-    root.addEventListener('click', (e: any) => {
-      const target = e.target as HTMLElement;
-      const path = e.composedPath() as HTMLElement[];
-
-      if (target.id === 'process-btn') this.setMode('process');
-      if (target.id === 'cancel-btn') this.cancelEdit();
-      if (target.id === 'save-btn') this.onSave();
-      if (target.id === 'close-btn') this.onClose();
-      if (target.id === 'delete-btn') this.onDelete();
-
-      if (path.some((el: any) => el.id === 'edit-btn')) this.handleEditToggle();
-    });
-
-    root.addEventListener('change', (e: any) => {
-      if (e.target.id === 'detail-status') {
-        this.updateApprovalVisibility(e.detail.status);
+    container!.innerHTML = '';
+    if (container) {
+      let featureEl: any;
+      if (data.reqType === 'Interpretation') {
+        featureEl = document.createElement('div');
+        featureEl.classList.add('details-interpretation');
+        featureEl.innerHTML = interpretationTemplate;
+      } else if (data.reqType === 'Translation') {
+        featureEl = document.createElement('div');
+        featureEl.classList.add('details-translation');
+        featureEl.innerHTML = translationTemplate;
       }
-    });
-  }
 
-  private handleEditToggle() {
-    const newMode = this._mode === 'edit' ? 'view' : 'edit';
-    this.setMode(newMode);
-    this.toggleButtons(this.shadowRoot!, newMode);
-  }
-
-  protected onClose() {
-    // Only update store if we are actually clearing a selection
-    if (store.getState().selectedRow !== null) {
-      store.setState({ selectedRow: null });
+      if (featureEl) {
+        container.appendChild(featureEl);
+        featureEl.data = data; // Push data into the new component
+        featureEl.mode = this._mode; // Set initial mode
+      }
     }
-    this.setMode('view');
   }
 
-  private cancelEdit() {
-    this.setMode('view');
+  private hydrateApprovalSection(root: ShadowRoot, data: HydratedRequest) {
+    // Hydrate Approval Info
+    const approvedBy = root.querySelector('#detail-approved-by');
+    if (approvedBy) approvedBy.textContent = data.approverName || 'N/A';
+
+    const approvedDate = root.querySelector('#detail-approved-date');
+    if (approvedDate)
+      approvedDate.textContent = data.approvedDate ? formatDate(data.approvedDate, 'MMM D, YYYY') : 'N/A';
+
+    const approvedByLabel = root.querySelector('#approved-by-label');
+    const approvedDateLabel = root.querySelector('#approved-date-label');
+
+    if (data.status === 'Denied') {
+      if (approvedByLabel) approvedByLabel.textContent = 'Denied By';
+      if (approvedDateLabel) approvedDateLabel.textContent = 'Denied Date';
+    } else {
+      if (approvedByLabel) approvedByLabel.textContent = 'Approved By';
+      if (approvedDateLabel) approvedDateLabel.textContent = 'Approved Date';
+    }
+    this.updateApprovalVisibility(data.status);
   }
 
-  /**
-   * Listens for store updates. When a row is selected in the store,
-   * the panel automatically opens and hydrates itself with the data.
-   */
-  subscribeToStore() {
-    store.subscribe((state) => {
-      if (state.selectedRow) {
-        this.data = state.selectedRow;
-        this.setMode('view');
-        this.open = true;
-      } else {
-        this.open = false;
-      }
-    });
+  private hydrateStatusSelect(root: ShadowRoot, data: HydratedRequest) {
+    const statusSelect = root.querySelector('#detail-status') as any;
+    if (statusSelect) {
+      statusSelect.status = data.status;
+      statusSelect.mode = this._mode;
+    }
   }
+
+  private hydrateSchoolSelect(root: ShadowRoot, data: HydratedRequest) {
+    const schoolSelect = root.querySelector('#detail-school') as any;
+    if (schoolSelect) {
+      schoolSelect.value = data.school || '';
+      schoolSelect.mode = this._mode;
+    }
+  }
+
+  // --- Mode Management ---
 
   setMode(mode: PanelMode) {
     this.mode = mode; // Uses DetailsBase setter which calls applyMode()
@@ -249,6 +313,87 @@ class DetailsPanel extends SlidingPanel {
     }
   }
 
+  // --- Event Handling ---
+
+  setupEventListeners() {
+    const root = this.shadowRoot;
+    if (!root) return;
+
+    this.setupBaseListeners(root);
+
+    root.addEventListener('click', (e: any) => {
+      const target = e.target as HTMLElement;
+      const path = e.composedPath() as HTMLElement[];
+
+      if (target.id === 'process-btn') this.setMode('process');
+      if (target.id === 'cancel-btn') this.cancelEdit();
+      if (target.id === 'save-btn') this.onSave();
+      if (target.id === 'close-btn') this.onClose();
+      if (target.id === 'delete-btn') this.onDelete();
+
+      if (path.some((el: any) => el.id === 'edit-btn')) this.handleEditToggle();
+    });
+
+    root.addEventListener('change', (e: any) => {
+      if (e.target.id === 'detail-status') {
+        this.updateApprovalVisibility(e.detail.status);
+      }
+    });
+  }
+
+  private handleEditToggle() {
+    const newMode = this._mode === 'edit' ? 'view' : 'edit';
+    this.setMode(newMode);
+    this.toggleButtons(this.shadowRoot!, newMode);
+  }
+
+  private cancelEdit() {
+    this.setMode('view');
+  }
+
+  // --- Actions ---
+
+  async onSave() {
+    const root = this.shadowRoot;
+    if (!this._data || !root) return;
+
+    const updatedRequest = this.gatherFormData(root);
+
+    await this.withLoadingState('#save-btn', async () => {
+      try {
+        await requestActions.save(updatedRequest);
+        this.setMode('view');
+      } catch (err) {
+        // Error is handled by the service (toasts/logs)
+      }
+    });
+  }
+
+  async onDelete() {
+    const data = this._data;
+    if (!data) return;
+
+    showModal('Confirm Deletion', `Are you sure you want to delete this ${data.reqType} request?`, async () => {
+      try {
+        await requestActions.delete(data);
+        this.setMode('view');
+      } catch (err) {
+        // Error is handled by the service (toasts/logs)
+        this.setMode('edit');
+      }
+    });
+  }
+
+  protected onClose() {
+    // Only update store if we are actually clearing a selection
+    if (store.getState().selectedRow !== null) {
+      store.setState({ selectedRow: null });
+    }
+    this.setMode('view');
+  }
+
+  // --- UI Helpers ---
+
   private toggleButtons(root: ShadowRoot, mode: string) {
     const isView = mode === 'view';
     const isEdit = mode === 'edit';
@@ -297,86 +442,6 @@ class DetailsPanel extends SlidingPanel {
     denyBtn.style.display = isView && !isEdit && canApprove && needsApproval ? '' : 'none';
   }
 
-  hydrate(root: ShadowRoot) {
-    if (!this._data) return;
-
-    // Call base auto-hydration for [data-bind] fields
-    this.autoHydrate(root);
-
-    // Handle compound fields not covered by simple data-bind
-    const langs = [this._data.originalLanguage, this._data.targetLanguage].filter(Boolean).join(' to ');
-    this.setSafeText(root, '#view-languages', langs);
-
-    this.hydrateApprovalSection(root, this._data);
-    this.hydrateStatusSelect(root, this._data);
-    this.hydrateSchoolSelect(root, this._data);
-
-    // this.injectDynamicContent(root, this._data);
-  }
-
-  private hydrateApprovalSection(root: ShadowRoot, data: HydratedRequest) {
-    // Hydrate Approval Info
-    const approvedBy = root.querySelector('#detail-approved-by');
-    if (approvedBy) approvedBy.textContent = data.approverName || 'N/A';
-
-    const approvedDate = root.querySelector('#detail-approved-date');
-    if (approvedDate)
-      approvedDate.textContent = data.approvedDate ? formatDate(data.approvedDate, 'MMM D, YYYY') : 'N/A';
-
-    const approvedByLabel = root.querySelector('#approved-by-label');
-    const approvedDateLabel = root.querySelector('#approved-date-label');
-
-    if (data.status === 'Denied') {
-      if (approvedByLabel) approvedByLabel.textContent = 'Denied By';
-      if (approvedDateLabel) approvedDateLabel.textContent = 'Denied Date';
-    } else {
-      if (approvedByLabel) approvedByLabel.textContent = 'Approved By';
-      if (approvedDateLabel) approvedDateLabel.textContent = 'Approved Date';
-    }
-    this.updateApprovalVisibility(data.status);
-  }
-
-  private hydrateStatusSelect(root: ShadowRoot, data: HydratedRequest) {
-    const statusSelect = root.querySelector('#detail-status') as any;
-    if (statusSelect) {
-      statusSelect.status = data.status;
-      statusSelect.mode = this._mode;
-    }
-  }
-
-  private hydrateSchoolSelect(root: ShadowRoot, data: HydratedRequest) {
-    const schoolSelect = root.querySelector('#detail-school') as any;
-    if (schoolSelect) {
-      schoolSelect.value = data.school || '';
-      schoolSelect.mode = this._mode;
-    }
-  }
-
-  private injectDynamicContent(root: ShadowRoot, data: HydratedRequest) {
-    const container = root.querySelector('#dynamic-content');
-    if (!container) return;
-
-    container!.innerHTML = '';
-    if (container) {
-      let featureEl: any;
-      if (data.reqType === 'Interpretation') {
-        featureEl = document.createElement('div');
-        featureEl.classList.add('details-interpretation');
-        featureEl.innerHTML = interpretationTemplate;
-      } else if (data.reqType === 'Translation') {
-        featureEl = document.createElement('div');
-        featureEl.classList.add('details-translation');
-        featureEl.innerHTML = translationTemplate;
-      }
-
-      if (featureEl) {
-        container.appendChild(featureEl);
-        featureEl.data = data; // Push data into the new component
-        featureEl.mode = this._mode; // Set initial mode
-      }
-    }
-  }
-
   private updateApprovalVisibility(status: string) {
     const approvalInfo = this.shadowRoot?.querySelector('#approval-info') as HTMLElement;
     if (approvalInfo) {
@@ -384,21 +449,7 @@ class DetailsPanel extends SlidingPanel {
     }
   }
 
-  async onSave() {
-    const root = this.shadowRoot;
-    if (!this._data || !root) return;
-
-    const updatedRequest = this.gatherFormData(root);
-
-    await this.withLoadingState('#save-btn', async () => {
-      try {
-        await requestActions.save(updatedRequest);
-        this.setMode('view');
-      } catch (err) {
-        // Error is handled by the service (toasts/logs)
-      }
-    });
-  }
+  // --- Data & Utilities ---
 
   private gatherFormData(root: ShadowRoot): HydratedRequest {
     return {
@@ -407,6 +458,34 @@ class DetailsPanel extends SlidingPanel {
       school: (root.querySelector('#detail-school') as any)?.value,
       status: (root.querySelector('#detail-status') as any)?.status,
     };
+  }
+
+  /**
+   * Automatically gathers data from elements with [data-bind] attributes
+   */
+  public getSaveData(): any {
+    const root = this.shadowRoot;
+    if (!root) return {};
+
+    const data: any = {};
+    const elements = root.querySelectorAll('input[data-bind], select[data-bind], textarea[data-bind]');
+
+    elements.forEach((el) => {
+      const prop = el.getAttribute('data-bind');
+      if (!prop) return;
+
+      const dataType = el.getAttribute('type');
+      const value = (el as HTMLInputElement).value;
+
+      if (dataType && dataType === 'date' && value) {
+        data[prop] = new Date(value);
+        return;
+      }
+
+      data[prop] = value;
+    });
+
+    return data;
   }
 
   private async withLoadingState(selector: string, action: () => Promise<void>) {
@@ -424,45 +503,6 @@ class DetailsPanel extends SlidingPanel {
       btn.disabled = false;
     }
   }
-
-  // --- Actions ---
-
-  /**
-   * Automatically gathers data from elements with [data-bind] attributes
-   */
-  public getSaveData(): any {
-    const root = this.shadowRoot;
-    if (!root) return {};
-
-    const data: any = {};
-    const elements = root.querySelectorAll('input[data-bind], select[data-bind], textarea[data-bind]');
-
-    elements.forEach((el) => {
-      const prop = el.getAttribute('data-bind');
-      if (prop) {
-        data[prop] = (el as HTMLInputElement).value;
-      }
-    });
-
-    return data;
-  }
-
-  async onDelete() {
-    const data = this._data;
-    if (!data) return;
-
-    showModal('Confirm Deletion', `Are you sure you want to delete this ${data.reqType} request?`, async () => {
-      try {
-        await requestActions.delete(data);
-        this.setMode('view');
-      } catch (err) {
-        // Error is handled by the service (toasts/logs)
-        this.setMode('edit');
-      }
-    });
-  }
-
-  // --- Utilities ---
 
   private setSafeText(root: ShadowRoot, selector: string, val: any, fallback = '') {
     const el = root.querySelector(selector);

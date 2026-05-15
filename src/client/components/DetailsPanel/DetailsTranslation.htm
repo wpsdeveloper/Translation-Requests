@@ -10,8 +10,8 @@
   </div>
   <div class="detail-item">
     <label>Needed By</label>
-    <div data-show="view" data-bind="requestDate" data-format="date"></div>
-    <input type="text" class="form-control" data-bind="requestDate" data-format="date" data-show="edit" />
+    <div data-show="view process" data-bind="requestDate" data-format="date"></div>
+    <input type="date" class="form-control" data-bind="requestDate" data-show="edit" />
   </div>
   <div class="detail-item col-2">
     <label>Target Language</label>
@@ -36,13 +36,8 @@
   <div class="detail-item">
     <label>Description</label>
     <div id="view-description" data-show="view process" data-bind="description"></div>
-    <textarea
-      id="edit-description"
-      class="form-control"
-      data-show="edit"
-      style="display: none"
-      data-bind="description"
-    ></textarea>
+    <textarea id="edit-description" class="form-control" data-show="edit" style="display: none"
+      data-bind="description"></textarea>
   </div>
 
   <div class="full-width">

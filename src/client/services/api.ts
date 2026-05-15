@@ -44,6 +44,19 @@ const dehydrateDateTime = (date: Date | string | null | undefined): string => {
 
 const dehydrateTime = (date: Date | string | null | undefined): string => {
   if (date instanceof Date) return formatTime(date, 'h:mm A');
+  if (typeof date === 'string') {
+    if (/^\d{2}:\d{2}:\d{2}$/.test(date)) return date;
+    if (/^\d{2}:\d{2}$/.test(date)) return `${date}:00`;
+    const ampmMatch = date.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (ampmMatch) {
+      let [, h, m, ampm] = ampmMatch;
+      let hours = parseInt(h, 10);
+      if (ampm.toUpperCase() === 'PM' && hours < 12) hours += 12;
+      if (ampm.toUpperCase() === 'AM' && hours === 12) hours = 0;
+      return `${hours.toString().padStart(2, '0')}:${m}:00`;
+    }
+    return date;
+  }
   return '';
 };
 

@@ -11,6 +11,7 @@ export const requestActions = {
    * Saves changes to an existing request.
    */
   async save(request: HydratedRequest): Promise<HydratedRequest> {
+    console.log("Saving request:", request);
     try {
       const savedData = await saveRequest(request);
 
