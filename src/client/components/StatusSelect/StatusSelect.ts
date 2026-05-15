@@ -98,11 +98,11 @@ class StatusSelect extends HTMLElement {
 
   updateMode() {
     const viewEl = this.shadowRoot?.querySelector('#view-mode') as HTMLElement;
-    const editEl = this.shadowRoot?.querySelector('#edit-mode') as HTMLElement;
+    const processEl = this.shadowRoot?.querySelector('#process-mode') as HTMLElement;
 
-    if (viewEl && editEl) {
-      viewEl.style.display = this._mode === 'view' ? 'block' : 'none';
-      editEl.style.display = this._mode === 'edit' ? 'block' : 'none';
+    if (viewEl && processEl) {
+      viewEl.style.display = this._mode === 'view' ? '' : 'none';
+      processEl.style.display = this._mode === 'process' ? '' : 'none';
     }
   }
 
