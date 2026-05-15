@@ -29,8 +29,9 @@ h3 {
   &:focus {
     outline: none;
     border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); /* Soft blue halo */
-}
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    /* Soft blue halo */
+  }
 }
 
 /* Button Styles */
@@ -42,6 +43,7 @@ h3 {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: var(--tms-font-size-small);
+
 
   &.btn-primary {
     background-color: var(--tms-primary);
@@ -83,6 +85,25 @@ h3 {
     cursor: not-allowed;
     opacity: 0.6;
   }
+
+  &.btn-link {
+    background: none;
+    border: none;
+    color: #2563eb;
+    text-decoration: none;
+
+    &.btn-danger {
+      background: none;
+      color: var(--tms-danger);
+
+      &:hover {
+        background: none;
+        border: none;
+        color: var(--tms-danger-highlight);
+        text-decoration: underline;
+      }
+    }
+  }
 }
 
 .help-text {
@@ -93,18 +114,18 @@ h3 {
 }
 
 .file-link {
-    display: inline-flex;
-    align-items: center;
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 6px 12px;
-    background: #eff6ff;
-    border-radius: 6px;
-    transition: background 0.2s;
-    
-    &:hover {
-      background: #dbeafe;
-      text-decoration: underline;
-    }
+  display: inline-flex;
+  align-items: center;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: #eff6ff;
+  border-radius: 6px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #dbeafe;
+    text-decoration: underline;
+  }
 }

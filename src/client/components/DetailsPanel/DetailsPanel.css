@@ -286,5 +286,3 @@ div[data-bind]:empty::before {
   display: flex;
   align-items: center;
 }
-
-.time-range-editor {}
