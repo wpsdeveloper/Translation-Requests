@@ -102,6 +102,26 @@ describe('DetailsPanel', () => {
     expect(requestActions.delete).toHaveBeenCalledWith(mockRequest);
   });
 
+  it('should call requestActions.approve when approve button is clicked and confirmed', async () => {
+    panel.data = mockRequest;
+    panel.mode = 'view';
+
+    const approveBtn = panel.shadowRoot.querySelector('#approve-btn') as HTMLButtonElement;
+    await approveBtn.click();
+
+    expect(requestActions.save).toHaveBeenCalledWith(expect.objectContaining({ status: 'Approved' }));
+  });
+
+  it('should call requestActions.deny when deny button is clicked and confirmed', async () => {
+    panel.data = mockRequest;
+    panel.mode = 'view';
+
+    const denyBtn = panel.shadowRoot.querySelector('#deny-btn') as HTMLButtonElement;
+    await denyBtn.click();
+
+    expect(requestActions.save).toHaveBeenCalledWith(expect.objectContaining({ status: 'Denied' }));
+  });
+
   it('should format dates correctly in autoHydrate', () => {
     panel.data = mockRequest;
     const dateEl = panel.shadowRoot.querySelector('[data-bind="requestDate"][data-format="date"]');

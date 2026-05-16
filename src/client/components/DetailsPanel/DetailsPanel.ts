@@ -345,6 +345,8 @@ class DetailsPanel extends SlidingPanel {
       if (target.id === 'save-btn') this.onSave();
       if (target.id === 'close-btn') this.onClose();
       if (target.id === 'delete-btn') this.onDelete();
+      if (target.id === 'approve-btn') this.onApprove();
+      if (target.id === 'deny-btn') this.onDeny();
 
       if (path.some((el: any) => el.id === 'edit-btn')) this.handleEditToggle();
     });
@@ -405,6 +407,45 @@ class DetailsPanel extends SlidingPanel {
       store.setState({ selectedRow: null });
     }
     this.setMode('view');
+  }
+
+  async onApprove() {
+    const root = this.shadowRoot;
+    if (!this._data || !root) return;
+
+    const updatedRequest = this.gatherFormData(root);
+    updatedRequest.status = 'Approved';
+    updatedRequest.approvedDate = new Date();
+    const user = store.getState().user;
+    updatedRequest.approverName = user?.name ?? 'Unknown';
+
+    await this.withLoadingState('#approve-btn', async () => {
+      try {
+        await requestActions.save(updatedRequest);
+        this.setMode('view');
+      } catch (err) {
+        // Error is handled by the service (toasts/logs)
+      }
+    });
+  }
+  async onDeny() {
+    const root = this.shadowRoot;
+    if (!this._data || !root) return;
+
+    const updatedRequest = this.gatherFormData(root);
+    updatedRequest.status = 'Denied';
+    updatedRequest.approvedDate = new Date();
+    const user = store.getState().user;
+    updatedRequest.approverName = user?.name ?? 'Unknown';
+
+    await this.withLoadingState('#deny-btn', async () => {
+      try {
+        await requestActions.save(updatedRequest);
+        this.setMode('view');
+      } catch (err) {
+        // Error is handled by the service (toasts/logs)
+      }
+    });
   }
 
   // --- UI Helpers ---
