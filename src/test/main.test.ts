@@ -22,15 +22,23 @@ describe('main.ts (App Integration)', () => {
       <button id="nav-dashboard"></button>
       <button id="nav-request"></button>
       <select id="school-filter"></select>
-      <div id="dashboard-view"></div>
-      <div id="users-view"></div>
+      <requests-dashboard></requests-dashboard>
+      <user-management></user-management>
       <details-panel></details-panel>
     `;
 
     // Mock api.fetchData
     vi.spyOn(api, 'fetchData').mockResolvedValue({
-      requests: [],
-      schools: ['School A'],
+      requests: [
+        {
+          id: '1',
+          reqType: 'Translation',
+          school: 'School A',
+          status: 'Needs Approval',
+          submittedDate: new Date(),
+        } as any,
+      ],
+      schools: ['School A', 'School B'],
       user: { email: 'test@test.com', name: 'Test', role: 'Admin', schools: [] },
     });
 
@@ -56,6 +64,11 @@ describe('main.ts (App Integration)', () => {
     navDashboard?.click();
 
     expect(store.getState().activeView).toBe('dashboard');
+
+    const navRequest = document.getElementById('nav-request');
+    navRequest?.click();
+
+    expect(store.getState().activeView).toBe('new-request-entry');
   });
 
   it('should close the details panel when clicking outside', () => {
