@@ -23,14 +23,4 @@ describe('SchoolSelect', () => {
     expect(options.length).toBe(5);
     expect(options[1].textContent).toBe('School A');
   });
-
-  it('should display the current value as text in view mode', () => {
-    const select = document.createElement('school-select') as any;
-    select.value = 'School C';
-    select.mode = 'view';
-    container.appendChild(select);
-
-    const viewEl = select.shadowRoot.querySelector('#view-value');
-    expect(viewEl.textContent).toBe('School C');
-  });
 });

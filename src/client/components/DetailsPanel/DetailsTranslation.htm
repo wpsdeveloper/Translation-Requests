@@ -36,8 +36,13 @@
   <div class="detail-item">
     <label>Description</label>
     <div id="view-description" data-show="view process" data-bind="description"></div>
-    <textarea id="edit-description" class="form-control" data-show="edit" style="display: none"
-      data-bind="description"></textarea>
+    <textarea
+      id="edit-description"
+      class="form-control"
+      data-show="edit"
+      style="display: none"
+      data-bind="description"
+    ></textarea>
   </div>
 
   <div class="full-width">
@@ -56,6 +61,12 @@
     <label>Date Sent to Contractor</label>
     <div data-bind="docSentDate" data-format="date" data-show="view edit"></div>
     <input type="date" class="form-control" data-bind="docSentDate" data-show="process" />
+  </div>
+
+  <div class="detail-item col-1 manual-contractor-entry">
+    <label>Contractor Name</label>
+    <div data-show="view" data-bind="contractorName"></div>
+    <input type="text" class="form-control" data-bind="contractorName" data-show="process edit" />
   </div>
 
   <div class="detail-item col-2">

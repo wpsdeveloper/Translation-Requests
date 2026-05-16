@@ -273,6 +273,8 @@ class DetailsPanel extends SlidingPanel {
 
     this.updateStatusSelect(root, isProcess);
     this.updateSchoolSelect(root, isEdit);
+
+    this.toggleContractorNameDisplay(root);
   }
 
   private toggleModeClasses(root: ShadowRoot, isEdit: boolean) {
@@ -311,6 +313,18 @@ class DetailsPanel extends SlidingPanel {
       } else {
         statusSelect.removeAttribute('disabled');
       }
+    }
+  }
+
+  toggleContractorNameDisplay(root: ShadowRoot) {
+    const contractor = this._data.contractor;
+    const manualEntryDiv = root.querySelector('.manual-contractor-entry') as HTMLElement;
+    if (!manualEntryDiv) return;
+
+    if (contractor === 'Staff Member' || contractor === 'Private Contractor') {
+      manualEntryDiv.style.display = '';
+    } else {
+      manualEntryDiv.style.display = 'none';
     }
   }
 

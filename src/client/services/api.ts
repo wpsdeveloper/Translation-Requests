@@ -1,10 +1,12 @@
 import { formatDate, formatTime } from './utils';
 // Determine if we are running in a local environment or inside Google Apps Script.
 // This allows us to use mock data for faster frontend development.
-const IS_MOCK = !window.location.href.includes('google') && !window.location.href.includes('script');
+export function isMock() {
+  return !window.location.href.includes('google') && !window.location.href.includes('script');
+}
 
 // Safety proxy for local development to prevent 'google is not defined' errors
-if (IS_MOCK && typeof (window as any).google === 'undefined') {
+if (isMock() && typeof (window as any).google === 'undefined') {
   (window as any).google = {
     script: {
       run: {
@@ -83,7 +85,7 @@ export interface FetchDataResult {
  */
 export const fetchData = (): Promise<FetchDataResult> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       import('./mock-data').then((module) => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
@@ -143,9 +145,7 @@ export const saveRequest = (updatedData: HydratedRequest): Promise<HydratedReque
     } as RawInterpretationRequest;
   }
 
-  console.log('Saving request to server (de-hydrated):', dataToSend);
-
-  if (IS_MOCK) {
+  if (isMock()) {
     console.warn('google.script.run.saveDataToServer called in mock mode');
     return new Promise((resolve) => setTimeout(() => resolve(updatedData), 1500));
   }
@@ -190,14 +190,14 @@ export const addRequest = (newData: HydratedRequest): Promise<HydratedRequest> =
     } as RawInterpretationRequest;
   }
 
-  if (IS_MOCK) {
+  if (isMock()) {
     console.warn('google.script.run.addRequestToServer called in mock mode');
     return new Promise((resolve) => setTimeout(() => resolve(newData), 1500));
   }
 
   console.log('Adding new request to server:', dataToSend);
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       setTimeout(() => {
         const mockCreated = { ...newData, id: 'MOCK-' + Date.now() };
         resolve(mockCreated);
@@ -220,7 +220,7 @@ export const addRequest = (newData: HydratedRequest): Promise<HydratedRequest> =
 export const deleteRequest = (request: HydratedRequest): Promise<HydratedRequest> => {
   if (!request.id) throw new Error('Cannot delete request without ID');
 
-  if (IS_MOCK) {
+  if (isMock()) {
     console.warn('google.script.run.deleteRequest called in mock mode');
     return new Promise((resolve) => setTimeout(() => resolve(request), 1500));
   }
@@ -241,7 +241,7 @@ export const deleteRequest = (request: HydratedRequest): Promise<HydratedRequest
  */
 export const uploadFile = (base64Data: string, fileName: string, mimeType: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       console.log('Mock uploading file:', fileName);
       setTimeout(() => resolve('https://drive.google.com/mock-file-url'), 1500);
       return;
@@ -258,7 +258,7 @@ export const uploadFile = (base64Data: string, fileName: string, mimeType: strin
  */
 export const fetchAllUsers = (): Promise<AppUser[]> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       resolve([
         { email: 'admin@walpole.k12.ma.us', name: 'Admin User', role: 'Admin', schools: [] },
         { email: 'user@walpole.k12.ma.us', name: 'Standard User', role: 'User', schools: ['Walpole High'] },
@@ -277,7 +277,7 @@ export const fetchAllUsers = (): Promise<AppUser[]> => {
  */
 export const saveUserData = (userData: AppUser, action: string): Promise<AppUser> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       console.log(`Mock User ${action}:`, userData);
       setTimeout(() => resolve(userData), 1000);
       return;

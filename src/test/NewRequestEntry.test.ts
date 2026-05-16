@@ -30,4 +30,18 @@ describe('NewRequestEntry', () => {
     const translationFields = entry.shadowRoot.querySelector('.translation-only');
     expect(translationFields.style.display).not.toBe('none');
   });
+
+  it('should show interpretation fields when Interpretation is selected', () => {
+    const entry = document.createElement('new-request-entry') as any;
+    container.appendChild(entry);
+
+    const typeInput = entry.shadowRoot.querySelector(
+      'input[name="req-type"][value="Interpretation"]'
+    ) as HTMLInputElement;
+    typeInput.checked = true;
+    typeInput.dispatchEvent(new Event('change'));
+
+    const interpretationFields = entry.shadowRoot.querySelector('.interpretation-only');
+    expect(interpretationFields.style.display).not.toBe('none');
+  });
 });

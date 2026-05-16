@@ -7,8 +7,8 @@ const mockData: { requests: RawRequest[]; schools: string[]; user: AppUser } = {
     {
       approvedDate: '',
       approverName: '',
-      contractor: '',
-      contractorName: '',
+      contractor: 'Staff Member',
+      contractorName: 'Jill Kimball',
       description: 'Requesting translation of syllabus',
       docLink: 'https://example.com/document',
       docPageCount: '10',

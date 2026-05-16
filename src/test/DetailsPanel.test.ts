@@ -26,8 +26,8 @@ describe('DetailsPanel', () => {
     school: 'Boyden Elementary',
     status: 'Needs Approval',
     reqType: 'Translation',
-    requestDate: new Date('2023-10-25'),
-    submittedDate: new Date('2023-10-20'),
+    requestDate: new Date('10/25/2023'),
+    submittedDate: new Date('10/24/2023'),
     email: 'jane@example.com',
     originalLanguage: 'English',
     targetLanguage: 'French',
@@ -46,7 +46,7 @@ describe('DetailsPanel', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     store.setState({ selectedRow: null, user: { email: 'admin@test.com', name: 'Admin', role: 'Admin', schools: [] } });
-    
+
     panel = document.createElement('details-panel');
     container.appendChild(panel);
     vi.clearAllMocks();
@@ -72,10 +72,10 @@ describe('DetailsPanel', () => {
   it('should gather form data correctly using getSaveData', () => {
     panel.data = mockRequest;
     panel.mode = 'edit';
-    
-    const input = panel.shadowRoot.querySelector('input[data-bind="description"]') as HTMLInputElement;
+
+    const input = panel.shadowRoot.querySelector('textarea[data-bind="description"]') as HTMLInputElement;
     input.value = 'Updated Description';
-    
+
     const data = panel.getSaveData();
     expect(data.description).toBe('Updated Description');
   });
@@ -83,10 +83,10 @@ describe('DetailsPanel', () => {
   it('should call requestActions.save when save button is clicked', async () => {
     panel.data = mockRequest;
     panel.mode = 'edit';
-    
+
     const saveBtn = panel.shadowRoot.querySelector('#save-btn') as HTMLButtonElement;
     await saveBtn.click();
-    
+
     expect(requestActions.save).toHaveBeenCalled();
     expect(panel.mode).toBe('view');
   });
@@ -94,10 +94,10 @@ describe('DetailsPanel', () => {
   it('should call requestActions.delete when delete button is clicked and confirmed', async () => {
     panel.data = mockRequest;
     panel.mode = 'edit';
-    
+
     const deleteBtn = panel.shadowRoot.querySelector('#delete-btn') as HTMLButtonElement;
     await deleteBtn.click();
-    
+
     expect(showModal).toHaveBeenCalled();
     expect(requestActions.delete).toHaveBeenCalledWith(mockRequest);
   });
@@ -110,7 +110,7 @@ describe('DetailsPanel', () => {
 
   it('should close and clear selection when close button is clicked', () => {
     store.setState({ selectedRow: mockRequest });
-    
+
     const closeBtn = panel.shadowRoot.querySelector('#close-btn');
     closeBtn.click();
 
@@ -118,4 +118,3 @@ describe('DetailsPanel', () => {
     expect(panel.classList.contains('open')).toBe(false);
   });
 });
-
