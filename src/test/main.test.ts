@@ -3,6 +3,14 @@ import { store } from '../client/services/state';
 import * as api from '../client/services/api';
 import { App } from '../client/main';
 
+import '../client/components/UserEditor/UserEditor';
+import '../client/components/UserManagement/UserManagement';
+import '../client/components/RequestsTable/RequestsTable';
+import '../client/components/DetailsPanel/DetailsPanel';
+import '../client/components/StatusMultiSelect/StatusMultiSelect';
+import '../client/components/NewRequestEntry/NewRequestEntry';
+import '../client/components/RequestsDashboard/RequestsDashboard';
+
 describe('main.ts (App Integration)', () => {
   let app: App;
 
@@ -12,16 +20,25 @@ describe('main.ts (App Integration)', () => {
       <div id="main-nav"></div>
       <button id="nav-users"></button>
       <button id="nav-dashboard"></button>
+      <button id="nav-request"></button>
       <select id="school-filter"></select>
-      <div id="dashboard-view"></div>
-      <div id="users-view"></div>
+      <requests-dashboard></requests-dashboard>
+      <user-management></user-management>
       <details-panel></details-panel>
     `;
 
     // Mock api.fetchData
     vi.spyOn(api, 'fetchData').mockResolvedValue({
-      requests: [],
-      schools: ['School A'],
+      requests: [
+        {
+          id: '1',
+          reqType: 'Translation',
+          school: 'School A',
+          status: 'Needs Approval',
+          submittedDate: new Date(),
+        } as any,
+      ],
+      schools: ['School A', 'School B'],
       user: { email: 'test@test.com', name: 'Test', role: 'Admin', schools: [] },
     });
 
@@ -47,6 +64,11 @@ describe('main.ts (App Integration)', () => {
     navDashboard?.click();
 
     expect(store.getState().activeView).toBe('dashboard');
+
+    const navRequest = document.getElementById('nav-request');
+    navRequest?.click();
+
+    expect(store.getState().activeView).toBe('new-request-entry');
   });
 
   it('should close the details panel when clicking outside', () => {

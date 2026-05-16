@@ -33,4 +33,18 @@ describe('state.ts', () => {
     expect(state.filterSchool).toBe('School A');
     expect(state.isPanelOpen).toBe(false);
   });
+
+  it('should notify all listeners when state changes', () => {
+    const callback1 = vi.fn();
+    const callback2 = vi.fn();
+    store.subscribe(callback1);
+    store.subscribe(callback2);
+
+    store.setState({ loading: true });
+
+    expect(callback1).toHaveBeenCalled();
+    expect(callback2).toHaveBeenCalled();
+  });
 });
+
+

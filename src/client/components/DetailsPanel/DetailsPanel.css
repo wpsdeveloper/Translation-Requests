@@ -5,7 +5,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 550px;
+  width: 600px;
   /* This is your fixed width */
   height: 100vh;
   z-index: 1000;
@@ -91,7 +91,7 @@ header {
 }
 
 /* Group Title and Edit Button */
-.detail-header-main > div:first-child {
+.detail-header-main>div:first-child {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -259,10 +259,26 @@ div[data-bind]:empty::before {
 }
 
 /* Handle special display types */
-:host([mode='view']) [data-show~='view'].time-range,
-:host([mode='edit']) [data-show~='edit'].time-range,
-:host([mode='process']) [data-show~='process'].time-range {
+:host([mode='view']) [data-show~='view'].time-range {
   display: flex !important;
+  gap: 10px;
+}
+
+:host([mode='edit']) [data-show~='edit'].time-range-editor,
+:host([mode='process']) [data-show~='process'].time-range-editor {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  >div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.time-view {
+  display: flex;
   gap: 10px;
 }
 

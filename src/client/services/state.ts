@@ -1,8 +1,6 @@
-import { AppUser, TranslationRequest } from '../../shared/types';
-
 interface State {
-  selectedRow: TranslationRequest | null;
-  allRows: TranslationRequest[];
+  selectedRow: HydratedRequest | null;
+  allRows: HydratedRequest[];
   schools: string[];
   filterSchool: string | null;
   filterStatuses: string[];

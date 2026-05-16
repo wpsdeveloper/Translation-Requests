@@ -44,25 +44,14 @@ class ContractorSelect extends HTMLElement {
 
   setupEventListeners() {
     const select = this.shadowRoot?.querySelector('#contractor-dropdown') as HTMLSelectElement;
-    const manualEntry = this.shadowRoot?.querySelector('#manual-entry') as HTMLElement;
     const nameInput = this.shadowRoot?.querySelector('#contractor-name') as HTMLInputElement;
 
     select?.addEventListener('change', (e: any) => {
-      const val = e.target.value;
-      if (manualEntry) {
-        if (val === 'Staff Member' || val === 'Private Contractor') {
-          manualEntry.style.display = 'block';
-        } else {
-          manualEntry.style.display = 'none';
-          if (nameInput) nameInput.value = ''; // Clear name if not needed
-        }
-      }
-
       // Dispatch custom event for parent components
       this.dispatchEvent(
         new CustomEvent('change', {
           detail: {
-            contractor: val,
+            contractor: select.value,
             name: nameInput?.value || '',
           },
           bubbles: true,
@@ -98,7 +87,7 @@ class ContractorSelect extends HTMLElement {
 
     if (viewEl && editEl) {
       viewEl.style.display = value === 'view' ? '' : 'none';
-      editEl.style.display = value === 'edit' ? '' : 'none';
+      editEl.style.display = value === 'process' || value === 'edit' ? '' : 'none';
     }
     this.updateViewValue();
   }
@@ -129,7 +118,7 @@ class ContractorSelect extends HTMLElement {
   set value(data: ContractorData) {
     this._data = data || { contractor: '', name: '' };
     const select = this.shadowRoot?.querySelector('#contractor-dropdown') as HTMLSelectElement;
-    const manualEntry = this.shadowRoot?.querySelector('#manual-entry') as HTMLElement;
+    const manualEntry = this.shadowRoot?.querySelector('.manual-entry-container') as HTMLElement;
     const nameInput = this.shadowRoot?.querySelector('#contractor-name') as HTMLInputElement;
 
     if (select) {

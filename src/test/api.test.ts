@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { hydrate, saveRequest } from '../client/services/api';
-import { RawRequest, TranslationRequest } from '../shared/types';
+import * as api from '../client/services/api';
+import { hydrate } from '../client/services/api';
 
 describe('api.ts', () => {
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('api.ts', () => {
         reqType: 'Translation',
       } as any;
 
-      const hydrated = hydrate(raw);
+      const hydrated = api.hydrate(raw);
 
       expect(hydrated.requestDate).toBeInstanceOf(Date);
       expect(hydrated.requestDate?.toISOString()).toBe('2023-10-25T12:00:00.000Z');
@@ -43,7 +43,7 @@ describe('api.ts', () => {
         submittedDate: null,
       } as any;
 
-      const hydrated = hydrate(raw);
+      const hydrated = api.hydrate(raw);
 
       expect(hydrated.requestDate).toBeNull();
       expect(hydrated.submittedDate).toBeNull();
@@ -51,22 +51,45 @@ describe('api.ts', () => {
   });
 
   describe('saveRequest', () => {
-    it('should convert Date objects back to strings when saving', async () => {
-      const rich: TranslationRequest = {
-        id: '1',
+    beforeEach(() => {
+      vi.stubGlobal('location', { href: 'https://script.google.com/test' });
+
+      // 2. Setup the "Fluent API" mock for Google
+      // We return 'this' (mockRun) so the chaining .withSuccessHandler().withFailureHandler() works
+      const mockRun = {
+        withSuccessHandler: vi.fn().mockReturnThis(),
+        withFailureHandler: vi.fn().mockReturnThis(),
+        saveDataToServer: vi.fn(),
+      };
+
+      vi.stubGlobal('google', { script: { run: mockRun } });
+    });
+
+    it('should dehydrate Translation dates correctly', async () => {
+      const rich = {
+        reqType: 'Translation',
         requestDate: new Date('2023-10-25T12:00:00Z'),
-        status: 'Approved',
-        name: 'John',
       } as any;
 
-      const savePromise = saveRequest(rich);
+      // We don't await yet because the promise only resolves
+      // when we manually trigger the success handler below.
+      const savePromise = api.saveRequest(rich);
 
-      // Get the mock call to saveDataToServer
       const mockRun = (globalThis as any).google.script.run;
-      const sentData = mockRun.saveDataToServer.mock.calls[0][0];
 
-      expect(typeof sentData.requestDate).toBe('string');
-      expect(sentData.requestDate).toContain('2023-10-25');
+      // 3. Inspect the "Spy history" (mock.calls[0][0])
+      // Using the cleaner 'toHaveBeenCalledWith' syntax
+      expect(mockRun.saveDataToServer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          requestDate: '10/25/2023', // Or whatever dehydrateDate returns
+        })
+      );
+
+      // 4. Manually trigger the success callback to resolve the promise
+      const successCallback = mockRun.withSuccessHandler.mock.calls[0][0];
+      successCallback(rich);
+
+      await expect(savePromise).resolves.toBeDefined();
     });
   });
 });

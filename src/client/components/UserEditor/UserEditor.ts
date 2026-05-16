@@ -142,10 +142,7 @@ class UserEditor extends HTMLElement {
     overlay?.classList.add('open');
   }
 
-  async saveUser() {
-    const form = this.shadowRoot?.getElementById('user-form') as HTMLFormElement;
-    const submitBtn = this.shadowRoot?.getElementById('submit-btn') as HTMLButtonElement;
-
+  getSaveData(): AppUser {
     const email = (this.shadowRoot?.getElementById('user-email') as HTMLInputElement).value;
     const name = (this.shadowRoot?.getElementById('user-name') as HTMLInputElement).value;
     const role = (this.shadowRoot?.getElementById('user-role') as HTMLSelectElement).value;
@@ -153,13 +150,20 @@ class UserEditor extends HTMLElement {
       this.shadowRoot?.querySelectorAll('input[name="school"]:checked') as NodeListOf<HTMLInputElement>
     ).map((cb) => cb.value);
 
-    const userData: AppUser = {
+    return {
       ...(this._user || ({} as AppUser)), // Preserve original keys (Row ID, etc.)
       email,
       name,
       role: role as any,
       schools: role === 'Admin' ? [] : selectedSchools,
     };
+  }
+
+  async saveUser() {
+    const form = this.shadowRoot?.getElementById('user-form') as HTMLFormElement;
+    const submitBtn = this.shadowRoot?.getElementById('submit-btn') as HTMLButtonElement;
+
+    const userData = this.getSaveData();
 
     if (submitBtn) {
       submitBtn.disabled = true;

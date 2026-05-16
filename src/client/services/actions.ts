@@ -10,10 +10,11 @@ export const requestActions = {
   /**
    * Saves changes to an existing request.
    */
-  async save(request: TranslationRequest): Promise<TranslationRequest> {
+  async save(request: HydratedRequest): Promise<HydratedRequest> {
+    console.log("Saving request:", request);
     try {
       const savedData = await saveRequest(request);
-      
+
       const { allRows } = store.getState();
       const updatedRows = allRows.map((row) => (row.id === savedData.id ? savedData : row));
 
@@ -21,8 +22,9 @@ export const requestActions = {
         allRows: updatedRows,
         selectedRow: savedData,
       });
-      
+
       showToast("Changes saved successfully.");
+      console.log("Base")
       return savedData;
     } catch (err) {
       console.error('Failed to save request:', err);
@@ -35,7 +37,7 @@ export const requestActions = {
    * Deletes a request with optimistic UI updates.
    * If the API call fails, it rolls back the state.
    */
-  async delete(request: TranslationRequest): Promise<void> {
+  async delete(request: HydratedRequest): Promise<void> {
     const previousRows = [...store.getState().allRows];
     const previousSelected = store.getState().selectedRow;
 
@@ -44,7 +46,7 @@ export const requestActions = {
       allRows: previousRows.filter((row) => row.id !== request.id),
       selectedRow: null,
     });
-    
+
     showToast("Deleting request...");
 
     try {
@@ -52,13 +54,13 @@ export const requestActions = {
       showToast("Request deleted successfully.");
     } catch (err) {
       console.error('Failed to delete request:', err);
-      
+
       // Rollback state on failure
       store.setState({
         allRows: previousRows,
         selectedRow: previousSelected,
       });
-      
+
       showToast("Error: Could not delete. Restoring data...", 5000);
       throw err;
     }
@@ -67,9 +69,9 @@ export const requestActions = {
   /**
    * Creates a new request and updates the dashboard view.
    */
-  async create(request: Partial<TranslationRequest>): Promise<TranslationRequest> {
+  async create(request: Partial<HydratedRequest>): Promise<HydratedRequest> {
     try {
-      const savedRequest = await addRequest(request as TranslationRequest);
+      const savedRequest = await addRequest(request as HydratedRequest);
 
       const { allRows } = store.getState();
       store.setState({

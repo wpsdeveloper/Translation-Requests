@@ -1,9 +1,12 @@
+import { formatDate, formatTime } from './utils';
 // Determine if we are running in a local environment or inside Google Apps Script.
 // This allows us to use mock data for faster frontend development.
-const IS_MOCK = !window.location.href.includes('google') && !window.location.href.includes('script');
+export function isMock() {
+  return !window.location.href.includes('google') && !window.location.href.includes('script');
+}
 
 // Safety proxy for local development to prevent 'google is not defined' errors
-if (IS_MOCK && typeof (window as any).google === 'undefined') {
+if (isMock() && typeof (window as any).google === 'undefined') {
   (window as any).google = {
     script: {
       run: {
@@ -27,8 +30,51 @@ if (IS_MOCK && typeof (window as any).google === 'undefined') {
   };
 }
 
+/**
+ * Helper to convert Date objects back to ISO strings for the server,
+ * or return an empty string if null/undefined.
+ */
+const dehydrateDate = (date: Date | string | null | undefined): string => {
+  if (date instanceof Date) return formatDate(date, 'MM/DD/YYYY');
+  return '';
+};
+
+const dehydrateDateTime = (date: Date | string | null | undefined): string => {
+  if (date instanceof Date) return date.toISOString();
+  return '';
+};
+
+const dehydrateTime = (date: Date | string | null | undefined): string => {
+  if (date instanceof Date) return formatTime(date, 'h:mm A');
+  if (typeof date === 'string') {
+    if (/^\d{2}:\d{2}:\d{2}$/.test(date)) return date;
+    if (/^\d{2}:\d{2}$/.test(date)) return `${date}:00`;
+    const ampmMatch = date.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (ampmMatch) {
+      let [, h, m, ampm] = ampmMatch;
+      let hours = parseInt(h, 10);
+      if (ampm.toUpperCase() === 'PM' && hours < 12) hours += 12;
+      if (ampm.toUpperCase() === 'AM' && hours === 12) hours = 0;
+      return `${hours.toString().padStart(2, '0')}:${m}:00`;
+    }
+    return date;
+  }
+  return '';
+};
+
+const hydrateDate = (value: string | null | undefined): Date | null => {
+  if (value === null || value === undefined) return null;
+  try {
+    const newDate = new Date(value);
+    if (isNaN(newDate.getTime())) return null;
+    return newDate;
+  } catch {
+    return null;
+  }
+};
+
 export interface FetchDataResult {
-  requests: TranslationRequest[];
+  requests: HydratedRequest[];
   schools: string[];
   user: AppUser | null;
 }
@@ -39,7 +85,7 @@ export interface FetchDataResult {
  */
 export const fetchData = (): Promise<FetchDataResult> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       import('./mock-data').then((module) => {
         console.log('Mock data loaded dynamically');
         const data = JSON.parse(module.getMockData());
@@ -71,44 +117,35 @@ export const fetchData = (): Promise<FetchDataResult> => {
  * This function "de-hydrates" the object (converts Dates back to strings)
  * to match the AppSheet API's expected format.
  */
-export const saveRequest = (updatedData: TranslationRequest): Promise<TranslationRequest> => {
+export const saveRequest = (updatedData: HydratedRequest): Promise<HydratedRequest> => {
   // Create a copy and convert Dates back to ISO strings or formatted strings for the server
-  const dataToSend: RawRequest = {
-    ...(updatedData as TranslationRequest),
-    requestDate:
-      updatedData.requestDate instanceof Date ? updatedData.requestDate.toISOString() : updatedData.requestDate || '',
-    submittedDate:
-      updatedData.submittedDate instanceof Date
-        ? updatedData.submittedDate.toISOString()
-        : updatedData.submittedDate || '',
-    approvedDate:
-      updatedData.approvedDate instanceof Date
-        ? updatedData.approvedDate.toISOString()
-        : updatedData.approvedDate || '',
-    startTime:
-      updatedData.startTime instanceof Date ? updatedData.startTime.toISOString() : updatedData.startTime || '',
-    endTime: updatedData.endTime instanceof Date ? updatedData.endTime.toISOString() : updatedData.endTime || '',
-    contractorScheduledDate:
-      updatedData.contractorScheduledDate instanceof Date
-        ? updatedData.contractorScheduledDate.toISOString()
-        : updatedData.contractorScheduledDate || '',
-    documentReturnedDate:
-      updatedData.documentReturnedDate instanceof Date
-        ? updatedData.documentReturnedDate.toISOString()
-        : updatedData.documentReturnedDate || '',
-    guestConfirmedDate:
-      updatedData.guestConfirmedDate instanceof Date
-        ? updatedData.guestConfirmedDate.toISOString()
-        : updatedData.guestConfirmedDate || '',
-    techConfirmedDate:
-      updatedData.techConfirmedDate instanceof Date
-        ? updatedData.techConfirmedDate.toISOString()
-        : updatedData.techConfirmedDate || '',
-  };
+  let dataToSend: RawTranslationRequest | RawInterpretationRequest;
+  if (updatedData.reqType === 'Translation') {
+    const translationRequest = updatedData as TranslationRequest;
+    dataToSend = {
+      ...translationRequest,
+      requestDate: dehydrateDate(translationRequest.requestDate),
+      submittedDate: dehydrateDate(translationRequest.submittedDate),
+      approvedDate: dehydrateDate(translationRequest.approvedDate),
+      documentReturnedDate: dehydrateDate(translationRequest.documentReturnedDate),
+      contractorScheduledDate: dehydrateDate(translationRequest.contractorScheduledDate),
+    } as RawTranslationRequest;
+  } else {
+    const interpretationRequest = updatedData as InterpretationRequest;
+    dataToSend = {
+      ...interpretationRequest,
+      requestDate: dehydrateDate(interpretationRequest.requestDate),
+      submittedDate: dehydrateDateTime(interpretationRequest.submittedDate),
+      approvedDate: dehydrateDateTime(interpretationRequest.approvedDate),
+      startTime: dehydrateTime(interpretationRequest.startTime),
+      endTime: dehydrateTime(interpretationRequest.endTime),
+      contractorScheduledDate: dehydrateDate(interpretationRequest.contractorScheduledDate),
+      guestConfirmedDate: dehydrateDate(interpretationRequest.guestConfirmedDate),
+      techConfirmedDate: dehydrateDate(interpretationRequest.techConfirmedDate),
+    } as RawInterpretationRequest;
+  }
 
-  console.log('Saving request to server (de-hydrated):', dataToSend);
-
-  if (IS_MOCK) {
+  if (isMock()) {
     console.warn('google.script.run.saveDataToServer called in mock mode');
     return new Promise((resolve) => setTimeout(() => resolve(updatedData), 1500));
   }
@@ -128,26 +165,39 @@ export const saveRequest = (updatedData: TranslationRequest): Promise<Translatio
 /**
  * Adds a new request to the server.
  */
-export const addRequest = (newData: TranslationRequest): Promise<TranslationRequest> => {
-  const dataToSend: RawRequest = {
-    ...(newData as any),
-    requestDate: newData.requestDate instanceof Date ? newData.requestDate.toISOString() : newData.requestDate || '',
-    submittedDate:
-      newData.submittedDate instanceof Date ? newData.submittedDate.toISOString() : newData.submittedDate || '',
-    approvedDate:
-      newData.approvedDate instanceof Date ? newData.approvedDate.toISOString() : newData.approvedDate || '',
-    startTime: newData.startTime instanceof Date ? newData.startTime.toISOString() : newData.startTime || '',
-    endTime: newData.endTime instanceof Date ? newData.endTime.toISOString() : newData.endTime || '',
-  };
+export const addRequest = (newData: HydratedRequest): Promise<HydratedRequest> => {
+  let dataToSend: RawTranslationRequest | RawInterpretationRequest;
+  if (newData.reqType === 'Translation') {
+    dataToSend = {
+      ...(newData as any),
+      requestDate: dehydrateDate(newData.requestDate),
+      submittedDate: dehydrateDate(newData.submittedDate),
+      approvedDate: dehydrateDate(newData.approvedDate),
+      contractorScheduledDate: dehydrateDate(newData.contractorScheduledDate),
+      documentReturnedDate: dehydrateDate(newData.documentReturnedDate),
+    } as RawTranslationRequest;
+  } else {
+    dataToSend = {
+      ...(newData as any),
+      requestDate: dehydrateDate(newData.requestDate),
+      submittedDate: dehydrateDateTime(newData.submittedDate),
+      approvedDate: dehydrateDateTime(newData.approvedDate),
+      startTime: dehydrateTime(newData.startTime),
+      endTime: dehydrateTime(newData.endTime),
+      contractorScheduledDate: dehydrateDate(newData.contractorScheduledDate),
+      guestConfirmedDate: dehydrateDate(newData.guestConfirmedDate),
+      techConfirmedDate: dehydrateDate(newData.techConfirmedDate),
+    } as RawInterpretationRequest;
+  }
 
-  if (IS_MOCK) {
+  if (isMock()) {
     console.warn('google.script.run.addRequestToServer called in mock mode');
     return new Promise((resolve) => setTimeout(() => resolve(newData), 1500));
   }
 
   console.log('Adding new request to server:', dataToSend);
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       setTimeout(() => {
         const mockCreated = { ...newData, id: 'MOCK-' + Date.now() };
         resolve(mockCreated);
@@ -167,10 +217,10 @@ export const addRequest = (newData: TranslationRequest): Promise<TranslationRequ
 /**
  * Deletes a request from the server.
  */
-export const deleteRequest = (request: TranslationRequest): Promise<TranslationRequest> => {
+export const deleteRequest = (request: HydratedRequest): Promise<HydratedRequest> => {
   if (!request.id) throw new Error('Cannot delete request without ID');
 
-  if (IS_MOCK) {
+  if (isMock()) {
     console.warn('google.script.run.deleteRequest called in mock mode');
     return new Promise((resolve) => setTimeout(() => resolve(request), 1500));
   }
@@ -184,14 +234,14 @@ export const deleteRequest = (request: TranslationRequest): Promise<TranslationR
       .withFailureHandler(reject)
       .deleteRequestFromServer(request.id);
   });
-}
+};
 
 /**
  * Uploads a file to Google Drive.
  */
 export const uploadFile = (base64Data: string, fileName: string, mimeType: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       console.log('Mock uploading file:', fileName);
       setTimeout(() => resolve('https://drive.google.com/mock-file-url'), 1500);
       return;
@@ -208,7 +258,7 @@ export const uploadFile = (base64Data: string, fileName: string, mimeType: strin
  */
 export const fetchAllUsers = (): Promise<AppUser[]> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       resolve([
         { email: 'admin@walpole.k12.ma.us', name: 'Admin User', role: 'Admin', schools: [] },
         { email: 'user@walpole.k12.ma.us', name: 'Standard User', role: 'User', schools: ['Walpole High'] },
@@ -227,7 +277,7 @@ export const fetchAllUsers = (): Promise<AppUser[]> => {
  */
 export const saveUserData = (userData: AppUser, action: string): Promise<AppUser> => {
   return new Promise((resolve, reject) => {
-    if (IS_MOCK) {
+    if (isMock()) {
       console.log(`Mock User ${action}:`, userData);
       setTimeout(() => resolve(userData), 1000);
       return;
@@ -244,17 +294,53 @@ export const saveUserData = (userData: AppUser, action: string): Promise<AppUser
  * object. This primarily involves turning ISO date strings into real JS Date objects,
  * which are much easier to format and manipulate in the UI.
  */
-export function hydrate(request: RawRequest): TranslationRequest {
-  return {
-    ...request,
-    requestDate: request.requestDate ? new Date(request.requestDate) : null,
-    submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
-    approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
-    startTime: request.startTime ? new Date(request.startTime) : null,
-    endTime: request.endTime ? new Date(request.endTime) : null,
-    contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
-    documentReturnedDate: request.documentReturnedDate ? new Date(request.documentReturnedDate) : null,
-    guestConfirmedDate: request.guestConfirmedDate ? new Date(request.guestConfirmedDate) : null,
-    techConfirmedDate: request.techConfirmedDate ? new Date(request.techConfirmedDate) : null,
-  };
+export function hydrate(request: RawRequest): HydratedRequest {
+  if (request.reqType === 'Translation') {
+    return {
+      ...(request as any),
+      requestDate: request.requestDate ? new Date(request.requestDate) : null,
+      submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
+      approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
+      contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
+      documentReturnedDate: request.documentReturnedDate ? new Date(request.documentReturnedDate) : null,
+    } as TranslationRequest;
+  } else {
+    return {
+      ...(request as any),
+      requestDate: request.requestDate ? new Date(request.requestDate) : null,
+      submittedDate: request.submittedDate ? new Date(request.submittedDate) : null,
+      approvedDate: request.approvedDate ? new Date(request.approvedDate) : null,
+      contractorScheduledDate: request.contractorScheduledDate ? new Date(request.contractorScheduledDate) : null,
+      guestConfirmedDate: request.guestConfirmedDate ? new Date(request.guestConfirmedDate) : null,
+      techConfirmedDate: request.techConfirmedDate ? new Date(request.techConfirmedDate) : null,
+
+      startTime: hydrateTime(request.startTime),
+      endTime: hydrateTime(request.endTime),
+    } as InterpretationRequest;
+  }
+}
+
+function hydrateTime(time: string | null): string | null {
+  if (!time) return 'Invalid time';
+
+  const timeRegex = /^\d{2}:\d{2}(:\d{2})?$/;
+  if (!timeRegex.test(time)) {
+    return 'Invalid time format';
+  }
+
+  try {
+    let [hours, minutes, seconds] = time.split(':').map(Number);
+
+    if (hours > 23 || minutes > 59 || seconds > 59) {
+      return 'Invalid time';
+    }
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+  } catch {
+    return 'Invalid time';
+  }
 }

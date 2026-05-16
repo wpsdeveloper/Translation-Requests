@@ -36,10 +36,10 @@ describe('StatusSelect', () => {
     container.innerHTML = '<status-select status="Approved" mode="view"></status-select>';
     const select = container.querySelector('status-select') as any;
 
-    const editModeDiv = select.shadowRoot.querySelector('#edit-mode');
+    const editModeDiv = select.shadowRoot.querySelector('#process-mode');
     expect(editModeDiv.style.display).toBe('none');
 
-    select.setAttribute('mode', 'edit');
-    expect(editModeDiv.style.display).toBe('block');
+    select.setAttribute('mode', 'process');
+    expect(editModeDiv.style.display).toBe('');
   });
 });

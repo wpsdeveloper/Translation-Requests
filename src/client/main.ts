@@ -1,6 +1,5 @@
 import { store } from './services/state';
 import { fetchData } from './services/api';
-// We don't need .js extension in imports for Vite when using TS
 import './components/RequestsTable/RequestsTable';
 import './components/DetailsPanel/DetailsPanel';
 import './components/StatusMultiSelect/StatusMultiSelect';
@@ -154,16 +153,25 @@ export class App {
 
     // 5. Global click listener to handle "outside clicks" for closing panels
     window.addEventListener('click', (e) => {
-      const panel = document.querySelector('details-panel') as any;
+      let panel = document.querySelector('details-panel') as any;
+      if (!panel) {
+        const dashboard = document.querySelector('requests-dashboard');
+        if (dashboard && dashboard.shadowRoot) {
+          panel = dashboard.shadowRoot.querySelector('details-panel');
+        }
+      }
+
       // If the panel is in edit mode, we don't want to close it accidentally
       if (panel && panel.mode === 'edit') return;
 
       const path = e.composedPath();
       const isPanel = path.some((el: any) => el.tagName === 'DETAILS-PANEL');
-      const isRow = path.some((el: any) => el.tagName === 'APP-ROW');
+      const clickedPanelBackground = panel && path[0] === panel;
+      const isRow = path.some((el: any) => el.tagName === 'REQUESTS-ROW');
 
       // If clicking outside both the panel and the table rows, clear selection
-      if (!isPanel && !isRow) {
+      // Also close if clicking the panel's blurred background (pseudo-element)
+      if ((!isPanel && !isRow) || clickedPanelBackground) {
         store.setState({ selectedRow: null });
       }
     });

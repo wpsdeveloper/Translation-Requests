@@ -11,7 +11,7 @@ describe('ContractorSelect', () => {
 
   it('should render the current contractor name', () => {
     const el = document.createElement('contractor-select') as any;
-    el.value = { contractor: 'Lexikeet', name: 'Lexikeet' };
+    el.value = { contractor: 'Lexikeet', contractorName: 'Lexikeet' };
     el.mode = 'view';
     container.appendChild(el);
 

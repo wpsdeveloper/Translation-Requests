@@ -11,7 +11,7 @@ interface AppUser {
  * The raw data structure as it comes from/goes to the AppSheet API.
  * All dates and times are handled as strings.
  */
-interface RawRequest {
+interface RawBaseRequest {
   id: string;
 
   email: string;
@@ -20,21 +20,12 @@ interface RawRequest {
   submittedDate: string;
 
   status: string;
-  reqType: string;
   requestDate: string;
-  
+
   originalLanguage: string;
   targetLanguage: string;
   description: string;
-  
-  docPageCount: string;
-  docLink: string;
-  
-  interpretationType: string;
-  eventLocation: string;
-  endTime: string;
-  startTime: string;
-  
+
   approverName: string;
   approvedDate: string;
 
@@ -42,32 +33,62 @@ interface RawRequest {
   contractorName: string;
 
   contractorScheduledDate: string;
+}
+
+interface RawTranslationRequest extends RawBaseRequest {
+  reqType: 'Translation';
+  docPageCount: string;
+  docLink: string;
   documentReturnedDate: string;
+}
+
+interface RawInterpretationRequest extends RawBaseRequest {
+  reqType: 'Interpretation';
+  interpretationType: string;
+  eventLocation: string;
+  endTime: string;
+  startTime: string;
   guestConfirmedDate: string;
   techConfirmedDate: string;
 }
+
+type RawRequest = RawTranslationRequest | RawInterpretationRequest;
 
 /**
  * The hydrated request object used throughout the frontend.
  * String dates are converted to real Date objects for easier manipulation.
  */
-interface TranslationRequest extends Omit<
-  RawRequest,
-  'requestDate' | 'approvedDate' | 'submittedDate' | 'startTime' | 'endTime'
+interface BaseRequest extends Omit<
+  RawBaseRequest,
+  'submittedDate' | 'requestDate' | 'approvedDate' | 'contractorScheduledDate'
 > {
   submittedDate: Date | null;
   requestDate: Date | null;
-  startTime: Date | null;
-  endTime: Date | null;
   approvedDate: Date | null;
   contractorScheduledDate: Date | null;
+}
+
+interface TranslationRequest extends BaseRequest {
+  reqType: 'Translation';
   documentReturnedDate: Date | null;
+  docPageCount: string;
+  docLink: string;
+}
+
+interface InterpretationRequest extends BaseRequest {
+  reqType: 'Interpretation';
+  interpretationType: string;
+  eventLocation: string;
+  startTime: string | null;
+  endTime: string | null;
   guestConfirmedDate: Date | null;
   techConfirmedDate: Date | null;
 }
 
+type HydratedRequest = TranslationRequest | InterpretationRequest;
+
 interface AppState {
-  requests: TranslationRequest[];
+  requests: HydratedRequest[];
   schools: string[];
   user: AppUser | null;
   loading: boolean;
